@@ -6,6 +6,8 @@
 
 #include <yuJson/json.hpp>
 
+#include <kpdb/pdb.hpp>
+#include <Geek/File/file.hpp>
 
 extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath){
 	jxy::string<POOL_TYPE::NonPagedPool, 'FAKE'> str = "??";
@@ -14,6 +16,8 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	//yuJson::Json json = { "fake", 666, "emm", true };
 
 	KdPrint(("Enter DriverEntry!%s\n", str.c_str()));
+
+	Geek::File file(L"fake");
 
 	
 

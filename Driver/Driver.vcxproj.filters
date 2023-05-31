@@ -17,42 +17,10 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
-    <Filter Include="Header Files\Process-Thread">
-      <UniqueIdentifier>{cb4accb9-3667-4b10-8dec-63ab2ff82bbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Process-Thread">
-      <UniqueIdentifier>{19b3e058-4beb-4b26-8d4a-a2e74a4d99a5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="entry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Process-Thread\object_header.cpp">
-      <Filter>Source Files\Process-Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="Process-Thread\psp_cid_table.cpp">
-      <Filter>Source Files\Process-Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="Process-Thread\handle_table.cpp">
-      <Filter>Source Files\Process-Thread</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="kpdb.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ynstd.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Process-Thread\object_header.h">
-      <Filter>Header Files\Process-Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="Process-Thread\psp_cid_table.h">
-      <Filter>Header Files\Process-Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="Process-Thread\handle_table.h">
-      <Filter>Header Files\Process-Thread</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
