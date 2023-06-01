@@ -88,7 +88,7 @@
     </DriverSign>
     <ClCompile>
       <TreatWarningAsError>false</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(KernelLib);$(VC_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(KernelLib);$(VC_IncludePath);$(SolutionDir)Driver;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(KernelLib)</AdditionalLibraryDirectories>
@@ -118,6 +118,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="entry.cpp" />
+    <ClCompile Include="Process-Thread\handle_table.cpp" />
+    <ClCompile Include="Process-Thread\object_header.cpp" />
+    <ClCompile Include="Process-Thread\psp_cid_table.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Process-Thread\handle_table.h" />
+    <ClInclude Include="Process-Thread\object_header.h" />
+    <ClInclude Include="Process-Thread\psp_cid_table.h" />
+    <ClInclude Include="ynstd.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

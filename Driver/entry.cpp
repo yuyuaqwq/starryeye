@@ -1,25 +1,18 @@
 #include <ntifs.h>
+#include "Process-Thread/psp_cid_table.h"
+#include "ynstd.hpp"
+#define _SCN StarryEye::ynstd::
+//#include <yuJson/json.hpp>
 
-#include <jxy/string.hpp>
-#include <jxy/vector.hpp>
-#include <jxy/memory.hpp>
+ULONG64 StarryEye::PspCidTable::Address = 114514;
 
-#include <yuJson/json.hpp>
+extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
 
-#include <kpdb/pdb.hpp>
-#include <Geek/File/file.hpp>
-
-extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath){
-	jxy::string<POOL_TYPE::NonPagedPool, 'FAKE'> str = "??";
-	//std::vector<int> aaaa;
+	_SCN string str = "??";
 
 	//yuJson::Json json = { "fake", 666, "emm", true };
 
 	KdPrint(("Enter DriverEntry!%s\n", str.c_str()));
-
-	Geek::File file(L"fake");
-
-	
 
 	return STATUS_SUCCESS;
 }
