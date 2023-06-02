@@ -1,11 +1,12 @@
 #pragma once
 #include <ntifs.h>
+#include "object_type.h"
+#include "global_vars.hpp"
 
 namespace StarryEye {
 
 #define OBJECT_HEADER_TO_BODY_SIZE 0x30
 
-static ULONG64 ObHeaderCookie;
 
 class ObjectHeader
 {
@@ -23,9 +24,10 @@ public:
 	// 获取解密后的TypeIndex
 	UCHAR TypeIndexDecrypted();
 
-	bool IsVaild();
+	// 获取Type对象(注意: 使用前一定要先调用ObjectType::Init()!)
+	ObjectType Type();
 
-	operator bool();
+	bool IsVaild();
 
 private:
 	// 地址

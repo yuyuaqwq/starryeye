@@ -2,7 +2,8 @@
 
 UCHAR StarryEye::ObjectHeader::DecryptTypeIndex(ULONG64 obj_addr, UCHAR type_index)
 {
-	return ObHeaderCookie ^ type_index ^ ((UCHAR*)obj_addr)[1];
+	UCHAR x = (UCHAR)(obj_addr >> 8);
+	return ObHeaderCookie ^ type_index ^ x;
 }
 
 StarryEye::ObjectHeader::ObjectHeader(std::nullptr_t)
@@ -12,13 +13,12 @@ StarryEye::ObjectHeader::ObjectHeader(std::nullptr_t)
 
 StarryEye::ObjectHeader::ObjectHeader(ULONG64 address)
 {
-	// TODO
 	address_ = address;
+	type_index_offset = 0x18;		//TODO TypeIndexÆ«ÒÆ
 }
 
 StarryEye::ObjectHeader::~ObjectHeader()
 {
-	// TODO
 }
 
 UCHAR StarryEye::ObjectHeader::TypeIndex()
@@ -31,12 +31,13 @@ UCHAR StarryEye::ObjectHeader::TypeIndexDecrypted()
 	return DecryptTypeIndex(address_, TypeIndex());
 }
 
+StarryEye::ObjectType StarryEye::ObjectHeader::Type()
+{
+	auto index = TypeIndexDecrypted();
+	return ObjectType(ObTypeIndexTable[index]);
+}
+
 bool StarryEye::ObjectHeader::IsVaild()
 {
 	return MmIsAddressValid((PVOID)address_);
-}
-
-StarryEye::ObjectHeader::operator bool()
-{
-	return IsVaild();
 }

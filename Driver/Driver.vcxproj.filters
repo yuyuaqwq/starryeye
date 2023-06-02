@@ -17,10 +17,10 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
-    <Filter Include="Header Files\Process-Thread">
+    <Filter Include="Header Files\Handle">
       <UniqueIdentifier>{ce9a505c-5d55-42eb-bf0a-0436256e1181}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Process-Thread">
+    <Filter Include="Source Files\Handle">
       <UniqueIdentifier>{249411a4-c64d-4795-84fc-422c665cd566}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -28,28 +28,31 @@
     <ClCompile Include="entry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Process-Thread\handle_table.cpp">
-      <Filter>Source Files\Process-Thread</Filter>
+    <ClCompile Include="Handle\handle_table.cpp">
+      <Filter>Source Files\Handle</Filter>
     </ClCompile>
-    <ClCompile Include="Process-Thread\object_header.cpp">
-      <Filter>Source Files\Process-Thread</Filter>
+    <ClCompile Include="Handle\object_header.cpp">
+      <Filter>Source Files\Handle</Filter>
     </ClCompile>
-    <ClCompile Include="Process-Thread\psp_cid_table.cpp">
-      <Filter>Source Files\Process-Thread</Filter>
+    <ClCompile Include="Handle\object_type.cpp">
+      <Filter>Source Files\Handle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ynstd.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Process-Thread\handle_table.h">
-      <Filter>Header Files\Process-Thread</Filter>
+    <ClInclude Include="Handle\handle_table.h">
+      <Filter>Header Files\Handle</Filter>
     </ClInclude>
-    <ClInclude Include="Process-Thread\object_header.h">
-      <Filter>Header Files\Process-Thread</Filter>
+    <ClInclude Include="Handle\object_header.h">
+      <Filter>Header Files\Handle</Filter>
     </ClInclude>
-    <ClInclude Include="Process-Thread\psp_cid_table.h">
-      <Filter>Header Files\Process-Thread</Filter>
+    <ClInclude Include="Handle\object_type.h">
+      <Filter>Header Files\Handle</Filter>
+    </ClInclude>
+    <ClInclude Include="global_vars.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

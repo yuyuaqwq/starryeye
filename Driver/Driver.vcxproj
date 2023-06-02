@@ -118,14 +118,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="entry.cpp" />
-    <ClCompile Include="Process-Thread\handle_table.cpp" />
-    <ClCompile Include="Process-Thread\object_header.cpp" />
-    <ClCompile Include="Process-Thread\psp_cid_table.cpp" />
+    <ClCompile Include="Handle\handle_table.cpp" />
+    <ClCompile Include="Handle\object_header.cpp" />
+    <ClCompile Include="Handle\object_type.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Process-Thread\handle_table.h" />
-    <ClInclude Include="Process-Thread\object_header.h" />
-    <ClInclude Include="Process-Thread\psp_cid_table.h" />
+    <ClInclude Include="global_vars.hpp" />
+    <ClInclude Include="Handle\handle_table.h" />
+    <ClInclude Include="Handle\object_header.h" />
+    <ClInclude Include="Handle\object_type.h" />
     <ClInclude Include="ynstd.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
