@@ -15,14 +15,14 @@ void DriverUnload(PDRIVER_OBJECT pDriverObject)
 extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
 
 	pDriverObject->DriverUnload = DriverUnload;
+
+	DbgBreakPoint();
+
 	StarryEye::InitGlobalVars();
 
 	_SCN string str = "??";
 
 	//yuJson::Json json = { "fake", 666, "emm", true };
-
-
-	DbgBreakPoint();
 
 	StarryEye::HandleTable table{(ULONG64)StarryEye::PspCidTable};
 
