@@ -1,16 +1,14 @@
 #pragma once
-#include <ntifs.h>
-#include "global_vars.hpp"
+#include "Config/kobject_base.h"
+#include "Config/global_vars.h"
 
 namespace StarryEye {
-	class ObjectType
+	class ObjectType: public KObjectBase
 	{
 	public:
 		ObjectType(ULONG64 address);
 		ObjectType(std::nullptr_t);
 		~ObjectType();
-
-		bool IsValid();
 
 		PUNICODE_STRING Name();
 
@@ -18,7 +16,6 @@ namespace StarryEye {
 		bool IsThread();
 
 	private:
-		ULONG64 address_;
 		UINT16 name_offset_;
 	};
 }

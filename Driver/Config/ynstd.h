@@ -10,6 +10,7 @@
 #include <ntifs.h>
 
 namespace StarryEye {
+// 数据结构
 namespace ynstd {
 
 static const ULONG kDefaultPoolTag = 114514;
@@ -46,13 +47,13 @@ template <class T>
 using shared_ptr = std::shared_ptr<T>;
 
 template <class T, class... ArgsT>
-unique_ptr<T> make_unique(ArgsT&&... args)
+inline unique_ptr<T> make_unique(ArgsT&&... args)
 {
 	return jxy::make_unique<T, PagedPool, kDefaultPoolTag, ArgsT...>(std::forward<ArgsT>(args)...);
 }
 
 template <class T, class... ArgsT>
-shared_ptr<T> make_shared(ArgsT&&... args)
+inline shared_ptr<T> make_shared(ArgsT&&... args)
 {
 	return jxy::make_shared<T, PagedPool, kDefaultPoolTag, ArgsT...>(std::forward<ArgsT>(args)...);
 }

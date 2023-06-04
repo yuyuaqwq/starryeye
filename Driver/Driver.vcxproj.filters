@@ -23,11 +23,26 @@
     <Filter Include="Source Files\Handle">
       <UniqueIdentifier>{249411a4-c64d-4795-84fc-422c665cd566}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Process">
+      <UniqueIdentifier>{9b238920-275e-4bc6-be86-ebcdffa6fb97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Thread">
+      <UniqueIdentifier>{1abd11d4-6e74-4c64-b027-92a7b41ff299}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Process">
+      <UniqueIdentifier>{92471f10-ae9a-4742-99aa-7f4f24de5700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread">
+      <UniqueIdentifier>{10c3f868-8d2f-47c4-a16d-eecaafbe96fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Config">
+      <UniqueIdentifier>{9b0ca28c-812b-4624-983b-bbc2bd1a0e77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Config">
+      <UniqueIdentifier>{3a0e8f65-ee91-4771-a81c-be2905992d68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="entry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Handle\handle_table.cpp">
       <Filter>Source Files\Handle</Filter>
     </ClCompile>
@@ -37,11 +52,29 @@
     <ClCompile Include="Handle\object_type.cpp">
       <Filter>Source Files\Handle</Filter>
     </ClCompile>
+    <ClCompile Include="Thread\ethread.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\kthread.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\eprocess.cpp">
+      <Filter>Source Files\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\kprocess.cpp">
+      <Filter>Source Files\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Config\global_vars.cpp">
+      <Filter>Source Files\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="entry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config\kobject_base.cpp">
+      <Filter>Source Files\Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ynstd.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Handle\handle_table.h">
       <Filter>Header Files\Handle</Filter>
     </ClInclude>
@@ -51,8 +84,26 @@
     <ClInclude Include="Handle\object_type.h">
       <Filter>Header Files\Handle</Filter>
     </ClInclude>
-    <ClInclude Include="global_vars.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Thread\ethread.h">
+      <Filter>Header Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\kthread.h">
+      <Filter>Header Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\eprocess.h">
+      <Filter>Header Files\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\kprocess.h">
+      <Filter>Header Files\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\global_vars.h">
+      <Filter>Header Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\kobject_base.h">
+      <Filter>Header Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\ynstd.h">
+      <Filter>Header Files\Config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

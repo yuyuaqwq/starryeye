@@ -1,14 +1,14 @@
 #pragma once
-#include <ntifs.h>
+#include "Config/kobject_base.h"
 #include "object_type.h"
-#include "global_vars.hpp"
+#include "Config/global_vars.h"
 
 namespace StarryEye {
 
 #define OBJECT_HEADER_TO_BODY_SIZE 0x30
 
 
-class ObjectHeader
+class ObjectHeader: public KObjectBase
 {
 public:
 	// 解密TypeIndex
@@ -27,12 +27,22 @@ public:
 	// 获取Type对象(注意: 使用前一定要先调用ObjectType::Init()!)
 	ObjectType Type();
 
-	bool IsVaild();
+	// 获取Body
+	PVOID Body();
+
+	// 获取Body并转换为对象
+	template<class T>
+	T BodyObject();
 
 private:
-	// 地址
-	ULONG64 address_;
 	UINT16 type_index_offset;
+	UINT16 body_offset_;
 };
+
+template<class T>
+inline T ObjectHeader::BodyObject()
+{
+	return T((ULONG64)Body());
+}
 
 }

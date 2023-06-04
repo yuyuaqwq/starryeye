@@ -6,15 +6,16 @@ UCHAR StarryEye::ObjectHeader::DecryptTypeIndex(ULONG64 obj_addr, UCHAR type_ind
 	return 0xd3 ^ type_index ^ x;
 }
 
-StarryEye::ObjectHeader::ObjectHeader(std::nullptr_t)
+StarryEye::ObjectHeader::ObjectHeader(std::nullptr_t) : KObjectBase(nullptr)
 {
-	address_ = 0;
+	type_index_offset = 0;
+	body_offset_ = 0;
 }
 
-StarryEye::ObjectHeader::ObjectHeader(ULONG64 address)
+StarryEye::ObjectHeader::ObjectHeader(ULONG64 address) : KObjectBase(address)
 {
-	address_ = address;
 	type_index_offset = 0x18;		//TODO TypeIndex偏移
+	body_offset_ = 0x30;
 }
 
 StarryEye::ObjectHeader::~ObjectHeader()
@@ -33,11 +34,10 @@ UCHAR StarryEye::ObjectHeader::TypeIndexDecrypted()
 
 StarryEye::ObjectType StarryEye::ObjectHeader::Type()
 {
-	auto cnm = &ObTypeIndexTable - 1;					//TODO 别问为什么这么写, 问就是我要干烂傻逼编译器的屁眼!!!!!!!!!!!
-	return ObjectType((*cnm)[TypeIndexDecrypted()]);	// 根据TypeIndex从ObTypeIndexTable中获取_OBJECT_TYPE
+	return ObjectType(ObTypeIndexTable[TypeIndexDecrypted()]);	// 根据TypeIndex从ObTypeIndexTable中获取_OBJECT_TYPE
 }
 
-bool StarryEye::ObjectHeader::IsVaild()
+PVOID StarryEye::ObjectHeader::Body()
 {
-	return MmIsAddressValid((PVOID)address_);
+	return (PVOID)(address_ + body_offset_);
 }

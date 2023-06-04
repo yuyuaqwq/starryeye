@@ -1,11 +1,11 @@
 #pragma once
-#include <ntifs.h>
+#include "Config/kobject_base.h"
 #include "object_header.h"
-#include "global_vars.hpp"
+#include "Config/global_vars.h"
 
 namespace StarryEye {
 
-class HandleTable
+class HandleTable: public KObjectBase
 {
 public:
 	HandleTable(std::nullptr_t);
@@ -30,7 +30,7 @@ public:
 	// 获取二级TableCode下指定索引的Handle对象
 	static ObjectHeader GetHandleObjectInLv2TableCode(PULONG64 table, USHORT index_lv2, USHORT index_lv1);
 	// 获取三级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv2TableCode(PULONG64 table, USHORT index_lv3, USHORT index_lv2, USHORT index_lv1);
+	static ObjectHeader GetHandleObjectInLv3TableCode(PULONG64 table, USHORT index_lv3, USHORT index_lv2, USHORT index_lv1);
 
 	// 获取TableCode
 	ULONG64 TableCode();
@@ -46,11 +46,7 @@ public:
 	template<class CallBackT>
 	bool AutoForeachAllHandleObjects(CallBackT callback);
 
-	bool IsVaild();
-
 private:
-	// 地址
-	ULONG64 address_;
 	// TableCode偏移
 	UINT16 table_code_offset_;
 };

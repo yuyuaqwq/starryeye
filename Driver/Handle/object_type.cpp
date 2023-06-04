@@ -1,23 +1,17 @@
 #include "object_type.h"
 
-StarryEye::ObjectType::ObjectType(ULONG64 address)
+StarryEye::ObjectType::ObjectType(ULONG64 address) : KObjectBase(address)
 {
-	address_ = address;
 	name_offset_ = 0x10;		//TODO NameÆ«ÒÆ
 }
 
-StarryEye::ObjectType::ObjectType(std::nullptr_t)
+StarryEye::ObjectType::ObjectType(std::nullptr_t) : KObjectBase(nullptr)
 {
-	address_ = 0;
+	name_offset_ = 0x10;
 }
 
 StarryEye::ObjectType::~ObjectType()
 {
-}
-
-bool StarryEye::ObjectType::IsValid()
-{
-	return MmIsAddressValid((PVOID)address_);
 }
 
 PUNICODE_STRING StarryEye::ObjectType::Name()
@@ -27,10 +21,10 @@ PUNICODE_STRING StarryEye::ObjectType::Name()
 
 bool StarryEye::ObjectType::IsProcess()
 {
-	return RtlCompareUnicodeString(Name(), &ProcessType, FALSE) == 0;
+	return RtlCompareUnicodeString(Name(), &ProcessTypeString, TRUE) == 0;
 }
 
 bool StarryEye::ObjectType::IsThread()
 {
-	return RtlCompareUnicodeString(Name(), &ThreadType, FALSE) == 0;
+	return RtlCompareUnicodeString(Name(), &ThreadTypeString, TRUE) == 0;
 }
