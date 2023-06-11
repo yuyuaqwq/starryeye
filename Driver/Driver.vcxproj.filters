@@ -64,13 +64,13 @@
     <ClCompile Include="Process\kprocess.cpp">
       <Filter>Source Files\Process</Filter>
     </ClCompile>
-    <ClCompile Include="Config\global_vars.cpp">
-      <Filter>Source Files\Config</Filter>
-    </ClCompile>
     <ClCompile Include="entry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Config\kobject_base.cpp">
+    <ClCompile Include="Config\base.cpp">
+      <Filter>Source Files\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Config\algorithm.cpp">
       <Filter>Source Files\Config</Filter>
     </ClCompile>
   </ItemGroup>
@@ -96,13 +96,13 @@
     <ClInclude Include="Process\kprocess.h">
       <Filter>Header Files\Process</Filter>
     </ClInclude>
-    <ClInclude Include="Config\global_vars.h">
-      <Filter>Header Files\Config</Filter>
-    </ClInclude>
-    <ClInclude Include="Config\kobject_base.h">
-      <Filter>Header Files\Config</Filter>
-    </ClInclude>
     <ClInclude Include="Config\ynstd.h">
+      <Filter>Header Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\base.h">
+      <Filter>Header Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\algorithm.h">
       <Filter>Header Files\Config</Filter>
     </ClInclude>
   </ItemGroup>

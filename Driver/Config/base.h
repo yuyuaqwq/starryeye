@@ -12,6 +12,8 @@ namespace StarryEye {
 
 		bool IsVaild();
 
+		ULONG64 Address();
+
 	protected:
 		ULONG64 address_;
 	};

@@ -1,5 +1,10 @@
 #include "kprocess.h"
 
+void StarryEye::KProcess::Init()
+{
+
+}
+
 StarryEye::KProcess::KProcess(ULONG64 address): KObjectBase(address)
 {
 }

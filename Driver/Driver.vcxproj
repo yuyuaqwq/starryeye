@@ -117,8 +117,8 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Config\global_vars.cpp" />
-    <ClCompile Include="Config\kobject_base.cpp" />
+    <ClCompile Include="Config\algorithm.cpp" />
+    <ClCompile Include="Config\base.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="Handle\handle_table.cpp" />
     <ClCompile Include="Handle\object_header.cpp" />
@@ -129,8 +129,8 @@
     <ClCompile Include="Thread\kthread.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config\global_vars.h" />
-    <ClInclude Include="Config\kobject_base.h" />
+    <ClInclude Include="Config\algorithm.h" />
+    <ClInclude Include="Config\base.h" />
     <ClInclude Include="Config\ynstd.h" />
     <ClInclude Include="Handle\handle_table.h" />
     <ClInclude Include="Handle\object_header.h" />

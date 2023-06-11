@@ -1,4 +1,4 @@
-#include "kobject_base.h"
+#include "base.h"
 
 StarryEye::KObjectBase::KObjectBase(ULONG64 address)
 {
@@ -17,4 +17,9 @@ StarryEye::KObjectBase::~KObjectBase()
 bool StarryEye::KObjectBase::IsVaild()
 {
 	return MmIsAddressValid((PVOID)address_);
+}
+
+ULONG64 StarryEye::KObjectBase::Address()
+{
+	return address_;
 }

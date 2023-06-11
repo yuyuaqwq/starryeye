@@ -1,5 +1,9 @@
 #include "kthread.h"
 
+void StarryEye::KThread::Init()
+{
+}
+
 StarryEye::KThread::KThread(ULONG64 address): KObjectBase(address)
 {
 }

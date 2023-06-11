@@ -1,13 +1,21 @@
 #include "object_type.h"
 
+using namespace StarryEye;
+
+void StarryEye::ObjectType::Init()
+{
+	ObTypeIndexTable = (PULONG64)0xfffff8066f911e80;
+	NameOffset = 0x10;
+	RtlInitUnicodeString(&ProcessTypeString, L"Process");
+	RtlInitUnicodeString(&ThreadTypeString, L"Thread");
+}
+
 StarryEye::ObjectType::ObjectType(ULONG64 address) : KObjectBase(address)
 {
-	name_offset_ = 0x10;		//TODO NameÆ«ÒÆ
 }
 
 StarryEye::ObjectType::ObjectType(std::nullptr_t) : KObjectBase(nullptr)
 {
-	name_offset_ = 0x10;
 }
 
 StarryEye::ObjectType::~ObjectType()
@@ -16,7 +24,7 @@ StarryEye::ObjectType::~ObjectType()
 
 PUNICODE_STRING StarryEye::ObjectType::Name()
 {
-	return (PUNICODE_STRING)(name_offset_ + address_);
+	return (PUNICODE_STRING)(NameOffset + address_);
 }
 
 bool StarryEye::ObjectType::IsProcess()

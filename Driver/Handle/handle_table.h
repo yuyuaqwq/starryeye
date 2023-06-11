@@ -1,13 +1,15 @@
 #pragma once
-#include "Config/kobject_base.h"
-#include "object_header.h"
-#include "Config/global_vars.h"
+#include "Config/base.h"
+#include "Handle/object_header.h"
 
 namespace StarryEye {
 
 class HandleTable: public KObjectBase
 {
 public:
+	inline static PVOID PspCidTable;
+	static void Init();
+
 	HandleTable(std::nullptr_t);
 	HandleTable(ULONG64 address);
 	~HandleTable();
@@ -26,11 +28,11 @@ public:
 	static void ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, CallBackT callback);
 
 	// 获取一级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv1TableCode(PULONG64 table, USHORT index);
+	static ObjectHeader GetHandleObjectInLv1TableCode(PULONG64 table, ULONG64 index);
 	// 获取二级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv2TableCode(PULONG64 table, USHORT index_lv2, USHORT index_lv1);
+	static ObjectHeader GetHandleObjectInLv2TableCode(PULONG64 table, ULONG64 index_lv2, ULONG64 index_lv1);
 	// 获取三级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv3TableCode(PULONG64 table, USHORT index_lv3, USHORT index_lv2, USHORT index_lv1);
+	static ObjectHeader GetHandleObjectInLv3TableCode(PULONG64 table, ULONG64 index_lv3, ULONG64 index_lv2, ULONG64 index_lv1);
 
 	// 获取TableCode
 	ULONG64 TableCode();
@@ -47,8 +49,7 @@ public:
 	bool AutoForeachAllHandleObjects(CallBackT callback);
 
 private:
-	// TableCode偏移
-	UINT16 table_code_offset_;
+	inline static ULONG64 TableCodeOffset;
 };
 
 

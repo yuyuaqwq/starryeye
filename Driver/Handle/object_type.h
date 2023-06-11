@@ -1,11 +1,16 @@
 #pragma once
-#include "Config/kobject_base.h"
-#include "Config/global_vars.h"
+#include "Config/base.h"
 
 namespace StarryEye {
 	class ObjectType: public KObjectBase
 	{
 	public:
+		inline static UNICODE_STRING ProcessTypeString;
+		inline static UNICODE_STRING ThreadTypeString;
+		inline static PULONG64 ObTypeIndexTable;
+
+		static void Init();
+
 		ObjectType(ULONG64 address);
 		ObjectType(std::nullptr_t);
 		~ObjectType();
@@ -16,6 +21,6 @@ namespace StarryEye {
 		bool IsThread();
 
 	private:
-		UINT16 name_offset_;
+		inline static ULONG64 NameOffset;
 	};
 }

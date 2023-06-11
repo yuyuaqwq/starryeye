@@ -1,16 +1,16 @@
 #pragma once
-#include "Config/kobject_base.h"
-#include "object_type.h"
-#include "Config/global_vars.h"
+#include "Config/base.h"
+#include "Handle/object_type.h"
 
 namespace StarryEye {
-
-#define OBJECT_HEADER_TO_BODY_SIZE 0x30
-
-
 class ObjectHeader: public KObjectBase
 {
 public:
+	inline static UCHAR ObHeaderCookie;
+
+	static void Init();
+	static ULONG64 GetBodyOffset();
+
 	// Ω‚√‹TypeIndex
 	static UCHAR DecryptTypeIndex(ULONG64 obj_addr, UCHAR type_index);
 
@@ -35,8 +35,8 @@ public:
 	T BodyObject();
 
 private:
-	UINT16 type_index_offset;
-	UINT16 body_offset_;
+	inline static ULONG64 TypeIndexOffset;
+	inline static ULONG64 BodyOffset;
 };
 
 template<class T>
