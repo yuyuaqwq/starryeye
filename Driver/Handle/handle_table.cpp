@@ -40,26 +40,27 @@ ULONG64 StarryEye::HandleTable::TableAddress()
 	return TableCode() & ~0b11;
 }
 
+ULONG64 StarryEye::HandleTable::MaxTableSize()
+{
+	ULONG64 total = 1;
+	for (UCHAR i = 0; i < TableLevel() + 1; i++)
+		total *= 512;
+	return total;
+}
+
 ObjectHeader StarryEye::HandleTable::GetHandleObject(ULONG64 index)
 {
 	// ½«Ë÷Òý²ð·Ö
+	if (index >= MaxTableSize()) return nullptr;
+
 	switch (TableLevel())
 	{
 	case 0:
-	{
-		if (index > 512) return nullptr;
 		return GetHandleObjectInLv1TableCode((PULONG64)TableAddress(), index);
-	}
 	case 1:
-	{
-		if (index > 512ULL * 512) return nullptr;
 		return GetHandleObjectInLv2TableCode((PULONG64)TableAddress(), index / 512, index % 512);
-	}
 	case 2:
-	{
-		if (index > 512ULL * 512 * 512) return nullptr;
 		return GetHandleObjectInLv3TableCode((PULONG64)TableAddress(), index / (512ULL * 512), (index % (512ULL * 512)) / 512, (index % (512ULL * 512)) % 512);
-	}
 	default:
 		return nullptr;
 	}

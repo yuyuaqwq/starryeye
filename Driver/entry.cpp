@@ -46,17 +46,19 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	_SCN string str = "??";
 
 	//yuJson::Json json = { "fake", 666, "emm", true };
-
+	DbgBreakPoint();
 
 	HandleTable table{(ULONG64)HandleTable::PspCidTable};
 
-	table.AutoForeachAllHandleObjects([&](ObjectHeader obj){
-		if (obj.Type().IsProcess())
+	for (size_t i = 0; i < table.MaxTableSize(); i++)
+	{
+		auto item = table.GetHandleObject(i);
+		if (item.IsVaild() && item.Type().IsProcess())
 		{
-			auto eproc = obj.BodyObject<EProcess>();
-			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Name:%s Object Address: 0x%llx\n", eproc.ImageFileName(), eproc.Address()));
+			auto eproc = item.BodyObject<EProcess>();
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Process Name: %s, Address: 0x%llx\n", eproc.ImageFileName(), eproc.Address()));
 		}
-	});
+	}
 
 	return STATUS_SUCCESS;
 }

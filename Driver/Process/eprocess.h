@@ -6,6 +6,8 @@
 #include "Config/algorithm.h"
 
 namespace StarryEye {
+	class EThread;
+
 	class EProcess: public KObjectBase
 	{
 	public:
@@ -18,11 +20,15 @@ namespace StarryEye {
 		PCHAR ImageFileName();
 		KProcess Pcb();
 		HandleTable ObjectTable();
+		UINT8 OwnerProcessId();
+		UCHAR PriorityClass();
 		KObjListEntry<EThread> ThreadListHead();
 
 	private:
 		inline static ULONG64 ImageFileNameOffset;
 		inline static ULONG64 ObjectTableOffset;
 		inline static ULONG64 ThreadListHeadOffset;
+		inline static UINT8 OwnerProcessIdOffset;
+		inline static UCHAR PriorityClassOffset;
 	};
 }

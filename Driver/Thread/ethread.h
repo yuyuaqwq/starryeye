@@ -2,13 +2,13 @@
 #include "Config/base.h"
 #include "Config/algorithm.h"
 #include "Thread/kthread.h"
+#include "Process/eprocess.h"
 
 namespace StarryEye {
 	class EThread: public KObjectBase
 	{
 	public:
 		static void Init();
-		static ULONG64 GetThreadListEntryOffset();
 
 		EThread(ULONG64 address);
 		EThread(std::nullptr_t);
@@ -18,6 +18,8 @@ namespace StarryEye {
 		KObjListEntry<EThread> ThreadListEntry();
 
 	private:
+		friend class EProcess;
+
 		inline static ULONG64 ThreadListEntryOffset;
 	};
 }

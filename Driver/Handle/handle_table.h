@@ -38,8 +38,10 @@ public:
 	ULONG64 TableCode();
 	// 获取TableCode等级
 	UCHAR TableLevel();
-	// 获取Table地址(最后2位清零)
+	// 获取TableCode真正地址(最后2位清零)
 	ULONG64 TableAddress();
+	// TableCode最大大小
+	ULONG64 MaxTableSize();
 
 	// 根据索引获取Handle对象
 	ObjectHeader GetHandleObject(ULONG64 index);

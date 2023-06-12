@@ -7,6 +7,8 @@ namespace StarryEye {
 	class KObjListEntry
 	{
 	public:
+		using Self = KObjListEntry<KObjT>;
+
 		KObjListEntry(ULONG64 list_addr, ULONG64 offset)
 		{
 			list_ = (PLIST_ENTRY64)list_addr;
@@ -14,18 +16,23 @@ namespace StarryEye {
 		}
 		~KObjListEntry() {}
 
-		KObjListEntry Flink()
+		Self Flink()
 		{
-			return KObjListEntry((ULONG64)list_->Flink, offset_);
+			return Self((ULONG64)list_->Flink, offset_);
 		}
-		KObjListEntry Blink()
+		Self Blink()
 		{
-			return KObjListEntry((ULONG64)list_->Blink, offset_);
+			return Self((ULONG64)list_->Blink, offset_);
 		}
 
 		KObjT Object()
 		{
 			return KObjT((ULONG64)list_ - offset_);
+		}
+
+		bool IsVaild()
+		{
+			return MmIsAddressValid(list_);
 		}
 
 	private:
