@@ -7,6 +7,35 @@ ULONG64 StarryEye::HandleTable::DecryptHandleAddress(ULONG64 addr)
 	return ((LONG64)addr >> 0x10) & ~0xF;
 }
 
+void StarryEye::HandleTable::ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+{
+	ObjectHeader temp = nullptr;
+	for (SHORT i = 0; i < 512; i++)
+	{
+		temp = GetHandleObjectInLv1TableCode(table, i);
+		if (temp.IsVaild())
+			callback(temp);
+	}
+}
+
+void StarryEye::HandleTable::ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+{
+	for (size_t i = 0; i < 512; i++)
+	{
+		if (MmIsAddressValid(table + i))
+			HandleTable::ForeachAllHandleObjectsInLv1TableCode((PULONG64)table[i], callback);
+	}
+}
+
+void StarryEye::HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+{
+	for (size_t i = 0; i < 512; i++)
+	{
+		if (MmIsAddressValid(table + i))
+			HandleTable::ForeachAllHandleObjectsInLv2TableCode((PULONG64)table[i], callback);
+	}
+}
+
 void StarryEye::HandleTable::Init()
 {
 	TableCodeOffset = 0x8;	//TODO TableCodeÆ«ÒÆ
@@ -63,6 +92,24 @@ ObjectHeader StarryEye::HandleTable::GetHandleObject(ULONG64 index)
 		return GetHandleObjectInLv3TableCode((PULONG64)TableAddress(), index / (512ULL * 512), (index % (512ULL * 512)) / 512, (index % (512ULL * 512)) % 512);
 	default:
 		return nullptr;
+	}
+}
+
+bool StarryEye::HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback)
+{
+	switch (TableLevel())
+	{
+	case 0:
+		HandleTable::ForeachAllHandleObjectsInLv1TableCode((PULONG64)TableAddress(), callback);
+		return true;
+	case 1:
+		HandleTable::ForeachAllHandleObjectsInLv2TableCode((PULONG64)TableAddress(), callback);
+		return true;
+	case 2:
+		HandleTable::ForeachAllHandleObjectsInLv3TableCode((PULONG64)TableAddress(), callback);
+		return true;
+	default:
+		return false;
 	}
 }
 

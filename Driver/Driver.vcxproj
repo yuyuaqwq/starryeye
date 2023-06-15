@@ -125,6 +125,7 @@
     <ClCompile Include="Handle\object_type.cpp" />
     <ClCompile Include="Process\eprocess.cpp" />
     <ClCompile Include="Process\kprocess.cpp" />
+    <ClCompile Include="Process\vadtree.cpp" />
     <ClCompile Include="Thread\ethread.cpp" />
     <ClCompile Include="Thread\kthread.cpp" />
   </ItemGroup>
@@ -137,6 +138,7 @@
     <ClInclude Include="Handle\object_type.h" />
     <ClInclude Include="Process\eprocess.h" />
     <ClInclude Include="Process\kprocess.h" />
+    <ClInclude Include="Process\vadtree.h" />
     <ClInclude Include="Thread\ethread.h" />
     <ClInclude Include="Thread\kthread.h" />
   </ItemGroup>

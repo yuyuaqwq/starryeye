@@ -1,5 +1,6 @@
 #pragma once
 #include "Config/base.h"
+#include "Config/ynstd.h"
 #include "Handle/object_header.h"
 
 namespace StarryEye {
@@ -7,6 +8,8 @@ namespace StarryEye {
 class HandleTable: public KObjectBase
 {
 public:
+	using ForeachHandleObjectsCallBack = const ynstd::function<void(ObjectHeader)>&;
+
 	inline static PVOID PspCidTable;
 	static void Init();
 
@@ -18,14 +21,11 @@ public:
 	static ULONG64 DecryptHandleAddress(ULONG64 addr);
 
 	// 获取一级TableCode下所有Handle对象
-	template<class CallBackT>
-	static void ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, CallBackT callback);
+	static void ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback);
 	// 获取二级TableCode下所有Handle对象
-	template<class CallBackT>
-	static void ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, CallBackT callback);
+	static void ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback);
 	// 获取三级TableCode下所有Handle对象
-	template<class CallBackT>
-	static void ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, CallBackT callback);
+	static void ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback);
 
 	// 获取一级TableCode下指定索引的Handle对象
 	static ObjectHeader GetHandleObjectInLv1TableCode(PULONG64 table, ULONG64 index);
@@ -47,63 +47,10 @@ public:
 	ObjectHeader GetHandleObject(ULONG64 index);
 
 	// 自动根据TableCode等级遍历所有Handle
-	template<class CallBackT>
-	bool AutoForeachAllHandleObjects(CallBackT callback);
+	bool AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback);
 
 private:
 	inline static ULONG64 TableCodeOffset;
 };
-
-
-template<class CallBackT>
-inline void HandleTable::ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, CallBackT callback)
-{
-	ObjectHeader temp = nullptr;
-	for (SHORT i = 0; i < 512; i++)
-	{
-		temp = GetHandleObjectInLv1TableCode(table, i);
-		if (temp.IsVaild())
-			callback(temp);
-	}
-}
-
-template<class CallBackT>
-inline void HandleTable::ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, CallBackT callback)
-{
-	for (size_t i = 0; i < 512; i++)
-	{
-		if (MmIsAddressValid(table + i))
-			HandleTable::ForeachAllHandleObjectsInLv1TableCode((PULONG64)table[i], callback);
-	}
-}
-
-template<class CallBackT>
-inline void HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, CallBackT callback)
-{
-	for (size_t i = 0; i < 512; i++)
-	{
-		if (MmIsAddressValid(table + i))
-			HandleTable::ForeachAllHandleObjectsInLv2TableCode((PULONG64)table[i], callback);
-	}
-}
-
-template<class CallBackT>
-inline bool HandleTable::AutoForeachAllHandleObjects(CallBackT callback)
-{
-	switch (TableLevel())
-	{
-	case 0:
-		HandleTable::ForeachAllHandleObjectsInLv1TableCode((PULONG64)TableAddress(), callback);
-		return true;
-	case 1:
-		HandleTable::ForeachAllHandleObjectsInLv2TableCode((PULONG64)TableAddress(), callback);
-		return true;
-	case 2:
-		HandleTable::ForeachAllHandleObjectsInLv3TableCode((PULONG64)TableAddress(), callback);
-		return true;
-	default:
-		return false;
-	}
-}
 
 }

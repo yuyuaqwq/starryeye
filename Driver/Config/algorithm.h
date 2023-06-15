@@ -1,42 +1,112 @@
 #pragma once
 #include <ntifs.h>
+#include "Config/base.h"
 #include "Config/ynstd.h"
 
 namespace StarryEye {
-	template<class KObjT>
-	class KObjListEntry
+template<class KObjT>
+class KObjListEntry: public KObjectBase
+{
+public:
+	using Self = KObjListEntry<KObjT>;
+
+	KObjListEntry(ULONG64 list_addr, ULONG64 offset): KObjectBase(list_addr)
 	{
-	public:
-		using Self = KObjListEntry<KObjT>;
+		list_ = (PLIST_ENTRY64)list_addr;
+		offset_ = offset;
+	}
+	KObjListEntry(std::nullptr_t): KObjectBase(nullptr)
+	~KObjListEntry() {}
 
-		KObjListEntry(ULONG64 list_addr, ULONG64 offset)
-		{
-			list_ = (PLIST_ENTRY64)list_addr;
-			offset_ = offset;
-		}
-		~KObjListEntry() {}
+	Self Flink()
+	{
+		return Self((ULONG64)list_->Flink, offset_);
+	}
+	Self Blink()
+	{
+		return Self((ULONG64)list_->Blink, offset_);
+	}
 
-		Self Flink()
-		{
-			return Self((ULONG64)list_->Flink, offset_);
-		}
-		Self Blink()
-		{
-			return Self((ULONG64)list_->Blink, offset_);
-		}
+	KObjT Object()
+	{
+		return KObjT((ULONG64)list_ - offset_);
+	}
 
-		KObjT Object()
-		{
-			return KObjT((ULONG64)list_ - offset_);
-		}
+private:
+	PLIST_ENTRY64 list_;
+	ULONG64 offset_;
+};
 
-		bool IsVaild()
-		{
-			return MmIsAddressValid(list_);
-		}
+template<class DataT>
+class RtlBalanceNode: public KObjectBase
+{
+public:
+	RtlBalanceNode(ULONG64 address): KObjectBase(address) {}
+	RtlBalanceNode(std::nullptr_t): KObjectBase(nullptr) {}
+	~RtlBalanceNode() {}
 
-	private:
-		PLIST_ENTRY64 list_;
-		ULONG64 offset_;
-	};
+	RtlBalanceNode Left()
+	{
+		return RtlBalanceNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlBalanceNode_Left));
+	}
+	RtlBalanceNode Right()
+	{
+		return RtlBalanceNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlBalanceNode_Right));
+	}
+	RtlBalanceNode ParentValue()
+	{
+		return RtlBalanceNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlBalanceNode_ParentValue));
+	}
+	DataT Data()
+	{
+		return DataT(address_);
+	}
+};
+
+template<class DataT>
+class RtlAvlTree: public KObjectBase
+{
+public:
+	using AvlNode = RtlBalanceNode<DataT>;
+	using ForeachCallBackT = const ynstd::function<void(AvlNode)>&;
+
+	RtlAvlTree(ULONG64 address): KObjectBase(address) {}
+	RtlAvlTree(std::nullptr_t): KObjectBase(nullptr) {}
+	~RtlAvlTree() {}
+
+	AvlNode Root() {
+		return AvlNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlAvlTree_RootOffset));
+	}
+
+	void Foreach(ForeachCallBackT callback) {
+		ForeachRecursion(Root(), callback);
+	}
+
+private:
+	void ForeachRecursion(AvlNode& root, ForeachCallBackT callback)
+	{
+		if (!root.IsVaild()) return;
+		ForeachRecursion(root.Left(), callback);
+		callback(root);
+		ForeachRecursion(root.Right(), callback);
+	}
+};
+
+
+class AlogrithmOffsets
+{
+public:
+	inline static ULONG64 RtlBalanceNode_Left;
+	inline static ULONG64 RtlBalanceNode_Right;
+	inline static ULONG64 RtlBalanceNode_ParentValue;
+	inline static ULONG64 RtlAvlTree_RootOffset;
+
+	static void Init()
+	{
+		RtlBalanceNode_Left = 0;
+		RtlBalanceNode_Right = 8;
+		RtlBalanceNode_ParentValue = 0x10;
+		RtlAvlTree_RootOffset = 0;
+	}
+};
 }

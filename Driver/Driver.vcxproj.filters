@@ -73,6 +73,9 @@
     <ClCompile Include="Config\algorithm.cpp">
       <Filter>Source Files\Config</Filter>
     </ClCompile>
+    <ClCompile Include="Process\vadtree.cpp">
+      <Filter>Source Files\Process</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">
@@ -104,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="Config\algorithm.h">
       <Filter>Header Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\vadtree.h">
+      <Filter>Header Files\Process</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

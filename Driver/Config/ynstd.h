@@ -7,13 +7,14 @@
 #include <jxy/stack.hpp>
 #include <jxy/queue.hpp>
 #include <jxy/set.hpp>
+#include <noalgo/functional.hpp>
 #include <ntifs.h>
 
 namespace StarryEye {
 // 数据结构
 namespace ynstd {
 
-static const ULONG kDefaultPoolTag = 114514;
+static const ULONG kDefaultPoolTag = 0x14451100;
 
 template<class T>
 using default_allocator = jxy::paged_allocator<T, kDefaultPoolTag>;
@@ -58,5 +59,7 @@ inline shared_ptr<T> make_shared(ArgsT&&... args)
 	return jxy::make_shared<T, PagedPool, kDefaultPoolTag, ArgsT...>(std::forward<ArgsT>(args)...);
 }
 
+template<class T>
+using function = noalgo::Function<T>;
 }
 }

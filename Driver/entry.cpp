@@ -1,5 +1,6 @@
 #include <ntifs.h>
 #include "Config/ynstd.h"
+#include "Config/algorithm.h"
 
 #include "Handle/handle_table.h"
 #include "Handle/object_header.h"
@@ -11,14 +12,12 @@
 #include "Thread/ethread.h"
 #include "Thread/kthread.h"
 
-#define _SCN StarryEye::ynstd::
 //#include <yuJson/json.hpp>
 using namespace StarryEye;
 
 void DriverUnload(PDRIVER_OBJECT pDriverObject)
 {
 	UNREFERENCED_PARAMETER(pDriverObject);
-
 	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "п╤ть!\n"));
 	return;
 }
@@ -34,6 +33,8 @@ void InitOffsets()
 
 	EThread::Init();
 	KThread::Init();
+
+	AlogrithmOffsets::Init();
 }
 
 extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
@@ -43,11 +44,6 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 
 	InitOffsets();
 
-	_SCN string str = "??";
-
-	//yuJson::Json json = { "fake", 666, "emm", true };
-	DbgBreakPoint();
-
 	HandleTable table{(ULONG64)HandleTable::PspCidTable};
 
 	for (size_t i = 0; i < table.MaxTableSize(); i++)
@@ -56,9 +52,23 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 		if (item.IsVaild() && item.Type().IsProcess())
 		{
 			auto eproc = item.BodyObject<EProcess>();
-			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Process Name: %s, Address: 0x%llx\n", eproc.ImageFileName(), eproc.Address()));
+			eproc.VadRoot().Foreach([](RtlBalanceNode<MmVad> node) {
+				auto data = node.Data();
+				auto start = data.Core().StartingVpn();
+				auto end = data.Core().EndingVpn();
+				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Start: %x --- End: %x\n", start, end));
+				});
+			break;
 		}
 	}
+	//table.AutoForeachAllHandleObjects([&](ObjectHeader obj) {
+	//	if (obj.Type().IsProcess())
+	//	{
+	//		auto eproc = obj.BodyObject<EProcess>();
+	//		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Process Name: %s, Address: 0x%llx\n", eproc.ImageFileName(), eproc.Address()));
+	//	}
+	//});
+
 
 	return STATUS_SUCCESS;
 }
