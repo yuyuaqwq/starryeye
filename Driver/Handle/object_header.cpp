@@ -4,7 +4,7 @@ using namespace StarryEye;
 
 void StarryEye::ObjectHeader::Init()
 {
-	TypeIndexOffset = 0x18;		//TODO TypeIndexÆ«ÒÆ
+	TypeIndexOffset = 0x18;
 	BodyOffset = 0x30;
 	ObHeaderCookie = 0xd3;
 }

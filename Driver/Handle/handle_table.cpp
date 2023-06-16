@@ -38,8 +38,8 @@ void StarryEye::HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 tabl
 
 void StarryEye::HandleTable::Init()
 {
-	TableCodeOffset = 0x8;	//TODO TableCodeÆ«ÒÆ
-	PspCidTable = (PVOID)0xffffcb0e0960ab40;	//TODO
+	TableCodeOffset = 0x8;
+	PspCidTable = (PVOID)0xffffcb0e0960ab40;
 }
 
 StarryEye::HandleTable::HandleTable(std::nullptr_t): KObjectBase(nullptr)
@@ -111,6 +111,15 @@ bool StarryEye::HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCal
 	default:
 		return false;
 	}
+}
+
+ynstd::list<ObjectHeader> StarryEye::HandleTable::GetAllHandleObjects()
+{
+	ynstd::list<ObjectHeader> total;
+	AutoForeachAllHandleObjects([&](ObjectHeader& obj) {
+		total.push_back(obj);
+		});
+	return total;
 }
 
 

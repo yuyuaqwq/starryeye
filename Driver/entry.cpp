@@ -52,12 +52,19 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 		if (item.IsVaild() && item.Type().IsProcess())
 		{
 			auto eproc = item.BodyObject<EProcess>();
-			eproc.VadRoot().Foreach([](RtlBalanceNode<MmVad> node) {
-				auto data = node.Data();
-				auto start = data.Core().StartingVpn();
-				auto end = data.Core().EndingVpn();
+
+			//eproc.VadRoot().Foreach([](VadNode& node) {
+			//	auto start = node->Core().StartingVpn();
+			//	auto end = node->Core().EndingVpn();
+			//	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Start: %x --- End: %x\n", start, end));
+			//	});
+			auto nodes = eproc.VadRoot().GetAllNodes();
+			for (auto& node : nodes)
+			{
+				auto start = node->Core().StartingVpn();
+				auto end = node->Core().EndingVpn();
 				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Start: %x --- End: %x\n", start, end));
-				});
+			}
 			break;
 		}
 	}
@@ -68,7 +75,5 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	//		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Process Name: %s, Address: 0x%llx\n", eproc.ImageFileName(), eproc.Address()));
 	//	}
 	//});
-
-
 	return STATUS_SUCCESS;
 }

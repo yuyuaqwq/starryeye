@@ -8,8 +8,6 @@ template<class KObjT>
 class KObjListEntry: public KObjectBase
 {
 public:
-	using Self = KObjListEntry<KObjT>;
-
 	KObjListEntry(ULONG64 list_addr, ULONG64 offset): KObjectBase(list_addr)
 	{
 		list_ = (PLIST_ENTRY64)list_addr;
@@ -18,13 +16,13 @@ public:
 	KObjListEntry(std::nullptr_t): KObjectBase(nullptr)
 	~KObjListEntry() {}
 
-	Self Flink()
+	KObjListEntry Flink()
 	{
-		return Self((ULONG64)list_->Flink, offset_);
+		return KObjListEntry((ULONG64)list_->Flink, offset_);
 	}
-	Self Blink()
+	KObjListEntry Blink()
 	{
-		return Self((ULONG64)list_->Blink, offset_);
+		return KObjListEntry((ULONG64)list_->Blink, offset_);
 	}
 
 	KObjT Object()
@@ -41,8 +39,8 @@ template<class DataT>
 class RtlBalanceNode: public KObjectBase
 {
 public:
-	RtlBalanceNode(ULONG64 address): KObjectBase(address) {}
-	RtlBalanceNode(std::nullptr_t): KObjectBase(nullptr) {}
+	RtlBalanceNode(ULONG64 address): KObjectBase(address), data_(address) {}
+	RtlBalanceNode(std::nullptr_t): KObjectBase(nullptr), data_(nullptr) {}
 	~RtlBalanceNode() {}
 
 	RtlBalanceNode Left()
@@ -57,33 +55,44 @@ public:
 	{
 		return RtlBalanceNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlBalanceNode_ParentValue));
 	}
-	DataT Data()
-	{
-		return DataT(address_);
+	DataT* operator->() {
+		return &data_;
 	}
+
+private:
+	DataT data_;
 };
 
 template<class DataT>
 class RtlAvlTree: public KObjectBase
 {
 public:
-	using AvlNode = RtlBalanceNode<DataT>;
-	using ForeachCallBackT = const ynstd::function<void(AvlNode)>&;
+	using NodeT = RtlBalanceNode<DataT>;
+	using ForeachCallBackT = const ynstd::function<void(NodeT&)>&;
 
 	RtlAvlTree(ULONG64 address): KObjectBase(address) {}
 	RtlAvlTree(std::nullptr_t): KObjectBase(nullptr) {}
 	~RtlAvlTree() {}
 
-	AvlNode Root() {
-		return AvlNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlAvlTree_RootOffset));
+	NodeT Root() {
+		return NodeT(*(PULONG64)(address_ + AlogrithmOffsets::RtlAvlTree_RootOffset));
 	}
 
 	void Foreach(ForeachCallBackT callback) {
 		ForeachRecursion(Root(), callback);
 	}
 
+	// 获取所有节点(性能差, 不推荐使用!!!)
+	ynstd::list<NodeT> GetAllNodes() {
+		ynstd::list<NodeT> total;
+		Foreach([&](NodeT& node) {
+			total.push_back(node);
+			});
+		return total;
+	}
+
 private:
-	void ForeachRecursion(AvlNode& root, ForeachCallBackT callback)
+	void ForeachRecursion(NodeT& root, ForeachCallBackT callback)
 	{
 		if (!root.IsVaild()) return;
 		ForeachRecursion(root.Left(), callback);

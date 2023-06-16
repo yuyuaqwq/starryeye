@@ -14,6 +14,8 @@ public:
 
 	ULONG32 StartingVpn();
 	ULONG32 EndingVpn();
+	ULONG64 StartingAddress();
+	ULONG64 EndingAddress();
 	LONG64 ReferenceCount();
 
 private:
@@ -43,5 +45,23 @@ private:
 	static inline ULONG64 CoreOffset;
 };
 
-using VadTree = RtlAvlTree<MmVad>;
+using VadNode = RtlBalanceNode<MmVad>;
+
+class VadTree: public RtlAvlTree<MmVad>
+{
+public:
+	using Inherit = RtlAvlTree<MmVad>;
+
+	VadTree(ULONG64 address);
+	VadTree(std::nullptr_t);
+	
+	//TODO ´ý²âÊÔ
+	VadNode Search(ULONG64 address);
+
+	~VadTree();
+
+private:
+	VadNode SearchRecursion(VadNode& root, ULONG64 address);
+};
+
 }

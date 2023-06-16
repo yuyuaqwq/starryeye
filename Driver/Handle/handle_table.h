@@ -8,7 +8,7 @@ namespace StarryEye {
 class HandleTable: public KObjectBase
 {
 public:
-	using ForeachHandleObjectsCallBack = const ynstd::function<void(ObjectHeader)>&;
+	using ForeachHandleObjectsCallBack = const ynstd::function<void(ObjectHeader&)>&;
 
 	inline static PVOID PspCidTable;
 	static void Init();
@@ -48,6 +48,9 @@ public:
 
 	// 自动根据TableCode等级遍历所有Handle
 	bool AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback);
+
+	// 获取所有Handle对象(性能差, 不推荐使用!!!)
+	ynstd::list<ObjectHeader> GetAllHandleObjects();
 
 private:
 	inline static ULONG64 TableCodeOffset;

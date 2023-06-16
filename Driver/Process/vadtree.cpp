@@ -23,6 +23,16 @@ ULONG32 StarryEye::MmVadShort::EndingVpn()
 	return *(PULONG32)(address_ + EndingVpnOffset);
 }
 
+ULONG64 StarryEye::MmVadShort::StartingAddress()
+{
+	return ULONG64(StartingVpn()) << 12;
+}
+
+ULONG64 StarryEye::MmVadShort::EndingAddress()
+{
+	return ULONG64(EndingVpn()) << 12;
+}
+
 LONG64 StarryEye::MmVadShort::ReferenceCount()
 {
 	return *(PLONG64)(address_ + ReferenceCountOffset);
@@ -43,4 +53,25 @@ StarryEye::MmVad::~MmVad() {}
 MmVadShort StarryEye::MmVad::Core()
 {
 	return MmVadShort(address_ + CoreOffset);
+}
+
+
+StarryEye::VadTree::VadTree(ULONG64 address): Inherit(address) {}
+StarryEye::VadTree::VadTree(std::nullptr_t) : Inherit(nullptr) {}
+StarryEye::VadTree::~VadTree() {}
+
+VadNode StarryEye::VadTree::Search(ULONG64 address)
+{
+	return SearchRecursion(Root(), address);
+}
+
+VadNode StarryEye::VadTree::SearchRecursion(VadNode& root, ULONG64 address)
+{
+	if (!root.IsVaild()) return nullptr;
+	if (address < root->Core().StartingAddress())
+		return SearchRecursion(root.Left(), address);
+	else if (address > root->Core().EndingAddress())
+		return SearchRecursion(root.Right(), address);
+	else
+		return root;
 }
