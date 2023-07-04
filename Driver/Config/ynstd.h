@@ -7,7 +7,8 @@
 #include <jxy/stack.hpp>
 #include <jxy/queue.hpp>
 #include <jxy/set.hpp>
-#include <noalgo/functional.hpp>
+#include <krnlib/functional.hpp>
+#include <krnlib/initializer_list.hpp>
 #include <ntifs.h>
 
 namespace StarryEye {
@@ -60,6 +61,8 @@ inline shared_ptr<T> make_shared(ArgsT&&... args)
 }
 
 template<class T>
-using function = noalgo::Function<T>;
+using function = krnlib::function<T>;
+template<class T>
+using initializer_list = krnlib::initializer_list<T>;
 }
 }
