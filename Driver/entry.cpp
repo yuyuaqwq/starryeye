@@ -1,5 +1,5 @@
 #include <ntifs.h>
-#include "Config/ynstd.h"
+#include "Config/yfstd.h"
 #include "Config/algorithm.h"
 
 #include "Handle/handle_table.h"
@@ -12,7 +12,7 @@
 #include "Thread/ethread.h"
 #include "Thread/kthread.h"
 
-#define _SCN StarryEye::ynstd::
+#define _SCN StarryEye::yfstd::
 #include <yuJson/json.hpp>
 using namespace StarryEye;
 
@@ -76,12 +76,5 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	//		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Process Name: %s, Address: 0x%llx\n", eproc.ImageFileName(), eproc.Address()));
 	//	}
 	//});
-	auto obj = yuJson::Json::MakeObject();
-	auto str = obj.Print();
-	auto& qqq = obj.GetObject().At("abc");
-	obj["aa"]["bb"];
-	yuJson::Json json{ "awdwd", yuJson::Json({ "aa", 123 }), "emmm", 3333};
-	json["cccccc"] = "qaq";
-	json["awdwd"]["aa"] = { 1,2,3,4 };
 	return STATUS_SUCCESS;
 }

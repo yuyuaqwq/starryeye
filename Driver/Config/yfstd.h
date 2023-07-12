@@ -13,7 +13,7 @@
 
 namespace StarryEye {
 // 数据结构
-namespace ynstd {
+namespace yfstd {
 
 static const ULONG kDefaultPoolTag = 0x14451100;
 

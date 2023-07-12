@@ -1,7 +1,7 @@
 #pragma once
 #include <ntifs.h>
 #include "Config/base.h"
-#include "Config/ynstd.h"
+#include "Config/yfstd.h"
 
 namespace StarryEye {
 template<class KObjT>
@@ -68,7 +68,7 @@ class RtlAvlTree: public KObjectBase
 {
 public:
 	using NodeT = RtlBalanceNode<DataT>;
-	using ForeachCallBackT = const ynstd::function<void(NodeT&)>&;
+	using ForeachCallBackT = const yfstd::function<void(NodeT&)>&;
 
 	RtlAvlTree(ULONG64 address): KObjectBase(address) {}
 	RtlAvlTree(std::nullptr_t): KObjectBase(nullptr) {}
@@ -83,8 +83,8 @@ public:
 	}
 
 	// 获取所有节点(性能差, 不推荐使用!!!)
-	ynstd::list<NodeT> GetAllNodes() {
-		ynstd::list<NodeT> total;
+	yfstd::list<NodeT> GetAllNodes() {
+		yfstd::list<NodeT> total;
 		Foreach([&](NodeT& node) {
 			total.push_back(node);
 			});

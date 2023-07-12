@@ -1,6 +1,6 @@
 #pragma once
 #include "Config/base.h"
-#include "Config/ynstd.h"
+#include "Config/yfstd.h"
 #include "Handle/object_header.h"
 
 namespace StarryEye {
@@ -8,7 +8,7 @@ namespace StarryEye {
 class HandleTable: public KObjectBase
 {
 public:
-	using ForeachHandleObjectsCallBack = const ynstd::function<void(ObjectHeader&)>&;
+	using ForeachHandleObjectsCallBack = const yfstd::function<void(ObjectHeader&)>&;
 
 	inline static PVOID PspCidTable;
 	static void Init();
@@ -50,7 +50,7 @@ public:
 	bool AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback);
 
 	// 获取所有Handle对象(性能差, 不推荐使用!!!)
-	ynstd::list<ObjectHeader> GetAllHandleObjects();
+	yfstd::list<ObjectHeader> GetAllHandleObjects();
 
 private:
 	inline static ULONG64 TableCodeOffset;

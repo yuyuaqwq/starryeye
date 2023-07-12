@@ -99,7 +99,7 @@
     <ClInclude Include="Process\kprocess.h">
       <Filter>Header Files\Process</Filter>
     </ClInclude>
-    <ClInclude Include="Config\ynstd.h">
+    <ClInclude Include="Config\yfstd.h">
       <Filter>Header Files\Config</Filter>
     </ClInclude>
     <ClInclude Include="Config\base.h">

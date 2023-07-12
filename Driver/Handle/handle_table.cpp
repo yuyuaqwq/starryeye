@@ -113,9 +113,9 @@ bool StarryEye::HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCal
 	}
 }
 
-ynstd::list<ObjectHeader> StarryEye::HandleTable::GetAllHandleObjects()
+yfstd::list<ObjectHeader> StarryEye::HandleTable::GetAllHandleObjects()
 {
-	ynstd::list<ObjectHeader> total;
+	yfstd::list<ObjectHeader> total;
 	AutoForeachAllHandleObjects([&](ObjectHeader& obj) {
 		total.push_back(obj);
 		});
