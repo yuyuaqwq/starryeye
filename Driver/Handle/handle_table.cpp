@@ -1,13 +1,12 @@
 #include "handle_table.h"
 
-using namespace StarryEye;
-
-ULONG64 StarryEye::HandleTable::DecryptHandleAddress(ULONG64 addr)
+namespace StarryEye {
+ULONG64 HandleTable::DecryptHandleAddress(ULONG64 addr)
 {
 	return ((LONG64)addr >> 0x10) & ~0xF;
 }
 
-void StarryEye::HandleTable::ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+void HandleTable::ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
 {
 	ObjectHeader temp = nullptr;
 	for (SHORT i = 0; i < 512; i++)
@@ -18,7 +17,7 @@ void StarryEye::HandleTable::ForeachAllHandleObjectsInLv1TableCode(PULONG64 tabl
 	}
 }
 
-void StarryEye::HandleTable::ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+void HandleTable::ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
 {
 	for (size_t i = 0; i < 512; i++)
 	{
@@ -27,7 +26,7 @@ void StarryEye::HandleTable::ForeachAllHandleObjectsInLv2TableCode(PULONG64 tabl
 	}
 }
 
-void StarryEye::HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+void HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
 {
 	for (size_t i = 0; i < 512; i++)
 	{
@@ -36,40 +35,40 @@ void StarryEye::HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 tabl
 	}
 }
 
-void StarryEye::HandleTable::Init()
+void HandleTable::Init()
 {
 	TableCodeOffset = 0x8;
 	PspCidTable = (PVOID)0xffffcb0e0960ab40;
 }
 
-StarryEye::HandleTable::HandleTable(std::nullptr_t): KObjectBase(nullptr)
+HandleTable::HandleTable(std::nullptr_t) : KObjectBase(nullptr)
 {
 }
 
-StarryEye::HandleTable::HandleTable(ULONG64 address): KObjectBase(address)
+HandleTable::HandleTable(ULONG64 address) : KObjectBase(address)
 {
 }
 
-StarryEye::HandleTable::~HandleTable()
+HandleTable::~HandleTable()
 {
 }
 
-ULONG64 StarryEye::HandleTable::TableCode()
+ULONG64 HandleTable::TableCode()
 {
 	return *(ULONG64*)(address_ + TableCodeOffset);
 }
 
-UCHAR StarryEye::HandleTable::TableLevel()
+UCHAR HandleTable::TableLevel()
 {
 	return TableCode() & 0b11;
 }
 
-ULONG64 StarryEye::HandleTable::TableAddress()
+ULONG64 HandleTable::TableAddress()
 {
 	return TableCode() & ~0b11;
 }
 
-ULONG64 StarryEye::HandleTable::MaxTableSize()
+ULONG64 HandleTable::MaxTableSize()
 {
 	ULONG64 total = 1;
 	for (UCHAR i = 0; i < TableLevel() + 1; i++)
@@ -77,7 +76,7 @@ ULONG64 StarryEye::HandleTable::MaxTableSize()
 	return total;
 }
 
-ObjectHeader StarryEye::HandleTable::GetHandleObject(ULONG64 index)
+ObjectHeader HandleTable::GetHandleObject(ULONG64 index)
 {
 	// 将索引拆分
 	if (index >= MaxTableSize()) return nullptr;
@@ -95,7 +94,7 @@ ObjectHeader StarryEye::HandleTable::GetHandleObject(ULONG64 index)
 	}
 }
 
-bool StarryEye::HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback)
+bool HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback)
 {
 	switch (TableLevel())
 	{
@@ -113,7 +112,7 @@ bool StarryEye::HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCal
 	}
 }
 
-yfstd::list<ObjectHeader> StarryEye::HandleTable::GetAllHandleObjects()
+yfstd::list<ObjectHeader> HandleTable::GetAllHandleObjects()
 {
 	yfstd::list<ObjectHeader> total;
 	AutoForeachAllHandleObjects([&](ObjectHeader& obj) {
@@ -123,7 +122,7 @@ yfstd::list<ObjectHeader> StarryEye::HandleTable::GetAllHandleObjects()
 }
 
 
-ObjectHeader StarryEye::HandleTable::GetHandleObjectInLv1TableCode(PULONG64 table, ULONG64 index)
+ObjectHeader HandleTable::GetHandleObjectInLv1TableCode(PULONG64 table, ULONG64 index)
 {
 	if (MmIsAddressValid(table) && index < 512)	// 判断目标地址是否有效
 		return ObjectHeader(
@@ -131,16 +130,17 @@ ObjectHeader StarryEye::HandleTable::GetHandleObjectInLv1TableCode(PULONG64 tabl
 	return nullptr;
 }
 
-ObjectHeader StarryEye::HandleTable::GetHandleObjectInLv2TableCode(PULONG64 table, ULONG64 index_lv2, ULONG64 index_lv1)
+ObjectHeader HandleTable::GetHandleObjectInLv2TableCode(PULONG64 table, ULONG64 index_lv2, ULONG64 index_lv1)
 {
 	if (MmIsAddressValid(table) && index_lv2 < 512 && index_lv1 < 512)
 		return GetHandleObjectInLv1TableCode((PULONG64)table[index_lv2], index_lv1);
 	return nullptr;
 }
 
-ObjectHeader StarryEye::HandleTable::GetHandleObjectInLv3TableCode(PULONG64 table, ULONG64 index_lv3, ULONG64 index_lv2, ULONG64 index_lv1)
+ObjectHeader HandleTable::GetHandleObjectInLv3TableCode(PULONG64 table, ULONG64 index_lv3, ULONG64 index_lv2, ULONG64 index_lv1)
 {
 	if (MmIsAddressValid(table) && index_lv3 < 512 && index_lv2 < 512 && index_lv1 < 512)
 		return GetHandleObjectInLv2TableCode((PULONG64)table[index_lv3], index_lv2, index_lv1);
 	return nullptr;
+}
 }

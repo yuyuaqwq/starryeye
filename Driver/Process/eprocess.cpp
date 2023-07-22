@@ -1,8 +1,7 @@
 #include "eprocess.h"
 
-using namespace StarryEye;
-
-void StarryEye::EProcess::Init()
+namespace StarryEye {
+void EProcess::Init()
 {
 	ImageFileNameOffset = 0x5A8;
 	ObjectTableOffset = 0x570;
@@ -12,62 +11,55 @@ void StarryEye::EProcess::Init()
 	ActiveProcessLinksOffset = 0x448;
 	InheritedFromUniqueProcessIdOffset = 0x540;
 	VadRootOffset = 0x7d8;
-	MmVad::Init();
+	VadTree::Init();
 }
 
-StarryEye::EProcess::EProcess(ULONG64 address): KObjectBase(address)
-{
-}
+EProcess::EProcess(ULONG64 address) : KObjectBase(address) {}
+EProcess::EProcess(std::nullptr_t) : KObjectBase(nullptr) {}
+EProcess::~EProcess() {}
 
-StarryEye::EProcess::EProcess(std::nullptr_t) : KObjectBase(nullptr)
-{
-}
-
-StarryEye::EProcess::~EProcess()
-{
-}
-
-PCHAR StarryEye::EProcess::ImageFileName()
+PCHAR EProcess::ImageFileName()
 {
 	return (PCHAR)(address_ + ImageFileNameOffset);
 }
 
-KProcess StarryEye::EProcess::Pcb()
+KProcess EProcess::Pcb()
 {
 	return KProcess(address_);
 }
 
-KObjListEntry<EProcess> StarryEye::EProcess::ActiveProcessLinks()
+KObjListEntry<EProcess> EProcess::ActiveProcessLinks()
 {
 	return KObjListEntry<EProcess>(address_ + ActiveProcessLinksOffset, ActiveProcessLinksOffset);
 }
 
-HandleTable StarryEye::EProcess::ObjectTable()
+HandleTable EProcess::ObjectTable()
 {
 	return HandleTable(address_ + ObjectTableOffset);
 }
 
-ULONG64 StarryEye::EProcess::InheritedFromUniqueProcessId()
+ULONG64 EProcess::InheritedFromUniqueProcessId()
 {
 	return *(PULONG64)(address_ + InheritedFromUniqueProcessIdOffset);
 }
 
-UINT8 StarryEye::EProcess::OwnerProcessId()
+UINT8 EProcess::OwnerProcessId()
 {
 	return *(PUINT8)(address_ + OwnerProcessIdOffset);
 }
 
-UCHAR StarryEye::EProcess::PriorityClass()
+UCHAR EProcess::PriorityClass()
 {
 	return *(PUCHAR)(address_ + PriorityClassOffset);
 }
 
-KObjListEntry<EThread> StarryEye::EProcess::ThreadListHead()
+KObjListEntry<EThread> EProcess::ThreadListHead()
 {
 	return KObjListEntry<EThread>(address_ + ThreadListHeadOffset, EThread::ThreadListEntryOffset);
 }
 
-VadTree StarryEye::EProcess::VadRoot()
+VadTree EProcess::VadRoot()
 {
 	return VadTree(address_ + VadRootOffset);
+}
 }

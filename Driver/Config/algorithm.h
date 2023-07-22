@@ -4,6 +4,10 @@
 #include "Config/yfstd.h"
 
 namespace StarryEye {
+
+#define HIGH_UINT32(x) (reinterpret_cast<PUINT16>(&x)[1])
+#define SET_HIGH_ULONG64(x, val) reinterpret_cast<PUINT32>(&x)[1] = val
+
 template<class KObjT>
 class KObjListEntry: public KObjectBase
 {

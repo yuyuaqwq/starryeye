@@ -2,66 +2,77 @@
 #include "Config/algorithm.h"
 
 namespace StarryEye {
-class EProcess;
-class MmVad;
+#define SIZE_OF_PAGE 0x1000
 
-class MmVadShort : public KObjectBase
+class EProcess;
+
+namespace details {
+class MmVadData;
+
+class MmVadShortData : public KObjectBase
 {
 public:
-	MmVadShort(ULONG64 address);
-	MmVadShort(std::nullptr_t);
-	~MmVadShort();
+	static void Init();
+
+	MmVadShortData(ULONG64 address);
+	MmVadShortData(std::nullptr_t);
+	~MmVadShortData();
 
 	ULONG32 StartingVpn();
 	ULONG32 EndingVpn();
-	ULONG64 StartingAddress();
-	ULONG64 EndingAddress();
+	UCHAR StartingVpnHigh();
+	UCHAR EndingVpnHigh();
+	ULONG64 GetStartingAddress();
+	ULONG64 GetEndingAddress();
 	LONG64 ReferenceCount();
 
 private:
-	friend class MmVad;
-
-	static void Init();
+	friend class MmVadData;
 
 	static inline ULONG64 StartingVpnOffset;
 	static inline ULONG64 EndingVpnOffset;
+	static inline ULONG64 StartingVpnHighOffset;
+	static inline ULONG64 EndingVpnHighOffset;
 	static inline ULONG64 ReferenceCountOffset;
 };
 
-class MmVad: public KObjectBase
+class MmVadData : public KObjectBase
 {
 public:
-	MmVad(ULONG64 vadnode_addr);
-	MmVad(std::nullptr_t);
-	~MmVad();
+	static void Init();
 
-	MmVadShort Core();
-		
+	MmVadData(ULONG64 vadnode_addr);
+	MmVadData(std::nullptr_t);
+	~MmVadData();
+
+	MmVadShortData Core();
+
 private:
 	friend class EProcess;
 
-	static void Init();
-
 	static inline ULONG64 CoreOffset;
 };
+}
 
-using VadNode = RtlBalanceNode<MmVad>;
+using MmVad = RtlBalanceNode<details::MmVadData>;
+using MmVadShort = RtlBalanceNode<details::MmVadShortData>;
 
-class VadTree: public RtlAvlTree<MmVad>
+class VadTree: public RtlAvlTree<details::MmVadData>
 {
 public:
-	using Inherit = RtlAvlTree<MmVad>;
+	static void Init();
+	using Inherit = RtlAvlTree<details::MmVadData>;
 
 	VadTree(ULONG64 address);
 	VadTree(std::nullptr_t);
 	
 	//TODO ´ý²âÊÔ
-	VadNode Search(ULONG64 address);
+	MmVad Search(ULONG64 address);
 
 	~VadTree();
 
 private:
-	VadNode SearchRecursion(VadNode& root, ULONG64 address);
+	MmVad SearchRecursion(MmVad& root, ULONG64 address);
 };
 
 }

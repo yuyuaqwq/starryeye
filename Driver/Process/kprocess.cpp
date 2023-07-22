@@ -1,25 +1,17 @@
 #include "kprocess.h"
 
-using namespace StarryEye;
-
-void StarryEye::KProcess::Init()
+namespace StarryEye {
+void KProcess::Init()
 {
     ProcessListEntryOffset = 0x350;
 }
 
-StarryEye::KProcess::KProcess(ULONG64 address): KObjectBase(address)
-{
-}
+KProcess::KProcess(ULONG64 address) : KObjectBase(address) {}
+KProcess::KProcess(std::nullptr_t) : KObjectBase(nullptr) {}
+KProcess::~KProcess() {}
 
-StarryEye::KProcess::KProcess(std::nullptr_t): KObjectBase(nullptr)
-{
-}
-
-StarryEye::KProcess::~KProcess()
-{
-}
-
-KObjListEntry<KProcess> StarryEye::KProcess::ProcessListEntry()
+KObjListEntry<KProcess> KProcess::ProcessListEntry()
 {
     return KObjListEntry<KProcess>(address_ + ProcessListEntryOffset, ProcessListEntryOffset);
+}
 }

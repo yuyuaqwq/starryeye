@@ -1,77 +1,97 @@
 #include "vadtree.h"
 
-using namespace StarryEye;
-
-void StarryEye::MmVadShort::Init()
+namespace StarryEye {
+namespace details {
+void MmVadShortData::Init()
 {
 	StartingVpnOffset = 0x18;
 	EndingVpnOffset = 0x1C;
+	StartingVpnHighOffset = 0x20;
+	EndingVpnHighOffset = 0x21;
 	ReferenceCountOffset = 0x24;
 }
 
-StarryEye::MmVadShort::MmVadShort(ULONG64 address): KObjectBase(address) {}
-StarryEye::MmVadShort::MmVadShort(std::nullptr_t) : KObjectBase(nullptr) {}
-StarryEye::MmVadShort::~MmVadShort() {}
+MmVadShortData::MmVadShortData(ULONG64 address) : KObjectBase(address) {}
+MmVadShortData::MmVadShortData(std::nullptr_t) : KObjectBase(nullptr) {}
+MmVadShortData::~MmVadShortData() {}
 
-ULONG32 StarryEye::MmVadShort::StartingVpn()
+ULONG32 MmVadShortData::StartingVpn()
 {
 	return *(PULONG32)(address_ + StartingVpnOffset);
 }
 
-ULONG32 StarryEye::MmVadShort::EndingVpn()
+ULONG32 MmVadShortData::EndingVpn()
 {
 	return *(PULONG32)(address_ + EndingVpnOffset);
 }
 
-ULONG64 StarryEye::MmVadShort::StartingAddress()
+UCHAR MmVadShortData::StartingVpnHigh()
 {
-	return ULONG64(StartingVpn()) << 12;
+	return *(PUCHAR)(address_ + StartingVpnHighOffset);
 }
 
-ULONG64 StarryEye::MmVadShort::EndingAddress()
+UCHAR MmVadShortData::EndingVpnHigh()
 {
-	return ULONG64(EndingVpn()) << 12;
+	return *(PUCHAR)(address_ + EndingVpnHighOffset);
 }
 
-LONG64 StarryEye::MmVadShort::ReferenceCount()
+ULONG64 MmVadShortData::GetStartingAddress()
+{
+	auto res = static_cast<ULONG64>(StartingVpn()) * SIZE_OF_PAGE;
+	SET_HIGH_ULONG64(res, StartingVpnHigh());
+	return res;
+}
+
+ULONG64 MmVadShortData::GetEndingAddress()
+{
+	auto res = static_cast<ULONG64>(EndingVpn()) * SIZE_OF_PAGE + SIZE_OF_PAGE - 1;
+	SET_HIGH_ULONG64(res, EndingVpnHigh());
+	return res;
+}
+
+LONG64 MmVadShortData::ReferenceCount()
 {
 	return *(PLONG64)(address_ + ReferenceCountOffset);
 }
 
-
-
-void StarryEye::MmVad::Init()
+void MmVadData::Init()
 {
-	MmVadShort::Init();
 	CoreOffset = 0;
 }
 
-StarryEye::MmVad::MmVad(ULONG64 vadnode_addr) : KObjectBase(vadnode_addr) {}
-StarryEye::MmVad::MmVad(std::nullptr_t) : KObjectBase(nullptr) {}
-StarryEye::MmVad::~MmVad() {}
+MmVadData::MmVadData(ULONG64 vadnode_addr) : KObjectBase(vadnode_addr) {}
+MmVadData::MmVadData(std::nullptr_t) : KObjectBase(nullptr) {}
+MmVadData::~MmVadData() {}
 
-MmVadShort StarryEye::MmVad::Core()
+MmVadShortData MmVadData::Core()
 {
-	return MmVadShort(address_ + CoreOffset);
+	return MmVadShortData(address_ + CoreOffset);
+}
 }
 
+void VadTree::Init()
+{
+	details::MmVadData::Init();
+	details::MmVadShortData::Init();
+}
 
-StarryEye::VadTree::VadTree(ULONG64 address): Inherit(address) {}
-StarryEye::VadTree::VadTree(std::nullptr_t) : Inherit(nullptr) {}
-StarryEye::VadTree::~VadTree() {}
+VadTree::VadTree(ULONG64 address) : Inherit(address) {}
+VadTree::VadTree(std::nullptr_t) : Inherit(nullptr) {}
+VadTree::~VadTree() {}
 
-VadNode StarryEye::VadTree::Search(ULONG64 address)
+MmVad VadTree::Search(ULONG64 address)
 {
 	return SearchRecursion(Root(), address);
 }
 
-VadNode StarryEye::VadTree::SearchRecursion(VadNode& root, ULONG64 address)
+MmVad VadTree::SearchRecursion(MmVad& root, ULONG64 address)
 {
 	if (!root.IsVaild()) return nullptr;
-	if (address < root->Core().StartingAddress())
+	if (address < root->Core().GetStartingAddress())
 		return SearchRecursion(root.Left(), address);
-	else if (address > root->Core().EndingAddress())
+	else if (address > root->Core().GetEndingAddress())
 		return SearchRecursion(root.Right(), address);
 	else
 		return root;
+}
 }
