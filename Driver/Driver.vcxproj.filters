@@ -41,6 +41,18 @@
     <Filter Include="Source Files\Config">
       <UniqueIdentifier>{3a0e8f65-ee91-4771-a81c-be2905992d68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Memory">
+      <UniqueIdentifier>{901e1ffd-fc55-49be-bd35-9f5f6ebce3d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Memory">
+      <UniqueIdentifier>{abfc936a-49fd-431b-a1f1-5b91e42ba6b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\File">
+      <UniqueIdentifier>{a2e37e7c-c5ea-4d08-b9c1-1d55ff026d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\File">
+      <UniqueIdentifier>{33342ec1-34b0-4e08-b49a-ec31ce844b84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Handle\handle_table.cpp">
@@ -76,6 +88,15 @@
     <ClCompile Include="Process\vadtree.cpp">
       <Filter>Source Files\Process</Filter>
     </ClCompile>
+    <ClCompile Include="Memory\subsection.cpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\control_area.cpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="File\file_object.cpp">
+      <Filter>Source Files\File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">
@@ -110,6 +131,15 @@
     </ClInclude>
     <ClInclude Include="Process\vadtree.h">
       <Filter>Header Files\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\subsection.h">
+      <Filter>Header Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\control_area.h">
+      <Filter>Header Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="File\file_object.h">
+      <Filter>Header Files\File</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

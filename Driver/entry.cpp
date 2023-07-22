@@ -31,9 +31,13 @@ void InitOffsets()
 
 	EProcess::Init();
 	KProcess::Init();
+	VadTree::Init();
 
 	EThread::Init();
 	KThread::Init();
+
+	ControlArea::Init();
+	SubSection::Init();
 
 	AlogrithmOffsets::Init();
 }
@@ -45,27 +49,26 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 
 	InitOffsets();
 
-	HandleTable table{(ULONG64)HandleTable::PspCidTable};
+	HandleTable table{*(PULONG64)HandleTable::PspCidTable};
 
+	DbgBreakPoint();
 	for (size_t i = 0; i < table.MaxTableSize(); i++)
 	{
 		auto item = table.GetHandleObject(i);
+		if (item.IsVaild())
+		{
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "TypeName: %wZ\n", item.Type().Name()));
+		}
 		if (item.IsVaild() && item.Type().IsProcess())
 		{
 			auto eproc = item.BodyObject<EProcess>();
 
-			//eproc.VadRoot().Foreach([](VadNode& node) {
-			//	auto start = node->Core().StartingVpn();
-			//	auto end = node->Core().EndingVpn();
-			//	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Start: %x --- End: %x\n", start, end));
-			//	});
-			auto nodes = eproc.VadRoot().GetAllNodes();
-			for (auto& node : nodes)
-			{
+			eproc.VadRoot().Foreach([](MmVad node) {
 				auto start = node->Core().StartingVpn();
 				auto end = node->Core().EndingVpn();
-				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Start: %x --- End: %x\n", start, end));
-			}
+				auto file_name = node->Subsection().ControlArea().FilePointer().FileName();
+				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Start: %x - End: %x - Name: %wZ\n", start, end, file_name));
+				});
 			break;
 		}
 	}

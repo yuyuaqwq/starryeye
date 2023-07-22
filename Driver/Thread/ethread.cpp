@@ -15,8 +15,8 @@ KThread EThread::Tcb()
 	return KThread(address_);
 }
 
-KObjListEntry<EThread> EThread::ThreadListEntry()
+ListEntry EThread::ThreadListEntry()
 {
-	return KObjListEntry<EThread>(address_ + ThreadListEntryOffset, ThreadListEntryOffset);
+	return ListEntry(address_ + ThreadListEntryOffset, ThreadListEntryOffset);
 }
 }

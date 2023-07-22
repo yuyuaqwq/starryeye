@@ -54,9 +54,27 @@ LONG64 MmVadShortData::ReferenceCount()
 	return *(PLONG64)(address_ + ReferenceCountOffset);
 }
 
+ListEntry MmVadData::ViewLinks()
+{
+	return ListEntry(address_ + ViewLinksOffset, VadsProcessOffset);
+}
+
 void MmVadData::Init()
 {
 	CoreOffset = 0;
+	SubsectionOffset = 0x48;
+	ViewLinksOffset = 0x60;
+	VadsProcessOffset = 0x70;
+}
+
+SubSection MmVadData::Subsection()
+{
+	return SubSection(*(PULONG64)(address_ + SubsectionOffset));
+}
+
+ULONG64 MmVadData::VadsProcessAddress()
+{
+	return *(PULONG64)(address_ + VadsProcessOffset);
 }
 
 MmVadData::MmVadData(ULONG64 vadnode_addr) : KObjectBase(vadnode_addr) {}

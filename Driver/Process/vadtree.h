@@ -1,5 +1,6 @@
 #include "Config/base.h"
 #include "Config/algorithm.h"
+#include "Memory/subsection.h"
 
 namespace StarryEye {
 #define SIZE_OF_PAGE 0x1000
@@ -46,11 +47,17 @@ public:
 	~MmVadData();
 
 	MmVadShortData Core();
+	SubSection Subsection();
+	ListEntry ViewLinks();
+	ULONG64 VadsProcessAddress();
 
 private:
 	friend class EProcess;
 
 	static inline ULONG64 CoreOffset;
+	static inline ULONG64 SubsectionOffset;
+	static inline ULONG64 ViewLinksOffset;
+	static inline ULONG64 VadsProcessOffset;
 };
 }
 

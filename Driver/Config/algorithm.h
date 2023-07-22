@@ -8,27 +8,27 @@ namespace StarryEye {
 #define HIGH_UINT32(x) (reinterpret_cast<PUINT16>(&x)[1])
 #define SET_HIGH_ULONG64(x, val) reinterpret_cast<PUINT32>(&x)[1] = val
 
-template<class KObjT>
-class KObjListEntry: public KObjectBase
+class ListEntry: public KObjectBase
 {
 public:
-	KObjListEntry(ULONG64 list_addr, ULONG64 offset): KObjectBase(list_addr)
+	ListEntry(ULONG64 list_addr, ULONG64 offset): KObjectBase(list_addr)
 	{
 		list_ = (PLIST_ENTRY64)list_addr;
 		offset_ = offset;
 	}
-	KObjListEntry(std::nullptr_t): KObjectBase(nullptr)
-	~KObjListEntry() {}
+	ListEntry(std::nullptr_t): KObjectBase(nullptr) {}
+	~ListEntry() {}
 
-	KObjListEntry Flink()
+	ListEntry Flink()
 	{
-		return KObjListEntry((ULONG64)list_->Flink, offset_);
+		return ListEntry((ULONG64)list_->Flink, offset_);
 	}
-	KObjListEntry Blink()
+	ListEntry Blink()
 	{
-		return KObjListEntry((ULONG64)list_->Blink, offset_);
+		return ListEntry((ULONG64)list_->Blink, offset_);
 	}
 
+	template<class KObjT>
 	KObjT Object()
 	{
 		return KObjT((ULONG64)list_ - offset_);

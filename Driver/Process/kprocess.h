@@ -12,7 +12,7 @@ public:
 	KProcess(std::nullptr_t);
 	~KProcess();
 
-	KObjListEntry<KProcess> ProcessListEntry();
+	ListEntry ProcessListEntry();
 
 private:
 	inline static ULONG64 ProcessListEntryOffset;

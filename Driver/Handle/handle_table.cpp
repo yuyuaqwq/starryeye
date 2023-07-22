@@ -38,20 +38,12 @@ void HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachH
 void HandleTable::Init()
 {
 	TableCodeOffset = 0x8;
-	PspCidTable = (PVOID)0xffffcb0e0960ab40;
+	PspCidTable = (PVOID)0xfffff80260efc5d0;	//TODO PspCidTable
 }
 
-HandleTable::HandleTable(std::nullptr_t) : KObjectBase(nullptr)
-{
-}
-
-HandleTable::HandleTable(ULONG64 address) : KObjectBase(address)
-{
-}
-
-HandleTable::~HandleTable()
-{
-}
+HandleTable::HandleTable(std::nullptr_t) : KObjectBase(nullptr) {}
+HandleTable::HandleTable(ULONG64 address) : KObjectBase(address) {}
+HandleTable::~HandleTable() {}
 
 ULONG64 HandleTable::TableCode()
 {

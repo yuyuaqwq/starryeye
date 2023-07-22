@@ -11,7 +11,6 @@ void EProcess::Init()
 	ActiveProcessLinksOffset = 0x448;
 	InheritedFromUniqueProcessIdOffset = 0x540;
 	VadRootOffset = 0x7d8;
-	VadTree::Init();
 }
 
 EProcess::EProcess(ULONG64 address) : KObjectBase(address) {}
@@ -28,9 +27,9 @@ KProcess EProcess::Pcb()
 	return KProcess(address_);
 }
 
-KObjListEntry<EProcess> EProcess::ActiveProcessLinks()
+ListEntry EProcess::ActiveProcessLinks()
 {
-	return KObjListEntry<EProcess>(address_ + ActiveProcessLinksOffset, ActiveProcessLinksOffset);
+	return ListEntry(address_ + ActiveProcessLinksOffset, ActiveProcessLinksOffset);
 }
 
 HandleTable EProcess::ObjectTable()
@@ -53,9 +52,9 @@ UCHAR EProcess::PriorityClass()
 	return *(PUCHAR)(address_ + PriorityClassOffset);
 }
 
-KObjListEntry<EThread> EProcess::ThreadListHead()
+ListEntry EProcess::ThreadListHead()
 {
-	return KObjListEntry<EThread>(address_ + ThreadListHeadOffset, EThread::ThreadListEntryOffset);
+	return ListEntry(address_ + ThreadListHeadOffset, EThread::ThreadListEntryOffset);
 }
 
 VadTree EProcess::VadRoot()

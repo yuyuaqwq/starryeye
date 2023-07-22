@@ -120,9 +120,12 @@
     <ClCompile Include="Config\algorithm.cpp" />
     <ClCompile Include="Config\base.cpp" />
     <ClCompile Include="entry.cpp" />
+    <ClCompile Include="File\file_object.cpp" />
     <ClCompile Include="Handle\handle_table.cpp" />
     <ClCompile Include="Handle\object_header.cpp" />
     <ClCompile Include="Handle\object_type.cpp" />
+    <ClCompile Include="Memory\control_area.cpp" />
+    <ClCompile Include="Memory\subsection.cpp" />
     <ClCompile Include="Process\eprocess.cpp" />
     <ClCompile Include="Process\kprocess.cpp" />
     <ClCompile Include="Process\vadtree.cpp" />
@@ -133,9 +136,12 @@
     <ClInclude Include="Config\algorithm.h" />
     <ClInclude Include="Config\base.h" />
     <ClInclude Include="Config\yfstd.h" />
+    <ClInclude Include="File\file_object.h" />
     <ClInclude Include="Handle\handle_table.h" />
     <ClInclude Include="Handle\object_header.h" />
     <ClInclude Include="Handle\object_type.h" />
+    <ClInclude Include="Memory\control_area.h" />
+    <ClInclude Include="Memory\subsection.h" />
     <ClInclude Include="Process\eprocess.h" />
     <ClInclude Include="Process\kprocess.h" />
     <ClInclude Include="Process\vadtree.h" />

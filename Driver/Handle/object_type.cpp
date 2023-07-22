@@ -3,7 +3,7 @@
 namespace StarryEye {
 void ObjectType::Init()
 {
-	ObTypeIndexTable = (PULONG64)0xfffff8066f911e80;
+	ObTypeIndexTable = (PULONG64)0xfffff80260efce80;	//TODO ObTypeIndexTable
 	NameOffset = 0x10;
 	RtlInitUnicodeString(&ProcessTypeString, L"Process");
 	RtlInitUnicodeString(&ThreadTypeString, L"Thread");

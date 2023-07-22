@@ -20,12 +20,12 @@ public:
 
 	PCHAR ImageFileName();
 	KProcess Pcb();
-	KObjListEntry<EProcess> ActiveProcessLinks();
+	ListEntry ActiveProcessLinks();
 	HandleTable ObjectTable();
 	ULONG64 InheritedFromUniqueProcessId();
 	UINT8 OwnerProcessId();
 	UCHAR PriorityClass();
-	KObjListEntry<EThread> ThreadListHead();
+	ListEntry ThreadListHead();
 	VadTree VadRoot();
 
 private:

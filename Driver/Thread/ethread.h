@@ -15,7 +15,7 @@ public:
 	~EThread();
 
 	KThread Tcb();
-	KObjListEntry<EThread> ThreadListEntry();
+	ListEntry ThreadListEntry();
 
 private:
 	friend class EProcess;
