@@ -1,7 +1,9 @@
 #pragma once
 #include <ntifs.h>
 #include "Config/base.h"
-#include "Config/yfstd.h"
+#include <krnlib/functional.hpp>
+#include <krnlib/stl_container.hpp>
+#include <krnlib/result.hpp>
 
 namespace StarryEye {
 
@@ -11,13 +13,9 @@ namespace StarryEye {
 class ListEntry: public KObjectBase
 {
 public:
-	ListEntry(ULONG64 list_addr, ULONG64 offset): KObjectBase(list_addr)
-	{
-		list_ = (PLIST_ENTRY64)list_addr;
-		offset_ = offset;
-	}
-	ListEntry(std::nullptr_t): KObjectBase(nullptr) {}
-	~ListEntry() {}
+	ListEntry(ULONG64 list_addr, ULONG64 offset);
+	ListEntry(std::nullptr_t);
+	~ListEntry();
 
 	ListEntry Flink()
 	{
@@ -72,7 +70,7 @@ class RtlAvlTree: public KObjectBase
 {
 public:
 	using NodeT = RtlBalanceNode<DataT>;
-	using ForeachCallBackT = const yfstd::function<void(NodeT&)>&;
+	using ForeachCallBackT = const krnlib::function<bool(NodeT&)>&;
 
 	RtlAvlTree(ULONG64 address): KObjectBase(address) {}
 	RtlAvlTree(std::nullptr_t): KObjectBase(nullptr) {}
@@ -87,21 +85,22 @@ public:
 	}
 
 	// 获取所有节点(性能差, 不推荐使用!!!)
-	yfstd::list<NodeT> GetAllNodes() {
-		yfstd::list<NodeT> total;
+	krnlib::list<NodeT> GetAllNodes() {
+		krnlib::list<NodeT> total;
 		Foreach([&](NodeT& node) {
 			total.push_back(node);
+			return true;
 			});
 		return total;
 	}
 
 private:
-	void ForeachRecursion(NodeT& root, ForeachCallBackT callback)
+	bool ForeachRecursion(NodeT& root, ForeachCallBackT callback)
 	{
-		if (!root.IsVaild()) return;
-		ForeachRecursion(root.Left(), callback);
-		callback(root);
-		ForeachRecursion(root.Right(), callback);
+		if (!root.IsVaild()) return true;
+		if (!ForeachRecursion(root.Left(), callback)) return false;
+		if (!callback(root)) return false;
+		return ForeachRecursion(root.Right(), callback);
 	}
 };
 
@@ -122,4 +121,6 @@ public:
 		RtlAvlTree_RootOffset = 0;
 	}
 };
+
+krnlib::Result<ULONG64, krnlib::Empty> GetBitAreaValue(PVOID buffer, ULONG64 pos, UCHAR bits);
 }

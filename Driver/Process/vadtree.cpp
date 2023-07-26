@@ -1,4 +1,5 @@
 #include "vadtree.h"
+#include "Process/eprocess.h"
 
 namespace StarryEye {
 namespace details {
@@ -9,6 +10,7 @@ void MmVadShortData::Init()
 	StartingVpnHighOffset = 0x20;
 	EndingVpnHighOffset = 0x21;
 	ReferenceCountOffset = 0x24;
+	uOffset = 0x30;
 }
 
 MmVadShortData::MmVadShortData(ULONG64 address) : KObjectBase(address) {}
@@ -49,14 +51,22 @@ ULONG64 MmVadShortData::GetEndingAddress()
 	return res;
 }
 
+krnlib::Result<MmVad, krnlib::Empty> MmVadShortData::ConvToMmVad()
+{
+	if (u().PrivateMemory() == 0)
+		return krnlib::Ok<MmVad>(address_);
+	else
+		return krnlib::ErrEmp();
+}
+
 LONG64 MmVadShortData::ReferenceCount()
 {
 	return *(PLONG64)(address_ + ReferenceCountOffset);
 }
 
-ListEntry MmVadData::ViewLinks()
+MmVadFlags MmVadShortData::u()
 {
-	return ListEntry(address_ + ViewLinksOffset, VadsProcessOffset);
+	return MmVadFlags(address_ + uOffset);
 }
 
 void MmVadData::Init()
@@ -67,16 +77,6 @@ void MmVadData::Init()
 	VadsProcessOffset = 0x70;
 }
 
-SubSection MmVadData::Subsection()
-{
-	return SubSection(*(PULONG64)(address_ + SubsectionOffset));
-}
-
-ULONG64 MmVadData::VadsProcessAddress()
-{
-	return *(PULONG64)(address_ + VadsProcessOffset);
-}
-
 MmVadData::MmVadData(ULONG64 vadnode_addr) : KObjectBase(vadnode_addr) {}
 MmVadData::MmVadData(std::nullptr_t) : KObjectBase(nullptr) {}
 MmVadData::~MmVadData() {}
@@ -85,29 +85,45 @@ MmVadShortData MmVadData::Core()
 {
 	return MmVadShortData(address_ + CoreOffset);
 }
+
+ListEntry MmVadData::ViewLinks()
+{
+	return ListEntry(address_ + ViewLinksOffset, VadsProcessOffset);
+}
+
+SubSection MmVadData::Subsection()
+{
+	return SubSection(*(PULONG64)(address_ + SubsectionOffset));
+}
+
+EProcess MmVadData::VadsProcess()
+{
+	return EProcess(*(PULONG64)(address_ + VadsProcessOffset));
+}
 }
 
 void VadTree::Init()
 {
 	details::MmVadData::Init();
 	details::MmVadShortData::Init();
+	MmVadFlags::Init();
 }
 
 VadTree::VadTree(ULONG64 address) : Inherit(address) {}
 VadTree::VadTree(std::nullptr_t) : Inherit(nullptr) {}
 VadTree::~VadTree() {}
 
-MmVad VadTree::Search(ULONG64 address)
+MmVadShort VadTree::Search(ULONG64 address)
 {
 	return SearchRecursion(Root(), address);
 }
 
-MmVad VadTree::SearchRecursion(MmVad& root, ULONG64 address)
+MmVadShort VadTree::SearchRecursion(MmVadShort& root, ULONG64 address)
 {
 	if (!root.IsVaild()) return nullptr;
-	if (address < root->Core().GetStartingAddress())
+	if (address < root->GetStartingAddress())
 		return SearchRecursion(root.Left(), address);
-	else if (address > root->Core().GetEndingAddress())
+	else if (address > root->GetEndingAddress())
 		return SearchRecursion(root.Right(), address);
 	else
 		return root;

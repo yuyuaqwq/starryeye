@@ -1,17 +1,17 @@
-#include "Memory/control_area.h"
+#include "control_area.h"
 
 namespace StarryEye {
-	void ControlArea::Init()
-	{
-		FilePointerOffset = 0x40;
-	}
+void ControlArea::Init()
+{
+	FilePointerOffset = 0x40;
+}
 
-	ControlArea::ControlArea(std::nullptr_t) : KObjectBase(nullptr) {}
-	ControlArea::ControlArea(ULONG64 address) : KObjectBase(address) {}
-	ControlArea::~ControlArea() {}
+ControlArea::ControlArea(std::nullptr_t) : KObjectBase(nullptr) {}
+ControlArea::ControlArea(ULONG64 address) : KObjectBase(address) {}
+ControlArea::~ControlArea() {}
 
-	FileObject ControlArea::FilePointer()
-	{
-		return FileObject(*(PULONG64)(address_ + FilePointerOffset));
-	}
+FileObject ControlArea::FilePointer()
+{
+	return FileObject(*(PULONG64)(address_ + FilePointerOffset));
+}
 }

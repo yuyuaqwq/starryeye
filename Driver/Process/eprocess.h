@@ -2,12 +2,12 @@
 #include "Config/base.h"
 #include "Config/algorithm.h"
 #include "Process/kprocess.h"
-#include "Process/vadtree.h"
 #include "Thread/ethread.h"
 #include "Handle/handle_table.h"
 
 namespace StarryEye {
 class EThread;
+class VadTree;
 
 class EProcess: public KObjectBase
 {
@@ -27,6 +27,8 @@ public:
 	UCHAR PriorityClass();
 	ListEntry ThreadListHead();
 	VadTree VadRoot();
+
+	bool CompareFileName(PCCHAR file_name);
 
 private:
 	inline static ULONG64 ImageFileNameOffset;

@@ -2,7 +2,7 @@
 #include "Config/base.h"
 
 namespace StarryEye {
-	class FileObject: KObjectBase
+	class FileObject: public KObjectBase
 	{
 	public:
 		FileObject(ULONG64 address);
@@ -13,5 +13,6 @@ namespace StarryEye {
 
 	private:
 		PFILE_OBJECT file_object_;
+		UCHAR property_;
 	};
 }

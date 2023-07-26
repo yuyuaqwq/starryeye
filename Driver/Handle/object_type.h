@@ -5,8 +5,6 @@ namespace StarryEye {
 	class ObjectType: public KObjectBase
 	{
 	public:
-		inline static UNICODE_STRING ProcessTypeString;
-		inline static UNICODE_STRING ThreadTypeString;
 		inline static PULONG64 ObTypeIndexTable;
 
 		static void Init();
@@ -17,8 +15,7 @@ namespace StarryEye {
 
 		PUNICODE_STRING Name();
 
-		bool IsProcess();
-		bool IsThread();
+		bool CompareTypeName(PCWSTR name);
 
 	private:
 		inline static ULONG64 NameOffset;

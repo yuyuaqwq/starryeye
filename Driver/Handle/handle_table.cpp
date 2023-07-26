@@ -6,33 +6,37 @@ ULONG64 HandleTable::DecryptHandleAddress(ULONG64 addr)
 	return ((LONG64)addr >> 0x10) & ~0xF;
 }
 
-void HandleTable::ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+bool HandleTable::ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
 {
 	ObjectHeader temp = nullptr;
 	for (SHORT i = 0; i < 512; i++)
 	{
 		temp = GetHandleObjectInLv1TableCode(table, i);
-		if (temp.IsVaild())
-			callback(temp);
+		if (temp.IsVaild()) {
+			if (!callback(temp)) return false;
+		}
 	}
+	return true;
 }
 
-void HandleTable::ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+bool HandleTable::ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
 {
-	for (size_t i = 0; i < 512; i++)
-	{
-		if (MmIsAddressValid(table + i))
-			HandleTable::ForeachAllHandleObjectsInLv1TableCode((PULONG64)table[i], callback);
+	for (size_t i = 0; i < 512; i++) {
+		if (MmIsAddressValid(table + i)) {
+			if (!HandleTable::ForeachAllHandleObjectsInLv1TableCode((PULONG64)table[i], callback)) return false;
+		}
 	}
+	return true;
 }
 
-void HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
+bool HandleTable::ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback)
 {
-	for (size_t i = 0; i < 512; i++)
-	{
-		if (MmIsAddressValid(table + i))
-			HandleTable::ForeachAllHandleObjectsInLv2TableCode((PULONG64)table[i], callback);
+	for (size_t i = 0; i < 512; i++) {
+		if (MmIsAddressValid(table + i)) {
+			if (!HandleTable::ForeachAllHandleObjectsInLv2TableCode((PULONG64)table[i], callback)) return false;
+		}
 	}
+	return true;
 }
 
 void HandleTable::Init()
@@ -104,11 +108,12 @@ bool HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callb
 	}
 }
 
-yfstd::list<ObjectHeader> HandleTable::GetAllHandleObjects()
+krnlib::list<ObjectHeader> HandleTable::GetAllHandleObjects()
 {
-	yfstd::list<ObjectHeader> total;
+	krnlib::list<ObjectHeader> total;
 	AutoForeachAllHandleObjects([&](ObjectHeader& obj) {
 		total.push_back(obj);
+		return true;
 		});
 	return total;
 }

@@ -5,8 +5,6 @@ void ObjectType::Init()
 {
 	ObTypeIndexTable = (PULONG64)0xfffff80260efce80;	//TODO ObTypeIndexTable
 	NameOffset = 0x10;
-	RtlInitUnicodeString(&ProcessTypeString, L"Process");
-	RtlInitUnicodeString(&ThreadTypeString, L"Thread");
 }
 
 ObjectType::ObjectType(ULONG64 address) : KObjectBase(address) {}
@@ -18,13 +16,10 @@ PUNICODE_STRING ObjectType::Name()
 	return (PUNICODE_STRING)(NameOffset + address_);
 }
 
-bool ObjectType::IsProcess()
+bool ObjectType::CompareTypeName(PCWSTR name)
 {
-	return RtlCompareUnicodeString(Name(), &ProcessTypeString, TRUE) == 0;
-}
-
-bool ObjectType::IsThread()
-{
-	return RtlCompareUnicodeString(Name(), &ThreadTypeString, TRUE) == 0;
+	UNICODE_STRING str;
+	RtlInitUnicodeString(&str, name);
+	return RtlCompareUnicodeString(Name(), &str, TRUE) == 0;
 }
 }

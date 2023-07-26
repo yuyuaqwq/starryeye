@@ -97,6 +97,9 @@
     <ClCompile Include="File\file_object.cpp">
       <Filter>Source Files\File</Filter>
     </ClCompile>
+    <ClCompile Include="Process\vad_flags.cpp">
+      <Filter>Source Files\Process</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">
@@ -120,9 +123,6 @@
     <ClInclude Include="Process\kprocess.h">
       <Filter>Header Files\Process</Filter>
     </ClInclude>
-    <ClInclude Include="Config\yfstd.h">
-      <Filter>Header Files\Config</Filter>
-    </ClInclude>
     <ClInclude Include="Config\base.h">
       <Filter>Header Files\Config</Filter>
     </ClInclude>
@@ -140,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="File\file_object.h">
       <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\vad_flags.h">
+      <Filter>Header Files\Process</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

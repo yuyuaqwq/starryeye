@@ -1,14 +1,22 @@
 #include "Config/base.h"
 #include "Config/algorithm.h"
 #include "Memory/subsection.h"
+#include "Process/vad_flags.h"
+#include <krnlib/result.hpp>
 
 namespace StarryEye {
 #define SIZE_OF_PAGE 0x1000
 
 class EProcess;
+namespace details {
+	class MmVadData;
+	class MmVadShortData;
+}
+
+using MmVad = RtlBalanceNode<details::MmVadData>;
+using MmVadShort = RtlBalanceNode<details::MmVadShortData>;
 
 namespace details {
-class MmVadData;
 
 class MmVadShortData : public KObjectBase
 {
@@ -23,9 +31,13 @@ public:
 	ULONG32 EndingVpn();
 	UCHAR StartingVpnHigh();
 	UCHAR EndingVpnHigh();
+	LONG64 ReferenceCount();
+	MmVadFlags u();
+
 	ULONG64 GetStartingAddress();
 	ULONG64 GetEndingAddress();
-	LONG64 ReferenceCount();
+
+	krnlib::Result<MmVad, krnlib::Empty> ConvToMmVad();
 
 private:
 	friend class MmVadData;
@@ -35,6 +47,7 @@ private:
 	static inline ULONG64 StartingVpnHighOffset;
 	static inline ULONG64 EndingVpnHighOffset;
 	static inline ULONG64 ReferenceCountOffset;
+	static inline ULONG64 uOffset;
 };
 
 class MmVadData : public KObjectBase
@@ -49,7 +62,7 @@ public:
 	MmVadShortData Core();
 	SubSection Subsection();
 	ListEntry ViewLinks();
-	ULONG64 VadsProcessAddress();
+	EProcess VadsProcess();
 
 private:
 	friend class EProcess;
@@ -61,25 +74,22 @@ private:
 };
 }
 
-using MmVad = RtlBalanceNode<details::MmVadData>;
-using MmVadShort = RtlBalanceNode<details::MmVadShortData>;
-
-class VadTree: public RtlAvlTree<details::MmVadData>
+class VadTree: public RtlAvlTree<details::MmVadShortData>
 {
 public:
 	static void Init();
-	using Inherit = RtlAvlTree<details::MmVadData>;
+	using Inherit = RtlAvlTree<details::MmVadShortData>;
 
 	VadTree(ULONG64 address);
 	VadTree(std::nullptr_t);
 	
 	//TODO ´ý²âÊÔ
-	MmVad Search(ULONG64 address);
+	MmVadShort Search(ULONG64 address);
 
 	~VadTree();
 
 private:
-	MmVad SearchRecursion(MmVad& root, ULONG64 address);
+	MmVadShort SearchRecursion(MmVadShort& root, ULONG64 address);
 };
 
 }

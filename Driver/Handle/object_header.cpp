@@ -1,11 +1,12 @@
 #include "object_header.h"
+#include "Process/eprocess.h"
 
 namespace StarryEye {
 void ObjectHeader::Init()
 {
 	TypeIndexOffset = 0x18;
 	BodyOffset = 0x30;
-	ObHeaderCookie = 0xd3;
+	ObHeaderCookie = (PUCHAR)0xfffff80260efc72c;	//TODO ObHeaderCookie
 }
 
 ULONG64 ObjectHeader::GetBodyOffset()
@@ -15,8 +16,8 @@ ULONG64 ObjectHeader::GetBodyOffset()
 
 UCHAR ObjectHeader::DecryptTypeIndex(ULONG64 obj_addr, UCHAR type_index)
 {
-	UCHAR x = (UCHAR)(obj_addr >> 8);
-	return 0xd3 ^ type_index ^ x;
+	auto x = (UCHAR)(obj_addr >> 8);
+	return type_index ^ x ^ (*ObHeaderCookie);
 }
 
 ObjectHeader::ObjectHeader(std::nullptr_t) : KObjectBase(nullptr) {}
@@ -38,8 +39,15 @@ ObjectType ObjectHeader::Type()
 	return ObjectType(ObjectType::ObTypeIndexTable[TypeIndexDecrypted()]);	// 根据TypeIndex从ObTypeIndexTable中获取_OBJECT_TYPE
 }
 
-PVOID ObjectHeader::Body()
+bool ObjectHeader::IsProcess()
 {
-	return (PVOID)(address_ + BodyOffset);
+	return Type().CompareTypeName(L"Process");
+}
+krnlib::Result<EProcess, krnlib::Empty> ObjectHeader::ConvToEProc()
+{
+	if (IsProcess())
+		return krnlib::Ok<EProcess>(Body<EProcess>());
+	else
+		return krnlib::ErrEmp();
 }
 }

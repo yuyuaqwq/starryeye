@@ -2,7 +2,7 @@
 #include "Memory/control_area.h"
 
 namespace StarryEye {
-	class SubSection: KObjectBase
+	class SubSection: public KObjectBase
 	{
 	public:
 		static void Init();

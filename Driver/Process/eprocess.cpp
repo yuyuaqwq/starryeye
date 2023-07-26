@@ -1,4 +1,5 @@
 #include "eprocess.h"
+#include "Process/vadtree.h"
 
 namespace StarryEye {
 void EProcess::Init()
@@ -60,5 +61,9 @@ ListEntry EProcess::ThreadListHead()
 VadTree EProcess::VadRoot()
 {
 	return VadTree(address_ + VadRootOffset);
+}
+bool EProcess::CompareFileName(PCCHAR file_name)
+{
+	return strcmp(file_name, ImageFileName()) == 0;
 }
 }

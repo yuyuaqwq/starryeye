@@ -1,12 +1,15 @@
 #pragma once
 #include "Config/base.h"
 #include "Handle/object_type.h"
+#include <krnlib/result.hpp>
 
 namespace StarryEye {
+class EProcess;
+
 class ObjectHeader: public KObjectBase
 {
 public:
-	inline static UCHAR ObHeaderCookie;
+	inline static PUCHAR ObHeaderCookie;
 
 	static void Init();
 	static ULONG64 GetBodyOffset();
@@ -24,15 +27,16 @@ public:
 	// 获取解密后的TypeIndex
 	UCHAR TypeIndexDecrypted();
 
-	// 获取Type对象(注意: 使用前一定要先调用ObjectType::Init()!)
+	// 获取Type对象
 	ObjectType Type();
 
-	// 获取Body
-	PVOID Body();
+	bool IsProcess();
+
+	krnlib::Result<EProcess, krnlib::Empty> ConvToEProc();
 
 	// 获取Body并转换为对象
 	template<class T>
-	T BodyObject();
+	T Body();
 
 private:
 	inline static ULONG64 TypeIndexOffset;
@@ -40,9 +44,9 @@ private:
 };
 
 template<class T>
-inline T ObjectHeader::BodyObject()
+inline T ObjectHeader::Body()
 {
-	return T((ULONG64)Body());
+	return T(address_ + BodyOffset);
 }
 
 }

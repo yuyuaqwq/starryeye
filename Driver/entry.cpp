@@ -1,5 +1,5 @@
 #include <ntifs.h>
-#include "Config/yfstd.h"
+#include <stdexcept>
 #include "Config/algorithm.h"
 
 #include "Handle/handle_table.h"
@@ -8,12 +8,13 @@
 
 #include "Process/eprocess.h"
 #include "Process/kprocess.h"
+#include "Process/vadtree.h"
 
 #include "Thread/ethread.h"
 #include "Thread/kthread.h"
 
-#define _SCN StarryEye::yfstd::
-#include <yuJson/json.hpp>
+//#define _SCN krnlib::
+//#include <yuJson/json.hpp>
 using namespace StarryEye;
 
 void DriverUnload(PDRIVER_OBJECT pDriverObject)
@@ -50,34 +51,25 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	InitOffsets();
 
 	HandleTable table{*(PULONG64)HandleTable::PspCidTable};
-
+	
 	DbgBreakPoint();
-	for (size_t i = 0; i < table.MaxTableSize(); i++)
-	{
-		auto item = table.GetHandleObject(i);
-		if (item.IsVaild())
-		{
-			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "TypeName: %wZ\n", item.Type().Name()));
-		}
-		if (item.IsVaild() && item.Type().IsProcess())
-		{
-			auto eproc = item.BodyObject<EProcess>();
-
-			eproc.VadRoot().Foreach([](MmVad node) {
-				auto start = node->Core().StartingVpn();
-				auto end = node->Core().EndingVpn();
-				auto file_name = node->Subsection().ControlArea().FilePointer().FileName();
-				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Start: %x - End: %x - Name: %wZ\n", start, end, file_name));
+	table.AutoForeachAllHandleObjects([&](ObjectHeader obj) {
+		if (auto res = obj.ConvToEProc(); res.Ok()) {
+			auto eproc = res.OkVal();
+			auto ddd = eproc.ImageFileName();
+			if (eproc.CompareFileName("Everything.exe")) {
+				eproc.VadRoot().Foreach([&](MmVadShort& mmvad_short) {
+					if (auto res = mmvad_short->ConvToMmVad(); res.Ok()) {
+						auto mmvad = res.OkVal();
+						if (auto file_obj = mmvad->Subsection().ControlArea().FilePointer(); file_obj.IsVaild())
+							AutoPrint("File Name: %wZ\n", file_obj.FileName());
+					}
+					return true;
 				});
-			break;
+				return false;
+			}
 		}
-	}
-	//table.AutoForeachAllHandleObjects([&](ObjectHeader obj) {
-	//	if (obj.Type().IsProcess())
-	//	{
-	//		auto eproc = obj.BodyObject<EProcess>();
-	//		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Process Name: %s, Address: 0x%llx\n", eproc.ImageFileName(), eproc.Address()));
-	//	}
-	//});
+		return true;
+	});
 	return STATUS_SUCCESS;
 }
