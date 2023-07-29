@@ -12,8 +12,8 @@ namespace StarryEye {
 
 	UCHAR MmVadFlags::PrivateMemory()
 	{
-		if (auto res = GetBitAreaValue((PVOID)address_, PrivateMemoryBitPos, 1); res.Ok())
-			return res.OkVal();
+		if (auto res = GetBitAreaValue((PVOID)address_, PrivateMemoryBitPos, 1); res.IsSome())
+			return res.SomeVal();
 		return 0;
 	}
 }

@@ -54,13 +54,13 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	
 	DbgBreakPoint();
 	table.AutoForeachAllHandleObjects([&](ObjectHeader obj) {
-		if (auto res = obj.ConvToEProc(); res.Ok()) {
-			auto eproc = res.OkVal();
+		if (auto res = obj.ConvToEProc(); res.IsSome()) {
+			auto eproc = res.SomeVal();
 			auto ddd = eproc.ImageFileName();
 			if (eproc.CompareFileName("Everything.exe")) {
 				eproc.VadRoot().Foreach([&](MmVadShort& mmvad_short) {
-					if (auto res = mmvad_short->ConvToMmVad(); res.Ok()) {
-						auto mmvad = res.OkVal();
+					if (auto res = mmvad_short->ConvToMmVad(); res.IsSome()) {
+						auto mmvad = res.SomeVal();
 						if (auto file_obj = mmvad->Subsection().ControlArea().FilePointer(); file_obj.IsVaild())
 							AutoPrint("File Name: %wZ\n", file_obj.FileName());
 					}

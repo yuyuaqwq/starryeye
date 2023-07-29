@@ -2,7 +2,7 @@
 #include "Config/algorithm.h"
 #include "Memory/subsection.h"
 #include "Process/vad_flags.h"
-#include <krnlib/result.hpp>
+#include <krnlib/option.hpp>
 
 namespace StarryEye {
 #define SIZE_OF_PAGE 0x1000
@@ -37,7 +37,7 @@ public:
 	ULONG64 GetStartingAddress();
 	ULONG64 GetEndingAddress();
 
-	krnlib::Result<MmVad, krnlib::Empty> ConvToMmVad();
+	krnlib::Option<MmVad> ConvToMmVad();
 
 private:
 	friend class MmVadData;

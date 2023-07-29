@@ -51,12 +51,12 @@ ULONG64 MmVadShortData::GetEndingAddress()
 	return res;
 }
 
-krnlib::Result<MmVad, krnlib::Empty> MmVadShortData::ConvToMmVad()
+krnlib::Option<MmVad> MmVadShortData::ConvToMmVad()
 {
 	if (u().PrivateMemory() == 0)
-		return krnlib::Ok<MmVad>(address_);
+		return krnlib::Option<MmVad>(address_);
 	else
-		return krnlib::ErrEmp();
+		return krnlib::None();
 }
 
 LONG64 MmVadShortData::ReferenceCount()

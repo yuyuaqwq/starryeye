@@ -43,11 +43,11 @@ bool ObjectHeader::IsProcess()
 {
 	return Type().CompareTypeName(L"Process");
 }
-krnlib::Result<EProcess, krnlib::Empty> ObjectHeader::ConvToEProc()
+krnlib::Option<EProcess> ObjectHeader::ConvToEProc()
 {
 	if (IsProcess())
-		return krnlib::Ok<EProcess>(Body<EProcess>());
+		return krnlib::Some<EProcess>(Body<EProcess>());
 	else
-		return krnlib::ErrEmp();
+		return krnlib::None();
 }
 }

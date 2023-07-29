@@ -1,7 +1,7 @@
 #pragma once
 #include "Config/base.h"
 #include "Handle/object_type.h"
-#include <krnlib/result.hpp>
+#include <krnlib/option.hpp>
 
 namespace StarryEye {
 class EProcess;
@@ -32,7 +32,7 @@ public:
 
 	bool IsProcess();
 
-	krnlib::Result<EProcess, krnlib::Empty> ConvToEProc();
+	krnlib::Option<EProcess> ConvToEProc();
 
 	// 获取Body并转换为对象
 	template<class T>

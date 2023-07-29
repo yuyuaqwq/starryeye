@@ -3,7 +3,7 @@
 #include "Config/base.h"
 #include <krnlib/functional.hpp>
 #include <krnlib/stl_container.hpp>
-#include <krnlib/result.hpp>
+#include <krnlib/option.hpp>
 
 namespace StarryEye {
 
@@ -122,5 +122,5 @@ public:
 	}
 };
 
-krnlib::Result<ULONG64, krnlib::Empty> GetBitAreaValue(PVOID buffer, ULONG64 pos, UCHAR bits);
+krnlib::Option<ULONG64> GetBitAreaValue(PVOID buffer, ULONG64 pos, UCHAR bits);
 }

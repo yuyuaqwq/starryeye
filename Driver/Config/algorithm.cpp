@@ -12,10 +12,10 @@ ListEntry::ListEntry(std::nullptr_t) :
 ListEntry::~ListEntry() {}
 
 
-krnlib::Result<ULONG64, krnlib::Empty> StarryEye::GetBitAreaValue(PVOID buffer, ULONG64 pos, UCHAR bits)
+krnlib::Option<ULONG64> StarryEye::GetBitAreaValue(PVOID buffer, ULONG64 pos, UCHAR bits)
 {
     if (bits > 64) {
-        return krnlib::ErrEmp();
+        return krnlib::None();
     }
 
     ULONG64 value = 0;
@@ -29,6 +29,6 @@ krnlib::Result<ULONG64, krnlib::Empty> StarryEye::GetBitAreaValue(PVOID buffer, 
         value |= (bitValue << i);
     }
 
-    return krnlib::Ok<ULONG64>(value);
+    return krnlib::Some<ULONG64>(value);
 }
 }
