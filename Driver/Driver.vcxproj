@@ -124,6 +124,9 @@
     <ClCompile Include="Handle\handle_table.cpp" />
     <ClCompile Include="Handle\object_header.cpp" />
     <ClCompile Include="Handle\object_type.cpp" />
+    <ClCompile Include="io\control.cpp" />
+    <ClCompile Include="io\device.cpp" />
+    <ClCompile Include="io\symbolic_link.cpp" />
     <ClCompile Include="Memory\control_area.cpp" />
     <ClCompile Include="Memory\subsection.cpp" />
     <ClCompile Include="Process\eprocess.cpp" />
@@ -140,6 +143,9 @@
     <ClInclude Include="Handle\handle_table.h" />
     <ClInclude Include="Handle\object_header.h" />
     <ClInclude Include="Handle\object_type.h" />
+    <ClInclude Include="io\control.h" />
+    <ClInclude Include="io\device.h" />
+    <ClInclude Include="io\symbolic_link.h" />
     <ClInclude Include="Memory\control_area.h" />
     <ClInclude Include="Memory\subsection.h" />
     <ClInclude Include="Process\eprocess.h" />

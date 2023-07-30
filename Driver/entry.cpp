@@ -13,9 +13,15 @@
 #include "Thread/ethread.h"
 #include "Thread/kthread.h"
 
+#include <io/control.h>
+
 //#define _SCN krnlib::
 //#include <yuJson/json.hpp>
 using namespace StarryEye;
+
+io::Device* g_device;
+io::Control* g_control;
+
 
 void DriverUnload(PDRIVER_OBJECT pDriverObject)
 {
@@ -46,9 +52,21 @@ void InitOffsets()
 extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
 	UNREFERENCED_PARAMETER(pRegistryPath);
 
+	g_device = new io::Device;
+	g_device->Create(pDriverObject, L"\\Device\\StarryEye");
+
+	g_control = new io::Control;
+	g_control->Create(g_device, L"\\??\\StarrtEye");
+
+	g_control->Register(1, [](void* buf, size_t len)->size_t {
+			
+		}
+	);
+
 	pDriverObject->DriverUnload = DriverUnload;
 
 	InitOffsets();
+
 
 	HandleTable table{*(PULONG64)HandleTable::PspCidTable};
 	

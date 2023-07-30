@@ -53,6 +53,12 @@
     <Filter Include="Source Files\File">
       <UniqueIdentifier>{33342ec1-34b0-4e08-b49a-ec31ce844b84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\io">
+      <UniqueIdentifier>{99103e2e-ebc4-42fb-aa47-213c87b445af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\io">
+      <UniqueIdentifier>{fb692ca2-3815-4ef3-910d-af2ec3385d64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Handle\handle_table.cpp">
@@ -100,6 +106,15 @@
     <ClCompile Include="Process\vad_flags.cpp">
       <Filter>Source Files\Process</Filter>
     </ClCompile>
+    <ClCompile Include="io\device.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\symbolic_link.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\control.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">
@@ -143,6 +158,15 @@
     </ClInclude>
     <ClInclude Include="Process\vad_flags.h">
       <Filter>Header Files\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="io\device.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\symbolic_link.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\control.h">
+      <Filter>Header Files\io</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
