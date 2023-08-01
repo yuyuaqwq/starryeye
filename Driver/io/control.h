@@ -2,6 +2,7 @@
 #define STARRY_EYE_IO_CONTROL_H_
 
 #include <krnlib/stl_container.hpp>
+#include <krnlib/functional.hpp>
 
 #include <basic.h>
 
@@ -13,7 +14,8 @@ namespace io {
 
 class Control {
 public:
-  typedef size_t(*Callback)(void* buf, size_t len);
+  //typedef size_t(*Callback)(void* buf, size_t len);
+  using Callback = krnlib::function<size_t(void* buf, size_t len)>;
 
 private:
   static NTSTATUS DispatchIoControl(DEVICE_OBJECT* device_object, PIRP irp) {
@@ -99,13 +101,14 @@ public:
     device_ = device;
     control_map_->insert(std::make_pair(device_->Get(), this));
     device_->Get()->DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = DispatchIoControl;
+    return true;
   }
 
   void Close() {
     control_map_->erase(device_->Get());
   }
 
-  void Register(uint32_t callback_code, Callback callback) {
+  void Register(uint32_t callback_code, const Callback& callback) {
     callback_code_map_.insert(std::make_pair(callback_code, callback));
   }
 
@@ -115,8 +118,8 @@ private:
   _SCN map<uint32_t, Callback> callback_code_map_;
 
 private:
-  static _SCN map<DEVICE_OBJECT*, Control*>* control_map_;
-  static uint32_t control_map_reference_count_;
+  static inline _SCN map<DEVICE_OBJECT*, Control*>* control_map_;
+  static inline uint32_t control_map_reference_count_;
 
 private:
   constexpr static DWORD kControlBaseCode = CTL_CODE(FILE_DEVICE_UNKNOWN, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS);

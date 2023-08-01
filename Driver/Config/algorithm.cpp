@@ -29,6 +29,6 @@ krnlib::Option<ULONG64> StarryEye::GetBitAreaValue(PVOID buffer, ULONG64 pos, UC
         value |= (bitValue << i);
     }
 
-    return krnlib::Some<ULONG64>(value);
+    return krnlib::Some(value);
 }
 }

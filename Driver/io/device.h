@@ -2,6 +2,7 @@
 #define STARRY_EYE_IO_DEVICE_H_
 
 #include <krnlib/stl_container.hpp>
+#include <krnlib/string.hpp>
 
 #include <basic.h>
 

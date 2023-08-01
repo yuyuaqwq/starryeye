@@ -46,7 +46,7 @@ bool ObjectHeader::IsProcess()
 krnlib::Option<EProcess> ObjectHeader::ConvToEProc()
 {
 	if (IsProcess())
-		return krnlib::Some<EProcess>(Body<EProcess>());
+		return krnlib::Some(Body<EProcess>());
 	else
 		return krnlib::None();
 }
