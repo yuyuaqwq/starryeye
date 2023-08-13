@@ -1,5 +1,5 @@
 #include "eprocess.h"
-#include "Process/vadtree.h"
+#include "process/vadtree.h"
 
 namespace StarryEye {
 void EProcess::Init()
@@ -14,7 +14,7 @@ void EProcess::Init()
 	VadRootOffset = 0x7d8;
 }
 
-EProcess::EProcess(ULONG64 address) : KObjectBase(address) {}
+EProcess::EProcess(uint64_t address) : KObjectBase(address) {}
 EProcess::EProcess(std::nullptr_t) : KObjectBase(nullptr) {}
 EProcess::~EProcess() {}
 
@@ -38,9 +38,9 @@ HandleTable EProcess::ObjectTable()
 	return HandleTable(address_ + ObjectTableOffset);
 }
 
-ULONG64 EProcess::InheritedFromUniqueProcessId()
+uint64_t EProcess::InheritedFromUniqueProcessId()
 {
-	return *(PULONG64)(address_ + InheritedFromUniqueProcessIdOffset);
+	return *(uint64_t*)(address_ + InheritedFromUniqueProcessIdOffset);
 }
 
 UINT8 EProcess::OwnerProcessId()
@@ -48,7 +48,7 @@ UINT8 EProcess::OwnerProcessId()
 	return *(PUINT8)(address_ + OwnerProcessIdOffset);
 }
 
-UCHAR EProcess::PriorityClass()
+uint8_t EProcess::PriorityClass()
 {
 	return *(PUCHAR)(address_ + PriorityClassOffset);
 }

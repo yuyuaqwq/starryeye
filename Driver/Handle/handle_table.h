@@ -1,8 +1,8 @@
 #pragma once
 #include <krnlib/functional.hpp>
 #include <krnlib/stl_container.hpp>
-#include "Config/base.h"
-#include "Handle/object_header.h"
+#include "config/base.h"
+#include "handle/object_header.h"
 
 namespace StarryEye {
 
@@ -15,24 +15,24 @@ public:
 	static void Init();
 
 	HandleTable(std::nullptr_t);
-	HandleTable(ULONG64 address);
+	HandleTable(uint64_t address);
 	~HandleTable();
 
 	// 解密HandleTable中Handle项的路径
-	static ULONG64 DecryptHandleAddress(ULONG64 addr);
+	static uint64_t DecryptHandleAddress(uint64_t addr);
 
 
 	// 获取TableCode
-	ULONG64 TableCode();
+	uint64_t TableCode();
 	// 获取TableCode等级
-	UCHAR TableLevel();
+	uint8_t TableLevel();
 	// 获取TableCode真正地址(最后2位清零)
-	ULONG64 TableAddress();
+	uint64_t TableAddress();
 	// TableCode最大大小
-	ULONG64 MaxTableSize();
+	uint64_t MaxTableSize();
 
 	// 根据索引获取Handle对象
-	ObjectHeader GetHandleObject(ULONG64 index);
+	ObjectHeader GetHandleObject(uint64_t index);
 
 	// 自动根据TableCode等级遍历所有Handle
 	bool AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback);
@@ -42,20 +42,20 @@ public:
 
 private:
 	// 获取一级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv1TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback);
+	static bool ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
 	// 获取二级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv2TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback);
+	static bool ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
 	// 获取三级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv3TableCode(PULONG64 table, ForeachHandleObjectsCallBack callback);
+	static bool ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
 
 	// 获取一级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv1TableCode(PULONG64 table, ULONG64 index);
+	static ObjectHeader GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index);
 	// 获取二级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv2TableCode(PULONG64 table, ULONG64 index_lv2, ULONG64 index_lv1);
+	static ObjectHeader GetHandleObjectInLv2TableCode(uint64_t* table, uint64_t index_lv2, uint64_t index_lv1);
 	// 获取三级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv3TableCode(PULONG64 table, ULONG64 index_lv3, ULONG64 index_lv2, ULONG64 index_lv1);
+	static ObjectHeader GetHandleObjectInLv3TableCode(uint64_t* table, uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1);
 
-	inline static ULONG64 TableCodeOffset;
+	inline static uint64_t TableCodeOffset;
 };
 
 }

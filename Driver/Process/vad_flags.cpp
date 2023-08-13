@@ -7,10 +7,10 @@ namespace StarryEye {
 	}
 
 	MmVadFlags::MmVadFlags(std::nullptr_t) : KObjectBase(nullptr) {}
-	MmVadFlags::MmVadFlags(ULONG64 address) : KObjectBase(address) {}
+	MmVadFlags::MmVadFlags(uint64_t address) : KObjectBase(address) {}
 	MmVadFlags::~MmVadFlags() {}
 
-	UCHAR MmVadFlags::PrivateMemory()
+	uint8_t MmVadFlags::PrivateMemory()
 	{
 		if (auto res = GetBitAreaValue((PVOID)address_, PrivateMemoryBitPos, 1); res.IsSome())
 			return res.SomeVal();

@@ -1,20 +1,21 @@
 #pragma once
 #include <ntifs.h>
+#include <stdint.h>
 
 namespace StarryEye {
 // 所有Kernel Object的基类, 主要是为了提供一个IsVaild函数和nullptr构造函数
 class KObjectBase
 {
 public:
-	KObjectBase(ULONG64 address);
+	KObjectBase(uint64_t address);
 	KObjectBase(std::nullptr_t);
 	~KObjectBase();
 
 	bool IsVaild();
 
-	ULONG64 Address();
+	uint64_t Address();
 
 protected:
-	ULONG64 address_;
+	uint64_t address_;
 };
 }

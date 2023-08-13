@@ -1,8 +1,8 @@
-#include "Config/base.h"
-#include "Config/algorithm.h"
-#include "Memory/subsection.h"
-#include "Process/vad_flags.h"
-#include <krnlib/option.hpp>
+#include "config/base.h"
+#include "config/algorithm.h"
+#include "memory/subsection.h"
+#include "process/vad_flags.h"
+#include <fustd/generic/option.hpp>
 
 namespace StarryEye {
 #define SIZE_OF_PAGE 0x1000
@@ -23,31 +23,31 @@ class MmVadShortData : public KObjectBase
 public:
 	static void Init();
 
-	MmVadShortData(ULONG64 address);
+	MmVadShortData(uint64_t address);
 	MmVadShortData(std::nullptr_t);
 	~MmVadShortData();
 
 	ULONG32 StartingVpn();
 	ULONG32 EndingVpn();
-	UCHAR StartingVpnHigh();
-	UCHAR EndingVpnHigh();
+	uint8_t StartingVpnHigh();
+	uint8_t EndingVpnHigh();
 	LONG64 ReferenceCount();
 	MmVadFlags u();
 
-	ULONG64 GetStartingAddress();
-	ULONG64 GetEndingAddress();
+	uint64_t GetStartingAddress();
+	uint64_t GetEndingAddress();
 
-	krnlib::Option<MmVad> ConvToMmVad();
+	fustd::Option<MmVad> ConvToMmVad();
 
 private:
 	friend class MmVadData;
 
-	static inline ULONG64 StartingVpnOffset;
-	static inline ULONG64 EndingVpnOffset;
-	static inline ULONG64 StartingVpnHighOffset;
-	static inline ULONG64 EndingVpnHighOffset;
-	static inline ULONG64 ReferenceCountOffset;
-	static inline ULONG64 uOffset;
+	static inline uint64_t StartingVpnOffset;
+	static inline uint64_t EndingVpnOffset;
+	static inline uint64_t StartingVpnHighOffset;
+	static inline uint64_t EndingVpnHighOffset;
+	static inline uint64_t ReferenceCountOffset;
+	static inline uint64_t uOffset;
 };
 
 class MmVadData : public KObjectBase
@@ -55,7 +55,7 @@ class MmVadData : public KObjectBase
 public:
 	static void Init();
 
-	MmVadData(ULONG64 vadnode_addr);
+	MmVadData(uint64_t vadnode_addr);
 	MmVadData(std::nullptr_t);
 	~MmVadData();
 
@@ -67,10 +67,10 @@ public:
 private:
 	friend class EProcess;
 
-	static inline ULONG64 CoreOffset;
-	static inline ULONG64 SubsectionOffset;
-	static inline ULONG64 ViewLinksOffset;
-	static inline ULONG64 VadsProcessOffset;
+	static inline uint64_t CoreOffset;
+	static inline uint64_t SubsectionOffset;
+	static inline uint64_t ViewLinksOffset;
+	static inline uint64_t VadsProcessOffset;
 };
 }
 
@@ -80,16 +80,16 @@ public:
 	static void Init();
 	using Inherit = RtlAvlTree<details::MmVadShortData>;
 
-	VadTree(ULONG64 address);
+	VadTree(uint64_t address);
 	VadTree(std::nullptr_t);
 	
 	//TODO ´ý²âÊÔ
-	MmVadShort Search(ULONG64 address);
+	MmVadShort Search(uint64_t address);
 
 	~VadTree();
 
 private:
-	MmVadShort SearchRecursion(MmVadShort& root, ULONG64 address);
+	MmVadShort SearchRecursion(MmVadShort& root, uint64_t address);
 };
 
 }

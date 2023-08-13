@@ -1,9 +1,9 @@
 #pragma once
-#include "Config/base.h"
-#include "Config/algorithm.h"
-#include "Process/kprocess.h"
-#include "Thread/ethread.h"
-#include "Handle/handle_table.h"
+#include "config/base.h"
+#include "config/algorithm.h"
+#include "process/kprocess.h"
+#include "thread/ethread.h"
+#include "handle/handle_table.h"
 
 namespace StarryEye {
 class EThread;
@@ -14,7 +14,7 @@ class EProcess: public KObjectBase
 public:
 	static void Init();
 
-	EProcess(ULONG64 address);
+	EProcess(uint64_t address);
 	EProcess(std::nullptr_t);
 	~EProcess();
 
@@ -22,22 +22,22 @@ public:
 	KProcess Pcb();
 	ListEntry ActiveProcessLinks();
 	HandleTable ObjectTable();
-	ULONG64 InheritedFromUniqueProcessId();
+	uint64_t InheritedFromUniqueProcessId();
 	UINT8 OwnerProcessId();
-	UCHAR PriorityClass();
+	uint8_t PriorityClass();
 	ListEntry ThreadListHead();
 	VadTree VadRoot();
 
 	bool CompareFileName(PCCHAR file_name);
 
 private:
-	inline static ULONG64 ImageFileNameOffset;
-	inline static ULONG64 ObjectTableOffset;
-	inline static ULONG64 ThreadListHeadOffset;
-	inline static ULONG64 OwnerProcessIdOffset;
-	inline static ULONG64 PriorityClassOffset;
-	inline static ULONG64 ActiveProcessLinksOffset;
-	inline static ULONG64 InheritedFromUniqueProcessIdOffset;
-	inline static ULONG64 VadRootOffset;
+	inline static uint64_t ImageFileNameOffset;
+	inline static uint64_t ObjectTableOffset;
+	inline static uint64_t ThreadListHeadOffset;
+	inline static uint64_t OwnerProcessIdOffset;
+	inline static uint64_t PriorityClassOffset;
+	inline static uint64_t ActiveProcessLinksOffset;
+	inline static uint64_t InheritedFromUniqueProcessIdOffset;
+	inline static uint64_t VadRootOffset;
 };
 }

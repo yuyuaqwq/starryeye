@@ -7,11 +7,11 @@ void ControlArea::Init()
 }
 
 ControlArea::ControlArea(std::nullptr_t) : KObjectBase(nullptr) {}
-ControlArea::ControlArea(ULONG64 address) : KObjectBase(address) {}
+ControlArea::ControlArea(uint64_t address) : KObjectBase(address) {}
 ControlArea::~ControlArea() {}
 
 FileObject ControlArea::FilePointer()
 {
-	return FileObject(*(PULONG64)(address_ + FilePointerOffset));
+	return FileObject(*(uint64_t*)(address_ + FilePointerOffset));
 }
 }

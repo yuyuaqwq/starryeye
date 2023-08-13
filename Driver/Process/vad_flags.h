@@ -1,6 +1,6 @@
 #pragma once
-#include "Config/base.h"
-#include "Config/algorithm.h"
+#include "config/base.h"
+#include "config/algorithm.h"
 
 namespace StarryEye {
 	class MmVadFlags: public KObjectBase
@@ -8,13 +8,13 @@ namespace StarryEye {
 	public:
 		static void Init();
 
-		MmVadFlags(ULONG64 address);
+		MmVadFlags(uint64_t address);
 		MmVadFlags(std::nullptr_t);
 		~MmVadFlags();
 
-		UCHAR PrivateMemory();
+		uint8_t PrivateMemory();
 
 	private:
-		static inline ULONG64 PrivateMemoryBitPos;
+		static inline uint64_t PrivateMemoryBitPos;
 	};
 }

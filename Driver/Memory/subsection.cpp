@@ -8,16 +8,16 @@ void SubSection::Init()
 }
 
 SubSection::SubSection(std::nullptr_t) : KObjectBase(nullptr) {}
-SubSection::SubSection(ULONG64 address) : KObjectBase(address) {}
+SubSection::SubSection(uint64_t address) : KObjectBase(address) {}
 SubSection::~SubSection() {}
 
 ControlArea SubSection::ControlArea()
 {
-	return StarryEye::ControlArea(*(PULONG64)(address_ + ControlAreaOffset));
+	return StarryEye::ControlArea(*(uint64_t*)(address_ + ControlAreaOffset));
 }
 
 SubSection SubSection::NextSubsection()
 {
-	return SubSection(*(PULONG64)(address_ + NextSubsectionOffset));
+	return SubSection(*(uint64_t*)(address_ + NextSubsectionOffset));
 }
 }

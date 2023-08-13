@@ -1,8 +1,8 @@
 #pragma once
-#include "Config/base.h"
-#include "Config/algorithm.h"
-#include "Thread/kthread.h"
-#include "Process/eprocess.h"
+#include "config/base.h"
+#include "config/algorithm.h"
+#include "thread/kthread.h"
+#include "process/eprocess.h"
 
 namespace StarryEye {
 class EThread: public KObjectBase
@@ -10,7 +10,7 @@ class EThread: public KObjectBase
 public:
 	static void Init();
 
-	EThread(ULONG64 address);
+	EThread(uint64_t address);
 	EThread(std::nullptr_t);
 	~EThread();
 
@@ -20,6 +20,6 @@ public:
 private:
 	friend class EProcess;
 
-	inline static ULONG64 ThreadListEntryOffset;
+	inline static uint64_t ThreadListEntryOffset;
 };
 }

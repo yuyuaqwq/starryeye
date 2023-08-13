@@ -20,91 +20,91 @@
     <Filter Include="Header Files\Handle">
       <UniqueIdentifier>{ce9a505c-5d55-42eb-bf0a-0436256e1181}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Handle">
-      <UniqueIdentifier>{249411a4-c64d-4795-84fc-422c665cd566}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Process">
-      <UniqueIdentifier>{9b238920-275e-4bc6-be86-ebcdffa6fb97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Thread">
-      <UniqueIdentifier>{1abd11d4-6e74-4c64-b027-92a7b41ff299}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Process">
-      <UniqueIdentifier>{92471f10-ae9a-4742-99aa-7f4f24de5700}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Thread">
-      <UniqueIdentifier>{10c3f868-8d2f-47c4-a16d-eecaafbe96fa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Config">
-      <UniqueIdentifier>{9b0ca28c-812b-4624-983b-bbc2bd1a0e77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Config">
-      <UniqueIdentifier>{3a0e8f65-ee91-4771-a81c-be2905992d68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Memory">
-      <UniqueIdentifier>{901e1ffd-fc55-49be-bd35-9f5f6ebce3d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Memory">
-      <UniqueIdentifier>{abfc936a-49fd-431b-a1f1-5b91e42ba6b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\File">
-      <UniqueIdentifier>{a2e37e7c-c5ea-4d08-b9c1-1d55ff026d26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\File">
-      <UniqueIdentifier>{33342ec1-34b0-4e08-b49a-ec31ce844b84}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\io">
       <UniqueIdentifier>{99103e2e-ebc4-42fb-aa47-213c87b445af}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\io">
       <UniqueIdentifier>{fb692ca2-3815-4ef3-910d-af2ec3385d64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\config">
+      <UniqueIdentifier>{9b0ca28c-812b-4624-983b-bbc2bd1a0e77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\file">
+      <UniqueIdentifier>{a2e37e7c-c5ea-4d08-b9c1-1d55ff026d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\memory">
+      <UniqueIdentifier>{901e1ffd-fc55-49be-bd35-9f5f6ebce3d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\process">
+      <UniqueIdentifier>{9b238920-275e-4bc6-be86-ebcdffa6fb97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thread">
+      <UniqueIdentifier>{1abd11d4-6e74-4c64-b027-92a7b41ff299}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\config">
+      <UniqueIdentifier>{3a0e8f65-ee91-4771-a81c-be2905992d68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\file">
+      <UniqueIdentifier>{33342ec1-34b0-4e08-b49a-ec31ce844b84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\handle">
+      <UniqueIdentifier>{249411a4-c64d-4795-84fc-422c665cd566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\memory">
+      <UniqueIdentifier>{abfc936a-49fd-431b-a1f1-5b91e42ba6b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\process">
+      <UniqueIdentifier>{92471f10-ae9a-4742-99aa-7f4f24de5700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thread">
+      <UniqueIdentifier>{10c3f868-8d2f-47c4-a16d-eecaafbe96fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Handle\handle_table.cpp">
-      <Filter>Source Files\Handle</Filter>
+      <Filter>Source Files\handle</Filter>
     </ClCompile>
     <ClCompile Include="Handle\object_header.cpp">
-      <Filter>Source Files\Handle</Filter>
+      <Filter>Source Files\handle</Filter>
     </ClCompile>
     <ClCompile Include="Handle\object_type.cpp">
-      <Filter>Source Files\Handle</Filter>
+      <Filter>Source Files\handle</Filter>
     </ClCompile>
     <ClCompile Include="Thread\ethread.cpp">
-      <Filter>Source Files\Thread</Filter>
+      <Filter>Source Files\thread</Filter>
     </ClCompile>
     <ClCompile Include="Thread\kthread.cpp">
-      <Filter>Source Files\Thread</Filter>
+      <Filter>Source Files\thread</Filter>
     </ClCompile>
     <ClCompile Include="Process\eprocess.cpp">
-      <Filter>Source Files\Process</Filter>
+      <Filter>Source Files\process</Filter>
     </ClCompile>
     <ClCompile Include="Process\kprocess.cpp">
-      <Filter>Source Files\Process</Filter>
+      <Filter>Source Files\process</Filter>
     </ClCompile>
     <ClCompile Include="entry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Config\base.cpp">
-      <Filter>Source Files\Config</Filter>
+      <Filter>Source Files\config</Filter>
     </ClCompile>
     <ClCompile Include="Config\algorithm.cpp">
-      <Filter>Source Files\Config</Filter>
+      <Filter>Source Files\config</Filter>
     </ClCompile>
     <ClCompile Include="Process\vadtree.cpp">
-      <Filter>Source Files\Process</Filter>
+      <Filter>Source Files\process</Filter>
     </ClCompile>
     <ClCompile Include="Memory\subsection.cpp">
-      <Filter>Source Files\Memory</Filter>
+      <Filter>Source Files\memory</Filter>
     </ClCompile>
     <ClCompile Include="Memory\control_area.cpp">
-      <Filter>Source Files\Memory</Filter>
+      <Filter>Source Files\memory</Filter>
     </ClCompile>
     <ClCompile Include="File\file_object.cpp">
-      <Filter>Source Files\File</Filter>
+      <Filter>Source Files\file</Filter>
     </ClCompile>
     <ClCompile Include="Process\vad_flags.cpp">
-      <Filter>Source Files\Process</Filter>
+      <Filter>Source Files\process</Filter>
     </ClCompile>
     <ClCompile Include="io\device.cpp">
       <Filter>Source Files\io</Filter>
@@ -127,37 +127,37 @@
       <Filter>Header Files\Handle</Filter>
     </ClInclude>
     <ClInclude Include="Thread\ethread.h">
-      <Filter>Header Files\Thread</Filter>
+      <Filter>Header Files\thread</Filter>
     </ClInclude>
     <ClInclude Include="Thread\kthread.h">
-      <Filter>Header Files\Thread</Filter>
+      <Filter>Header Files\thread</Filter>
     </ClInclude>
     <ClInclude Include="Process\eprocess.h">
-      <Filter>Header Files\Process</Filter>
+      <Filter>Header Files\process</Filter>
     </ClInclude>
     <ClInclude Include="Process\kprocess.h">
-      <Filter>Header Files\Process</Filter>
+      <Filter>Header Files\process</Filter>
     </ClInclude>
     <ClInclude Include="Config\base.h">
-      <Filter>Header Files\Config</Filter>
+      <Filter>Header Files\config</Filter>
     </ClInclude>
     <ClInclude Include="Config\algorithm.h">
-      <Filter>Header Files\Config</Filter>
+      <Filter>Header Files\config</Filter>
     </ClInclude>
     <ClInclude Include="Process\vadtree.h">
-      <Filter>Header Files\Process</Filter>
+      <Filter>Header Files\process</Filter>
     </ClInclude>
     <ClInclude Include="Memory\subsection.h">
-      <Filter>Header Files\Memory</Filter>
+      <Filter>Header Files\memory</Filter>
     </ClInclude>
     <ClInclude Include="Memory\control_area.h">
-      <Filter>Header Files\Memory</Filter>
+      <Filter>Header Files\memory</Filter>
     </ClInclude>
     <ClInclude Include="File\file_object.h">
-      <Filter>Header Files\File</Filter>
+      <Filter>Header Files\file</Filter>
     </ClInclude>
     <ClInclude Include="Process\vad_flags.h">
-      <Filter>Header Files\Process</Filter>
+      <Filter>Header Files\process</Filter>
     </ClInclude>
     <ClInclude Include="io\device.h">
       <Filter>Header Files\io</Filter>

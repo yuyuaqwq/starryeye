@@ -1,7 +1,7 @@
 #pragma once
-#include "Config/base.h"
-#include "Handle/object_type.h"
-#include <krnlib/option.hpp>
+#include "config/base.h"
+#include "handle/object_type.h"
+#include <fustd/generic/option.hpp>
 
 namespace StarryEye {
 class EProcess;
@@ -12,35 +12,35 @@ public:
 	inline static PUCHAR ObHeaderCookie;
 
 	static void Init();
-	static ULONG64 GetBodyOffset();
+	static uint64_t GetBodyOffset();
 
 	// 解密TypeIndex
-	static UCHAR DecryptTypeIndex(ULONG64 obj_addr, UCHAR type_index);
+	static uint8_t DecryptTypeIndex(uint64_t obj_addr, uint8_t type_index);
 
 	ObjectHeader(std::nullptr_t);
-	ObjectHeader(ULONG64 address);
+	ObjectHeader(uint64_t address);
 	~ObjectHeader();
 
 	// 获取TypeIndex
-	UCHAR TypeIndex();
+	uint8_t TypeIndex();
 
 	// 获取解密后的TypeIndex
-	UCHAR TypeIndexDecrypted();
+	uint8_t TypeIndexDecrypted();
 
 	// 获取Type对象
 	ObjectType Type();
 
 	bool IsProcess();
 
-	krnlib::Option<EProcess> ConvToEProc();
+	fustd::Option<EProcess> ConvToEProc();
 
 	// 获取Body并转换为对象
 	template<class T>
 	T Body();
 
 private:
-	inline static ULONG64 TypeIndexOffset;
-	inline static ULONG64 BodyOffset;
+	inline static uint64_t TypeIndexOffset;
+	inline static uint64_t BodyOffset;
 };
 
 template<class T>

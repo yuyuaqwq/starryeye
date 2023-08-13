@@ -1,15 +1,15 @@
 #pragma once
-#include "Config/base.h"
+#include "config/base.h"
 
 namespace StarryEye {
 	class ObjectType: public KObjectBase
 	{
 	public:
-		inline static PULONG64 ObTypeIndexTable;
+		inline static uint64_t* ObTypeIndexTable;
 
 		static void Init();
 
-		ObjectType(ULONG64 address);
+		ObjectType(uint64_t address);
 		ObjectType(std::nullptr_t);
 		~ObjectType();
 
@@ -18,6 +18,6 @@ namespace StarryEye {
 		bool CompareTypeName(PCWSTR name);
 
 	private:
-		inline static ULONG64 NameOffset;
+		inline static uint64_t NameOffset;
 	};
 }

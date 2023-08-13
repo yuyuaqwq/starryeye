@@ -6,7 +6,7 @@ void KProcess::Init()
     ProcessListEntryOffset = 0x350;
 }
 
-KProcess::KProcess(ULONG64 address) : KObjectBase(address) {}
+KProcess::KProcess(uint64_t address) : KObjectBase(address) {}
 KProcess::KProcess(std::nullptr_t) : KObjectBase(nullptr) {}
 KProcess::~KProcess() {}
 

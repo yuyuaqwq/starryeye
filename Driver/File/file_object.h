@@ -1,11 +1,11 @@
 #pragma once
-#include "Config/base.h"
+#include "config/base.h"
 
 namespace StarryEye {
 	class FileObject: public KObjectBase
 	{
 	public:
-		FileObject(ULONG64 address);
+		FileObject(uint64_t address);
 		FileObject(std::nullptr_t);
 		~FileObject();
 
@@ -13,6 +13,6 @@ namespace StarryEye {
 
 	private:
 		PFILE_OBJECT file_object_;
-		UCHAR property_;
+		uint8_t property_;
 	};
 }

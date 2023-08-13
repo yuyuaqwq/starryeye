@@ -1,5 +1,5 @@
 #pragma once
-#include "File/file_object.h"
+#include "file/file_object.h"
 
 namespace StarryEye {
 	class ControlArea: public KObjectBase
@@ -7,13 +7,13 @@ namespace StarryEye {
 	public:
 		static void Init();
 
-		ControlArea(ULONG64 address);
+		ControlArea(uint64_t address);
 		ControlArea(std::nullptr_t);
 		~ControlArea();
 
 		FileObject FilePointer();
 
 	private:
-		inline static ULONG64 FilePointerOffset;
+		inline static uint64_t FilePointerOffset;
 	};
 }

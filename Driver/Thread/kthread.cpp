@@ -6,12 +6,12 @@ void KThread::Init()
 	ProcessOffset = 0x220;
 }
 
-KThread::KThread(ULONG64 address) : KObjectBase(address) {}
+KThread::KThread(uint64_t address) : KObjectBase(address) {}
 KThread::KThread(std::nullptr_t) : KObjectBase(nullptr) {}
 KThread::~KThread() {}
 
 KProcess KThread::Process()
 {
-	return KProcess(*(PULONG64)(address_ + ProcessOffset));
+	return KProcess(*(uint64_t*)(address_ + ProcessOffset));
 }
 }

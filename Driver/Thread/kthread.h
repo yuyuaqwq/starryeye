@@ -1,6 +1,6 @@
 #pragma once
-#include "Config/base.h"
-#include "Process/kprocess.h"
+#include "config/base.h"
+#include "process/kprocess.h"
 
 namespace StarryEye {
 class KThread: public KObjectBase
@@ -8,13 +8,13 @@ class KThread: public KObjectBase
 public:
 	static void Init();
 
-	KThread(ULONG64 address);
+	KThread(uint64_t address);
 	KThread(std::nullptr_t);
 	~KThread();
 
 	KProcess Process();
 
 private:
-	inline static ULONG64 ProcessOffset;
+	inline static uint64_t ProcessOffset;
 };
 }

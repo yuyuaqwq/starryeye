@@ -1,17 +1,17 @@
 #include <ntifs.h>
 #include <stdexcept>
-#include "Config/algorithm.h"
+#include "config/algorithm.h"
 
-#include "Handle/handle_table.h"
-#include "Handle/object_header.h"
-#include "Handle/object_type.h"
+#include "handle/handle_table.h"
+#include "handle/object_header.h"
+#include "handle/object_type.h"
 
-#include "Process/eprocess.h"
-#include "Process/kprocess.h"
-#include "Process/vadtree.h"
+#include "process/eprocess.h"
+#include "process/kprocess.h"
+#include "process/vadtree.h"
 
-#include "Thread/ethread.h"
-#include "Thread/kthread.h"
+#include "thread/ethread.h"
+#include "thread/kthread.h"
 
 #include <io/control.h>
 
@@ -67,7 +67,7 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	InitOffsets();
 
 
-	HandleTable table{*(PULONG64)HandleTable::PspCidTable};
+	HandleTable table{*(uint64_t*)HandleTable::PspCidTable};
 	//DbgBreakPoint();
 
 	table.AutoForeachAllHandleObjects([&](ObjectHeader obj) {

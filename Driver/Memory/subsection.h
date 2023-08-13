@@ -1,5 +1,5 @@
 #pragma once
-#include "Memory/control_area.h"
+#include "memory/control_area.h"
 
 namespace StarryEye {
 	class SubSection: public KObjectBase
@@ -7,7 +7,7 @@ namespace StarryEye {
 	public:
 		static void Init();
 
-		SubSection(ULONG64 address);
+		SubSection(uint64_t address);
 		SubSection(std::nullptr_t);
 		~SubSection();
 
@@ -15,7 +15,7 @@ namespace StarryEye {
 		SubSection NextSubsection();
 
 	private:
-		inline static ULONG64 ControlAreaOffset;
-		inline static ULONG64 NextSubsectionOffset;
+		inline static uint64_t ControlAreaOffset;
+		inline static uint64_t NextSubsectionOffset;
 	};
 }

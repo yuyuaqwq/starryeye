@@ -1,5 +1,5 @@
 #include "object_header.h"
-#include "Process/eprocess.h"
+#include "process/eprocess.h"
 
 namespace StarryEye {
 void ObjectHeader::Init()
@@ -9,27 +9,27 @@ void ObjectHeader::Init()
 	ObHeaderCookie = (PUCHAR)0xfffff80260efc72c;	//TODO ObHeaderCookie
 }
 
-ULONG64 ObjectHeader::GetBodyOffset()
+uint64_t ObjectHeader::GetBodyOffset()
 {
 	return BodyOffset;
 }
 
-UCHAR ObjectHeader::DecryptTypeIndex(ULONG64 obj_addr, UCHAR type_index)
+uint8_t ObjectHeader::DecryptTypeIndex(uint64_t obj_addr, uint8_t type_index)
 {
-	auto x = (UCHAR)(obj_addr >> 8);
+	auto x = (uint8_t)(obj_addr >> 8);
 	return type_index ^ x ^ (*ObHeaderCookie);
 }
 
 ObjectHeader::ObjectHeader(std::nullptr_t) : KObjectBase(nullptr) {}
-ObjectHeader::ObjectHeader(ULONG64 address) : KObjectBase(address) {}
+ObjectHeader::ObjectHeader(uint64_t address) : KObjectBase(address) {}
 ObjectHeader::~ObjectHeader() {}
 
-UCHAR ObjectHeader::TypeIndex()
+uint8_t ObjectHeader::TypeIndex()
 {
-	return *(UCHAR*)(address_ + TypeIndexOffset);
+	return *(uint8_t*)(address_ + TypeIndexOffset);
 }
 
-UCHAR ObjectHeader::TypeIndexDecrypted()
+uint8_t ObjectHeader::TypeIndexDecrypted()
 {
 	return DecryptTypeIndex(address_, TypeIndex());
 }
@@ -43,11 +43,11 @@ bool ObjectHeader::IsProcess()
 {
 	return Type().CompareTypeName(L"Process");
 }
-krnlib::Option<EProcess> ObjectHeader::ConvToEProc()
+fustd::Option<EProcess> ObjectHeader::ConvToEProc()
 {
 	if (IsProcess())
-		return krnlib::Some(Body<EProcess>());
+		return fustd::Some(Body<EProcess>());
 	else
-		return krnlib::None();
+		return fustd::None();
 }
 }

@@ -3,11 +3,11 @@
 namespace StarryEye {
 void ObjectType::Init()
 {
-	ObTypeIndexTable = (PULONG64)0xfffff80260efce80;	//TODO ObTypeIndexTable
+	ObTypeIndexTable = (uint64_t*)0xfffff80260efce80;	//TODO ObTypeIndexTable
 	NameOffset = 0x10;
 }
 
-ObjectType::ObjectType(ULONG64 address) : KObjectBase(address) {}
+ObjectType::ObjectType(uint64_t address) : KObjectBase(address) {}
 ObjectType::ObjectType(std::nullptr_t) : KObjectBase(nullptr) {}
 ObjectType::~ObjectType() {}
 

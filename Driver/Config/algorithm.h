@@ -1,61 +1,61 @@
 #pragma once
 #include <ntifs.h>
-#include "Config/base.h"
+#include "config/base.h"
 #include <krnlib/functional.hpp>
 #include <krnlib/stl_container.hpp>
-#include <krnlib/option.hpp>
+#include <fustd/generic/option.hpp>
 
 namespace StarryEye {
 
-#define HIGH_UINT32(x) (reinterpret_cast<PUINT16>(&x)[1])
-#define SET_HIGH_ULONG64(x, val) reinterpret_cast<PUINT32>(&x)[1] = val
+#define HIGH_UINT32(x) (reinterpret_cast<uint16_t*>(&x)[1])
+#define SET_HIGH_ULONG64(x, val) reinterpret_cast<uint32_t*>(&x)[1] = val
 
 class ListEntry: public KObjectBase
 {
 public:
-	ListEntry(ULONG64 list_addr, ULONG64 offset);
+	ListEntry(uint64_t list_addr, uint64_t offset);
 	ListEntry(std::nullptr_t);
 	~ListEntry();
 
 	ListEntry Flink()
 	{
-		return ListEntry((ULONG64)list_->Flink, offset_);
+		return ListEntry((uint64_t)list_->Flink, offset_);
 	}
 	ListEntry Blink()
 	{
-		return ListEntry((ULONG64)list_->Blink, offset_);
+		return ListEntry((uint64_t)list_->Blink, offset_);
 	}
 
 	template<class KObjT>
 	KObjT Object()
 	{
-		return KObjT((ULONG64)list_ - offset_);
+		return KObjT((uint64_t)list_ - offset_);
 	}
 
 private:
 	PLIST_ENTRY64 list_;
-	ULONG64 offset_;
+	uint64_t offset_;
 };
 
 template<class DataT>
 class RtlBalanceNode: public KObjectBase
 {
 public:
-	RtlBalanceNode(ULONG64 address): KObjectBase(address), data_(address) {}
+	RtlBalanceNode(uint64_t address): KObjectBase(address), data_(address) {}
 	RtlBalanceNode(std::nullptr_t): KObjectBase(nullptr), data_(nullptr) {}
 	~RtlBalanceNode() {}
 
 	RtlBalanceNode Left()
 	{
-		return RtlBalanceNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlBalanceNode_Left));
+		return RtlBalanceNode(*(uint64_t*)(address_ + AlogrithmOffsets::RtlBalanceNode_Left));
 	}
 	RtlBalanceNode Right()
 	{
-		return RtlBalanceNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlBalanceNode_Right));
+		return RtlBalanceNode(*(uint64_t*)(address_ + AlogrithmOffsets::RtlBalanceNode_Right));
 	}
 	RtlBalanceNode ParentValue()
 	{
-		return RtlBalanceNode(*(PULONG64)(address_ + AlogrithmOffsets::RtlBalanceNode_ParentValue));
+		return RtlBalanceNode(*(uint64_t*)(address_ + AlogrithmOffsets::RtlBalanceNode_ParentValue));
 	}
 	DataT* operator->() {
 		return &data_;
@@ -72,12 +72,12 @@ public:
 	using NodeT = RtlBalanceNode<DataT>;
 	using ForeachCallBackT = const krnlib::function<bool(NodeT&)>&;
 
-	RtlAvlTree(ULONG64 address): KObjectBase(address) {}
+	RtlAvlTree(uint64_t address): KObjectBase(address) {}
 	RtlAvlTree(std::nullptr_t): KObjectBase(nullptr) {}
 	~RtlAvlTree() {}
 
 	NodeT Root() {
-		return NodeT(*(PULONG64)(address_ + AlogrithmOffsets::RtlAvlTree_RootOffset));
+		return NodeT(*(uint64_t*)(address_ + AlogrithmOffsets::RtlAvlTree_RootOffset));
 	}
 
 	void Foreach(ForeachCallBackT callback) {
@@ -108,10 +108,10 @@ private:
 class AlogrithmOffsets
 {
 public:
-	inline static ULONG64 RtlBalanceNode_Left;
-	inline static ULONG64 RtlBalanceNode_Right;
-	inline static ULONG64 RtlBalanceNode_ParentValue;
-	inline static ULONG64 RtlAvlTree_RootOffset;
+	inline static uint64_t RtlBalanceNode_Left;
+	inline static uint64_t RtlBalanceNode_Right;
+	inline static uint64_t RtlBalanceNode_ParentValue;
+	inline static uint64_t RtlAvlTree_RootOffset;
 
 	static void Init()
 	{
@@ -122,5 +122,5 @@ public:
 	}
 };
 
-krnlib::Option<ULONG64> GetBitAreaValue(PVOID buffer, ULONG64 pos, UCHAR bits);
+fustd::Option<uint64_t> GetBitAreaValue(PVOID buffer, uint64_t pos, uint8_t bits);
 }
