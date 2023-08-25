@@ -9,7 +9,6 @@ void ObjectType::Init()
 
 ObjectType::ObjectType(uint64_t address) : KObjectBase(address) {}
 ObjectType::ObjectType(std::nullptr_t) : KObjectBase(nullptr) {}
-ObjectType::~ObjectType() {}
 
 PUNICODE_STRING ObjectType::Name()
 {

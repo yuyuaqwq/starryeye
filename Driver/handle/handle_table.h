@@ -16,7 +16,7 @@ public:
 
 	HandleTable(std::nullptr_t);
 	HandleTable(uint64_t address);
-	~HandleTable();
+	~HandleTable() = default;
 
 	// 解密HandleTable中Handle项的路径
 	static uint64_t DecryptHandleAddress(uint64_t addr);

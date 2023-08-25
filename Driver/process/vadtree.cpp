@@ -15,7 +15,6 @@ void MmVadShortData::Init()
 
 MmVadShortData::MmVadShortData(uint64_t address) : KObjectBase(address) {}
 MmVadShortData::MmVadShortData(std::nullptr_t) : KObjectBase(nullptr) {}
-MmVadShortData::~MmVadShortData() {}
 
 ULONG32 MmVadShortData::StartingVpn()
 {
@@ -79,7 +78,6 @@ void MmVadData::Init()
 
 MmVadData::MmVadData(uint64_t vadnode_addr) : KObjectBase(vadnode_addr) {}
 MmVadData::MmVadData(std::nullptr_t) : KObjectBase(nullptr) {}
-MmVadData::~MmVadData() {}
 
 MmVadShortData MmVadData::Core()
 {
@@ -111,7 +109,6 @@ void VadTree::Init()
 
 VadTree::VadTree(uint64_t address) : Inherit(address) {}
 VadTree::VadTree(std::nullptr_t) : Inherit(nullptr) {}
-VadTree::~VadTree() {}
 
 MmVadShort VadTree::Search(uint64_t address)
 {

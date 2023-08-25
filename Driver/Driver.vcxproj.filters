@@ -115,6 +115,9 @@
     <ClCompile Include="io\control.cpp">
       <Filter>Source Files\io</Filter>
     </ClCompile>
+    <ClCompile Include="memory\page.cpp">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">
@@ -167,6 +170,9 @@
     </ClInclude>
     <ClInclude Include="io\control.h">
       <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\page.h">
+      <Filter>Header Files\memory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

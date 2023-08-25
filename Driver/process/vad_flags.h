@@ -10,11 +10,12 @@ namespace StarryEye {
 
 		MmVadFlags(uint64_t address);
 		MmVadFlags(std::nullptr_t);
-		~MmVadFlags();
+		~MmVadFlags() = default;
 
 		uint8_t PrivateMemory();
 
 	private:
 		static inline uint64_t PrivateMemoryBitPos;
+		static inline uint64_t PrivateMemoryBitSize;
 	};
 }

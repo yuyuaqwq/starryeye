@@ -19,7 +19,7 @@ public:
 
 	ObjectHeader(std::nullptr_t);
 	ObjectHeader(uint64_t address);
-	~ObjectHeader();
+	~ObjectHeader() = default;
 
 	// ªÒ»°TypeIndex
 	uint8_t TypeIndex();

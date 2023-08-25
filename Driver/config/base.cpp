@@ -7,7 +7,7 @@ KObjectBase::~KObjectBase() { address_ = 0; }
 
 bool KObjectBase::IsVaild()
 {
-	return MmIsAddressValid((PVOID)address_);
+	return MmIsAddressValid((PVOID)Address());
 }
 
 uint64_t KObjectBase::Address()

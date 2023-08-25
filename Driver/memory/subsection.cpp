@@ -9,7 +9,6 @@ void SubSection::Init()
 
 SubSection::SubSection(std::nullptr_t) : KObjectBase(nullptr) {}
 SubSection::SubSection(uint64_t address) : KObjectBase(address) {}
-SubSection::~SubSection() {}
 
 ControlArea SubSection::ControlArea()
 {

@@ -9,7 +9,7 @@ namespace StarryEye {
 
 		SubSection(uint64_t address);
 		SubSection(std::nullptr_t);
-		~SubSection();
+		~SubSection() = default;
 
 		StarryEye::ControlArea ControlArea();
 		SubSection NextSubsection();

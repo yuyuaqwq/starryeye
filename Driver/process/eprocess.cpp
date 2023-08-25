@@ -16,7 +16,6 @@ void EProcess::Init()
 
 EProcess::EProcess(uint64_t address) : KObjectBase(address) {}
 EProcess::EProcess(std::nullptr_t) : KObjectBase(nullptr) {}
-EProcess::~EProcess() {}
 
 PCHAR EProcess::ImageFileName()
 {

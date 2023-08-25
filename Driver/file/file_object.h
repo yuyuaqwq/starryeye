@@ -7,7 +7,7 @@ namespace StarryEye {
 	public:
 		FileObject(uint64_t address);
 		FileObject(std::nullptr_t);
-		~FileObject();
+		~FileObject() = default;
 
 		PUNICODE_STRING FileName();
 

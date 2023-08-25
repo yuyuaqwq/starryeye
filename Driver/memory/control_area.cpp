@@ -8,7 +8,6 @@ void ControlArea::Init()
 
 ControlArea::ControlArea(std::nullptr_t) : KObjectBase(nullptr) {}
 ControlArea::ControlArea(uint64_t address) : KObjectBase(address) {}
-ControlArea::~ControlArea() {}
 
 FileObject ControlArea::FilePointer()
 {

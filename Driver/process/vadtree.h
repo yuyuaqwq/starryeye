@@ -25,7 +25,7 @@ public:
 
 	MmVadShortData(uint64_t address);
 	MmVadShortData(std::nullptr_t);
-	~MmVadShortData();
+	~MmVadShortData() = default;
 
 	ULONG32 StartingVpn();
 	ULONG32 EndingVpn();
@@ -57,7 +57,7 @@ public:
 
 	MmVadData(uint64_t vadnode_addr);
 	MmVadData(std::nullptr_t);
-	~MmVadData();
+	~MmVadData() = default;
 
 	MmVadShortData Core();
 	SubSection Subsection();
@@ -82,14 +82,12 @@ public:
 
 	VadTree(uint64_t address);
 	VadTree(std::nullptr_t);
+	~VadTree() = default;
 	
 	//TODO ´ý²âÊÔ
 	MmVadShort Search(uint64_t address);
 
-	~VadTree();
-
 private:
 	MmVadShort SearchRecursion(MmVadShort& root, uint64_t address);
 };
-
 }

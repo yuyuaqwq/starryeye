@@ -16,7 +16,7 @@ public:
 
 	EProcess(uint64_t address);
 	EProcess(std::nullptr_t);
-	~EProcess();
+	~EProcess() = default;
 
 	PCHAR ImageFileName();
 	KProcess Pcb();

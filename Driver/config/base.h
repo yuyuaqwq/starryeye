@@ -11,11 +11,15 @@ public:
 	KObjectBase(std::nullptr_t);
 	~KObjectBase();
 
-	bool IsVaild();
+	virtual bool IsVaild();
 
-	uint64_t Address();
+	virtual uint64_t Address();
 
 protected:
 	uint64_t address_;
 };
+
+//#define KOBJECTBASE_DEFAULT_CONSTRUCT(class_name) \
+//	class_name(std::nullptr_t): KObjectBase(nullptr){}  \
+//	class_name(uint64_t address): KObjectBase(address){}
 }

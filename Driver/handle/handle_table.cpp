@@ -47,7 +47,6 @@ void HandleTable::Init()
 
 HandleTable::HandleTable(std::nullptr_t) : KObjectBase(nullptr) {}
 HandleTable::HandleTable(uint64_t address) : KObjectBase(address) {}
-HandleTable::~HandleTable() {}
 
 uint64_t HandleTable::TableCode()
 {

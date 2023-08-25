@@ -8,7 +8,6 @@ void EThread::Init()
 
 EThread::EThread(uint64_t address) : KObjectBase(address) {}
 EThread::EThread(std::nullptr_t) : KObjectBase(nullptr) {}
-EThread::~EThread() {}
 
 KThread EThread::Tcb()
 {

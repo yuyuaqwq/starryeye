@@ -10,7 +10,7 @@ public:
 
 	KThread(uint64_t address);
 	KThread(std::nullptr_t);
-	~KThread();
+	~KThread() = default;
 
 	KProcess Process();
 

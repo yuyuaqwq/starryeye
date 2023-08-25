@@ -12,7 +12,7 @@ public:
 
 	EThread(uint64_t address);
 	EThread(std::nullptr_t);
-	~EThread();
+	~EThread() = default;
 
 	KThread Tcb();
 	ListEntry ThreadListEntry();

@@ -15,16 +15,10 @@ class ListEntry: public KObjectBase
 public:
 	ListEntry(uint64_t list_addr, uint64_t offset);
 	ListEntry(std::nullptr_t);
-	~ListEntry();
+	~ListEntry() = default;
 
-	ListEntry Flink()
-	{
-		return ListEntry((uint64_t)list_->Flink, offset_);
-	}
-	ListEntry Blink()
-	{
-		return ListEntry((uint64_t)list_->Blink, offset_);
-	}
+	ListEntry Flink();
+	ListEntry Blink();
 
 	template<class KObjT>
 	KObjT Object()
@@ -43,7 +37,7 @@ class RtlBalanceNode: public KObjectBase
 public:
 	RtlBalanceNode(uint64_t address): KObjectBase(address), data_(address) {}
 	RtlBalanceNode(std::nullptr_t): KObjectBase(nullptr), data_(nullptr) {}
-	~RtlBalanceNode() {}
+	~RtlBalanceNode() = default;
 
 	RtlBalanceNode Left()
 	{
@@ -74,7 +68,7 @@ public:
 
 	RtlAvlTree(uint64_t address): KObjectBase(address) {}
 	RtlAvlTree(std::nullptr_t): KObjectBase(nullptr) {}
-	~RtlAvlTree() {}
+	~RtlAvlTree() = default;
 
 	NodeT Root() {
 		return NodeT(*(uint64_t*)(address_ + AlogrithmOffsets::RtlAvlTree_RootOffset));
@@ -122,5 +116,5 @@ public:
 	}
 };
 
-fustd::Option<uint64_t> GetBitAreaValue(PVOID buffer, uint64_t pos, uint8_t bits);
+fustd::Option<uint64_t> GetBitAreaValue(PVOID buffer, size_t buf_size, size_t pos, uint8_t bits);
 }

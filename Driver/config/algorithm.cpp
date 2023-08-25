@@ -9,12 +9,20 @@ ListEntry::ListEntry(std::nullptr_t) :
     KObjectBase(nullptr),
     list_(0),
     offset_(0) {}
-ListEntry::~ListEntry() {}
 
-
-fustd::Option<uint64_t> StarryEye::GetBitAreaValue(PVOID buffer, uint64_t pos, uint8_t bits)
+ListEntry ListEntry::Flink()
 {
-    if (bits > 64) {
+    return ListEntry((uint64_t)list_->Flink, offset_);
+}
+
+ListEntry ListEntry::Blink()
+{
+    return ListEntry((uint64_t)list_->Blink, offset_);
+}
+
+fustd::Option<uint64_t> StarryEye::GetBitAreaValue(PVOID buffer, size_t buf_size, size_t pos, uint8_t bits)
+{
+    if (bits > 64 || pos + bits > buf_size * 8) {
         return fustd::None();
     }
 
