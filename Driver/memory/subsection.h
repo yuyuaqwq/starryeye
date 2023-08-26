@@ -8,7 +8,7 @@ namespace StarryEye {
 		static void Init();
 
 		SubSection(uint64_t address);
-		SubSection(std::nullptr_t);
+		SubSection() = default;
 		~SubSection() = default;
 
 		StarryEye::ControlArea ControlArea();

@@ -9,7 +9,7 @@ namespace StarryEye {
 		static void Init();
 
 		MmVadFlags(uint64_t address);
-		MmVadFlags(std::nullptr_t);
+		MmVadFlags() = default;
 		~MmVadFlags() = default;
 
 		uint8_t PrivateMemory();

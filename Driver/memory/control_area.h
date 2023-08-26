@@ -8,7 +8,7 @@ namespace StarryEye {
 		static void Init();
 
 		ControlArea(uint64_t address);
-		ControlArea(std::nullptr_t);
+		ControlArea() = default;
 		~ControlArea() = default;
 
 		FileObject FilePointer();

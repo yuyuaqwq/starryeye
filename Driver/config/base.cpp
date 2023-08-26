@@ -2,7 +2,7 @@
 
 namespace StarryEye {
 KObjectBase::KObjectBase(uint64_t address) : address_(address) {}
-KObjectBase::KObjectBase(std::nullptr_t) : address_(0) {}
+KObjectBase::KObjectBase() : address_(0) {}
 KObjectBase::~KObjectBase() { address_ = 0; }
 
 bool KObjectBase::IsVaild()

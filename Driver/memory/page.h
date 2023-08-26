@@ -1,223 +1,240 @@
 #pragma once
 #include "config/base.h"
+#include <intrin.h>
+
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....
 namespace StarryEye {
 namespace details {
-    class MmPageHandware
+union PdteFormater
+{
+    uint64_t quad_part;
+    struct
     {
-    public:
-        static void Init();
-        MmPageHandware(uint64_t pte);
-        ~MmPageHandware() = default;
+        uint64_t valid : 1;                 // 0
+        uint64_t read_write : 1;            // 1
+        uint64_t user_supervisor : 1;       // 2
+        uint64_t write_through : 1;         // 3
+        uint64_t cache_disable : 1;         // 4
+        uint64_t accessed : 1;              // 5
+        uint64_t ignored : 1;               // 6
+        uint64_t large_page : 1;            // 7
+        uint64_t ignored2 : 3;              // 8
+        uint64_t accessed : 1;              // 11
+        uint64_t pdt_align : 40;            // 12
+        uint64_t ignored3 : 11;             // 52
+        uint64_t execute_disable : 1;       // 63
+    } bits;
+    struct
+    {
+        uint64_t valid : 1;                // 0
+        uint64_t read_write : 1;           // 1
+        uint64_t user_supervisor : 1;      // 2
+        uint64_t write_through : 1;        // 3
+        uint64_t cache_disable : 1;        // 4
+        uint64_t accessed : 1;             // 5
+        uint64_t dirty : 1;                // 6
+        uint64_t large_page : 1;           // 7
+        uint64_t global : 1;               // 8
+        uint64_t ignored2 : 2;             // 9
+        uint64_t restart : 1;              // 11
+        uint64_t pat : 1;                  // 12
+        uint64_t reserved : 8;             // 13
+        uint64_t page_align : 31;          // 21
+        uint64_t ignored : 7;              // 52
+        uint64_t protection_key : 4;       // 59
+        uint64_t execute_disable : 1;      // 63
+    } bits_2m;
+};
 
-        uint64_t Valid();
-        uint64_t LargePage();
-        uint64_t PageFrameNumber();
 
-    private:
-        inline static uint64_t LargePageBitPos;
-        inline static uint64_t LargePageBitSize;
-        inline static uint64_t PageFrameNumberBitPos;
-        inline static uint64_t PageFrameNumberBitSize;
+union PdpteFormater
+{
+    uint64_t quad_part;
+    struct
+    {
+        uint64_t valid : 1;                // 0
+        uint64_t read_write : 1;           // 1
+        uint64_t user_supervisor : 1;      // 2
+        uint64_t write_through : 1;        // 3
+        uint64_t cache_disable : 1;        // 4
+        uint64_t accessed : 1;             // 5
+        uint64_t ignored : 1;              // 6
+        uint64_t large_page : 1;           // 7
+        uint64_t ignored2 : 3;             // 8
+        uint64_t restart : 1;              // 11
+        uint64_t pdpt_align : 40;          // 12
+        uint64_t ignored3 : 11;            // 52
+        uint64_t execute_disable : 1;      // 63
+    } bits;
+    struct
+    {
+        uint64_t valid : 1;                // 0
+        uint64_t read_write : 1;           // 1
+        uint64_t user_supervisor : 1;      // 2
+        uint64_t write_through : 1;        // 3
+        uint64_t cache_disable : 1;        // 4
+        uint64_t accessed : 1;             // 5
+        uint64_t dirty : 1;                // 6
+        uint64_t large_page : 1;           // 7
+        uint64_t global : 1;               // 8
+        uint64_t ignored2 : 2;             // 9
+        uint64_t restart : 1;              // 11
+        uint64_t pat : 1;                  // 12
+        uint64_t reserved : 17;            // 13
+        uint64_t page_align : 22;          // 30
+        uint64_t ignored : 7;              // 52
+        uint64_t protection_key : 4;       // 59
+        uint64_t execute_disable : 1;      // 63
+    } bits_1g;
+};
 
-        uint64_t pte_;
-    };
+union Pml4Formater
+{
+    uint64_t quad_part;
+    struct
+    {
+        uint64_t valid : 1;             // 0
+        uint64_t read_write : 1;        // 1
+        uint64_t user_supervisor : 1;   // 2
+        uint64_t write_through : 1;     // 3
+        uint64_t cache_disable : 1;     // 4
+        uint64_t accessed : 1;          // 5
+        uint64_t ignored : 1;           // 6
+        uint64_t reserved : 1;          // 7
+        uint64_t ignored2 : 3;          // 8
+        uint64_t restart : 1;           // 11
+        uint64_t pdpt_align : 40;       // 12
+        uint64_t ignored3 : 11;         // 52
+        uint64_t execute_disable : 1;   // 63
+    }bits;
+};
+
+union Cr3Formater
+{
+    uint64_t quad_part;
+    struct
+    {
+        uint64_t ignored : 3;           // 0
+        uint64_t write_through : 1;     // 3
+        uint64_t cache_disable : 1;     // 4
+        uint64_t ignored2 : 7;          // 5
+        uint64_t pml4_align : 40;       // 12
+        uint64_t reserved : 12;         // 52
+    } bits;
+};
+
+union VirtualAddressFormater
+{
+    uint64_t quad_part;
+    uint64_t* ptr;
+    struct
+    {
+        uint64_t offset : 12;           // 0
+        uint64_t pti : 9;               // 12
+        uint64_t pdti : 9;              // 21
+        uint64_t ppti : 9;             // 30
+        uint64_t pxti : 9;             // 39
+        uint64_t sign_extend : 16;      // 48
+    } bits;
+};
+
+VirtualAddressFormater LocatePml4Base();
 }
 
-class MmPage : public KObjectBase
+class MmPte : public KObjectBase
 {
 public:
-    MmPage(std::nullptr_t);
-    MmPage(uint64_t pte);
-    ~MmPage() = default;
+    static void Init();
 
-    details::MmPageHandware Hand();
-
-private:
-    uint64_t Address() override { return 0; };
-    bool IsVaild() override { return false; };
-    uint64_t pte_;
-};
-
-
-class MmPageTable : public KObjectBase
-{
-public:
-    MmPageTable(std::nullptr_t);
-    MmPageTable(uint64_t pdte);
-    ~MmPageTable() = default;
-
-    bool Is2mPage();
-    uint64_t Address() override;
-    MmPage operator[](size_t idx);
-
-private:
-    union
+    class Handware : public KObjectBase
     {
-        struct
-        {
-            uint64_t valid : 1;                 // 0
-            uint64_t read_write : 1;            // 1
-            uint64_t user_supervisor : 1;       // 2
-            uint64_t write_through : 1;         // 3
-            uint64_t cache_disable : 1;         // 4
-            uint64_t accessed : 1;              // 5
-            uint64_t ignored : 1;               // 6
-            uint64_t large_page : 1;            // 7
-            uint64_t ignored2 : 3;              // 8
-            uint64_t accessed : 1;              // 11
-            uint64_t pdt_align : 24;            // 12
-            uint64_t reserved : 16;             // 36
-            uint64_t ignored3 : 11;             // 52
-            uint64_t execute_disable : 1;       // 63
-        } pdte_;
-        struct
-        {
-            uint64_t valid : 1;                // 0
-            uint64_t read_write : 1;           // 1
-            uint64_t user_supervisor : 1;      // 2
-            uint64_t write_through : 1;        // 3
-            uint64_t cache_disable : 1;        // 4
-            uint64_t accessed : 1;             // 5
-            uint64_t dirty : 1;                // 6
-            uint64_t large_page : 1;           // 7
-            uint64_t global : 1;               // 8
-            uint64_t ignored2 : 2;             // 9
-            uint64_t restart : 1;              // 11
-            uint64_t pat : 1;                  // 12
-            uint64_t reserved : 8;             // 13
-            uint64_t page_align : 15;          // 21
-            uint64_t reserved2 : 6;            // 36
-            uint64_t ignored : 7;              // 52
-            uint64_t protection_key : 4;       // 59
-            uint64_t execute_disable : 1;      // 63
-        } pdte_2m_;
-        uint64_t ulonglong_;
+    public:
+        ~Handware() = default;
+        bool IsVaild() override;
+
+
+    private:
+        friend class MmPte;
+
+        static inline uint64_t PageFrameNumberBitPos;
+        static inline uint64_t PageFrameNumberBitSize;
+
+        Handware(details::VirtualAddressFormater pte_base);
+        details::VirtualAddressFormater pte_base_;
+        uint64_t pte_;
     };
-};
 
-class MmPageDirectoryTable : public KObjectBase
-{
-public:
-    MmPageDirectoryTable(std::nullptr_t);
-    MmPageDirectoryTable(uint64_t pdpte);
-    ~MmPageDirectoryTable() = default;
-
-    bool Is1gPage();
-    uint64_t Address() override;
-    MmPageTable operator[](size_t idx);
+    MmPte() = default;
+    MmPte(details::VirtualAddressFormater pte_base);
+    ~MmPte() = default;
 
 private:
-    union
-    {
-        struct
-        {
-            uint64_t valid : 1;                // 0
-            uint64_t read_write : 1;           // 1
-            uint64_t user_supervisor : 1;      // 2
-            uint64_t write_through : 1;        // 3
-            uint64_t cache_disable : 1;        // 4
-            uint64_t accessed : 1;             // 5
-            uint64_t ignored : 1;              // 6
-            uint64_t large_page : 1;           // 7
-            uint64_t ignored2 : 3;             // 8
-            uint64_t restart : 1;              // 11
-            uint64_t pdpt_align : 24;          // 12
-            uint64_t reserved : 16;            // 36
-            uint64_t ignored3 : 11;            // 52
-            uint64_t execute_disable : 1;      // 63
-        } pdpte_;
-        struct
-        {
-            uint64_t valid : 1;                // 0
-            uint64_t read_write : 1;           // 1
-            uint64_t user_supervisor : 1;      // 2
-            uint64_t write_through : 1;        // 3
-            uint64_t cache_disable : 1;        // 4
-            uint64_t accessed : 1;             // 5
-            uint64_t dirty : 1;                // 6
-            uint64_t large_page : 1;           // 7
-            uint64_t global : 1;               // 8
-            uint64_t ignored2 : 2;             // 9
-            uint64_t restart : 1;              // 11
-            uint64_t pat : 1;                  // 12
-            uint64_t reserved : 17;            // 13
-            uint64_t page_align : 6;           // 30
-            uint64_t reserved2 : 16;           // 36
-            uint64_t ignored : 7;              // 52
-            uint64_t protection_key : 4;       // 59
-            uint64_t execute_disable : 1;      // 63
-        } pdpte_1g_;
-        uint64_t ulonglong_;
-    };
+    details::VirtualAddressFormater pte_base_;
 };
 
-class MmPageDirectoryPointerTable : public KObjectBase
+
+class MmPt : public KObjectBase
 {
 public:
-    MmPageDirectoryPointerTable(std::nullptr_t);
-    MmPageDirectoryPointerTable(uint64_t pml4e);
-    ~MmPageDirectoryPointerTable() = default;
+    MmPt() = default;
+    MmPt(details::VirtualAddressFormater pt_base);
+    ~MmPt() = default;
 
-    uint64_t Address() override;
-    MmPageDirectoryTable operator[](size_t idx);
+    MmPte operator[](size_t pti);
 
 private:
-    union
-    {
-        struct
-        {
-            uint64_t valid : 1;             // 0
-            uint64_t read_write : 1;        // 1
-            uint64_t user_supervisor : 1;   // 2
-            uint64_t write_through : 1;     // 3
-            uint64_t cache_disable : 1;     // 4
-            uint64_t accessed : 1;          // 5
-            uint64_t ignored : 1;           // 6
-            uint64_t reserved : 1;          // 7
-            uint64_t ignored2 : 3;          // 8
-            uint64_t restart : 1;           // 11
-            uint64_t pdpt_align : 24;       // 12
-            uint64_t reserved2 : 16;        // 36
-            uint64_t ignored3 : 11;         // 52
-            uint64_t execute_disable : 1;   // 63
-        }pml4e_;
-        uint64_t ulonglong_;
-    };
+    details::VirtualAddressFormater pt_base_;
 };
 
-class MmPageMapLevel4 : public KObjectBase
+
+class MmPdt : public KObjectBase
 {
 public:
-    MmPageMapLevel4(std::nullptr_t);
-    MmPageMapLevel4(uint64_t cr3);
-    ~MmPageMapLevel4() = default;
+    MmPdt() = default;
+    MmPdt(details::VirtualAddressFormater pdt_base);
+    ~MmPdt() = default;
 
-    uint64_t Address() override;
-    MmPageDirectoryPointerTable operator[](size_t idx);
+    MmPt operator[](size_t pdti);
 
 private:
-    union
-    {
-        struct
-        {
-            uint64_t ignored : 3;           // 0
-            uint64_t write_through : 1;     // 3
-            uint64_t cache_disable : 1;     // 4
-            uint64_t ignored2 : 7;          // 5
-            uint64_t pml4_align : 24;       // 12
-            uint64_t reserved : 28;         // 36
-        } cr3_;
-        uint64_t ulonglong_;
-    };
+    details::VirtualAddressFormater pdt_base_;
 };
+
+class MmPpt : public KObjectBase
+{
+public:
+    MmPpt() = default;
+    MmPpt(details::VirtualAddressFormater ppt_base);
+    ~MmPpt() = default;
+
+    MmPdt operator[](size_t ppti);
+
+private:
+    details::VirtualAddressFormater ppt_base_;
+};
+
+class MmPxt : public KObjectBase
+{
+public:
+    MmPxt() = default;
+    MmPxt(uint64_t kproc_addr);
+    ~MmPxt() = default;
+
+    MmPpt operator[](size_t pxti);
+
+private:
+    details::VirtualAddressFormater pxt_base_;
+};
+
 
 class MmVirtualAddress : public KObjectBase
 {
 public:
-	MmVirtualAddress(std::nullptr_t);
+	MmVirtualAddress() = default;
 	MmVirtualAddress(uint64_t va, uint64_t owner_kproc_addr);
 	~MmVirtualAddress() = default;
+
+    //static MmVirtualAddress FromPhysicalAddress(uint64_t phyaddr, uint64_t kproc_addr);
 
     uint64_t Pml4Index();
     uint64_t PdptIndex();
@@ -229,17 +246,7 @@ public:
 
 private:
 	uint64_t owner_kproc_addr_;
-    MmPageMapLevel4 directory_table_;
-    union {
-        struct {
-            uint64_t offset : 12;           // 0
-            uint64_t pt_idx : 9;            // 12
-            uint64_t pdt_idx : 9;           // 21
-            uint64_t pdpt_idx : 9;          // 30
-            uint64_t pml4_idx : 9;          // 39
-            uint64_t sign_extend : 16;      // 48
-        } vaddr_bits;
-        uint64_t vaddr_;
-    };
+    MmPxt directory_table_;
+    details::VirtualAddressFormater vaddr_;
 };
 }

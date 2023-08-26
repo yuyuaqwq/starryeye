@@ -24,7 +24,7 @@ public:
 	static void Init();
 
 	MmVadShortData(uint64_t address);
-	MmVadShortData(std::nullptr_t);
+	MmVadShortData() = default;
 	~MmVadShortData() = default;
 
 	ULONG32 StartingVpn();
@@ -56,7 +56,7 @@ public:
 	static void Init();
 
 	MmVadData(uint64_t vadnode_addr);
-	MmVadData(std::nullptr_t);
+	MmVadData() = default;
 	~MmVadData() = default;
 
 	MmVadShortData Core();
@@ -81,7 +81,7 @@ public:
 	using Inherit = RtlAvlTree<details::MmVadShortData>;
 
 	VadTree(uint64_t address);
-	VadTree(std::nullptr_t);
+	VadTree() = default;
 	~VadTree() = default;
 	
 	//TODO ´ý²âÊÔ

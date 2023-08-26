@@ -5,10 +5,6 @@ ListEntry::ListEntry(uint64_t list_addr, uint64_t offset) :
     KObjectBase(list_addr),
     list_((PLIST_ENTRY64)list_addr),
     offset_(offset) {}
-ListEntry::ListEntry(std::nullptr_t) :
-    KObjectBase(nullptr),
-    list_(0),
-    offset_(0) {}
 
 ListEntry ListEntry::Flink()
 {

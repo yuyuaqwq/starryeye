@@ -14,15 +14,14 @@ class ListEntry: public KObjectBase
 {
 public:
 	ListEntry(uint64_t list_addr, uint64_t offset);
-	ListEntry(std::nullptr_t);
+	ListEntry() = default;
 	~ListEntry() = default;
 
 	ListEntry Flink();
 	ListEntry Blink();
 
 	template<class KObjT>
-	KObjT Object()
-	{
+	KObjT Object() {
 		return KObjT((uint64_t)list_ - offset_);
 	}
 
@@ -36,7 +35,7 @@ class RtlBalanceNode: public KObjectBase
 {
 public:
 	RtlBalanceNode(uint64_t address): KObjectBase(address), data_(address) {}
-	RtlBalanceNode(std::nullptr_t): KObjectBase(nullptr), data_(nullptr) {}
+	RtlBalanceNode() = default;
 	~RtlBalanceNode() = default;
 
 	RtlBalanceNode Left()
@@ -67,7 +66,7 @@ public:
 	using ForeachCallBackT = const krnlib::function<bool(NodeT&)>&;
 
 	RtlAvlTree(uint64_t address): KObjectBase(address) {}
-	RtlAvlTree(std::nullptr_t): KObjectBase(nullptr) {}
+	RtlAvlTree() = default;
 	~RtlAvlTree() = default;
 
 	NodeT Root() {

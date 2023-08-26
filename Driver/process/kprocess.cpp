@@ -8,7 +8,6 @@ void KProcess::Init()
 }
 
 KProcess::KProcess(uint64_t address) : KObjectBase(address) {}
-KProcess::KProcess(std::nullptr_t) : KObjectBase(nullptr) {}
 
 ListEntry KProcess::ProcessListEntry()
 {

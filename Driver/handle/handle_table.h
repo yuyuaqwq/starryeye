@@ -14,7 +14,7 @@ public:
 	inline static PVOID PspCidTable;
 	static void Init();
 
-	HandleTable(std::nullptr_t);
+	HandleTable() = default;
 	HandleTable(uint64_t address);
 	~HandleTable() = default;
 

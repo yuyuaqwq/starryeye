@@ -7,7 +7,6 @@ void KThread::Init()
 }
 
 KThread::KThread(uint64_t address) : KObjectBase(address) {}
-KThread::KThread(std::nullptr_t) : KObjectBase(nullptr) {}
 
 KProcess KThread::Process()
 {

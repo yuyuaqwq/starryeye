@@ -10,7 +10,7 @@ public:
 	static void Init();
 
 	KProcess(uint64_t address);
-	KProcess(std::nullptr_t);
+	KProcess() = default;
 	~KProcess() = default;
 
 	ListEntry ProcessListEntry();

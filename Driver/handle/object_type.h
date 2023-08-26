@@ -10,7 +10,7 @@ namespace StarryEye {
 		static void Init();
 
 		ObjectType(uint64_t address);
-		ObjectType(std::nullptr_t);
+		ObjectType() = default;
 		~ObjectType() = default;
 
 		PUNICODE_STRING Name();

@@ -20,7 +20,6 @@ uint8_t ObjectHeader::DecryptTypeIndex(uint64_t obj_addr, uint8_t type_index)
 	return type_index ^ x ^ (*ObHeaderCookie);
 }
 
-ObjectHeader::ObjectHeader(std::nullptr_t) : KObjectBase(nullptr) {}
 ObjectHeader::ObjectHeader(uint64_t address) : KObjectBase(address) {}
 
 uint8_t ObjectHeader::TypeIndex()

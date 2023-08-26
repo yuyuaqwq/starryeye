@@ -7,7 +7,6 @@ namespace StarryEye {
 		PrivateMemoryBitSize = 1;
 	}
 
-	MmVadFlags::MmVadFlags(std::nullptr_t) : KObjectBase(nullptr) {}
 	MmVadFlags::MmVadFlags(uint64_t address) : KObjectBase(address) {}
 
 	uint8_t MmVadFlags::PrivateMemory()

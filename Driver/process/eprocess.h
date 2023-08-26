@@ -15,7 +15,7 @@ public:
 	static void Init();
 
 	EProcess(uint64_t address);
-	EProcess(std::nullptr_t);
+	EProcess() = default;
 	~EProcess() = default;
 
 	PCHAR ImageFileName();

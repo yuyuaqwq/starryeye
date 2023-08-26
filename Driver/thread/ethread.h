@@ -11,7 +11,7 @@ public:
 	static void Init();
 
 	EThread(uint64_t address);
-	EThread(std::nullptr_t);
+	EThread() = default;
 	~EThread() = default;
 
 	KThread Tcb();

@@ -17,7 +17,7 @@ public:
 	// Ω‚√‹TypeIndex
 	static uint8_t DecryptTypeIndex(uint64_t obj_addr, uint8_t type_index);
 
-	ObjectHeader(std::nullptr_t);
+	ObjectHeader() = default;
 	ObjectHeader(uint64_t address);
 	~ObjectHeader() = default;
 
