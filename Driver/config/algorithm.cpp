@@ -16,9 +16,9 @@ ListEntry ListEntry::Blink()
     return ListEntry((uint64_t)list_->Blink, offset_);
 }
 
-fustd::Option<uint64_t> StarryEye::GetBitAreaValue(PVOID buffer, size_t buf_size, size_t pos, uint8_t bits)
+fustd::Option<uint64_t> StarryEye::GetBitAreaValue(PVOID buffer, size_t buf_size, size_t bit_pos, uint8_t bits)
 {
-    if (bits > 64 || pos + bits > buf_size * 8) {
+    if (bits > 64 || bit_pos + bits > buf_size * 8) {
         return fustd::None();
     }
 
@@ -26,8 +26,8 @@ fustd::Option<uint64_t> StarryEye::GetBitAreaValue(PVOID buffer, size_t buf_size
     uint8_t* byteBuffer = static_cast<uint8_t*>(buffer);
 
     for (uint64_t i = 0; i < bits; ++i) {
-        uint64_t byteIndex = (pos + i) / 8;
-        uint64_t bitIndex = (pos + i) % 8;
+        uint64_t byteIndex = (bit_pos + i) / 8;
+        uint64_t bitIndex = (bit_pos + i) % 8;
 
         uint64_t bitValue = (byteBuffer[byteIndex] >> bitIndex) & 1;
         value |= (bitValue << i);

@@ -151,7 +151,7 @@ public:
     public:
         ~Handware() = default;
         bool IsVaild() override;
-
+        uint64_t PageFrameNumber();
 
     private:
         friend class MmPte;
@@ -167,6 +167,8 @@ public:
     MmPte() = default;
     MmPte(details::VirtualAddressFormater pte_base);
     ~MmPte() = default;
+
+    Handware Hand();
 
 private:
     details::VirtualAddressFormater pte_base_;
@@ -241,8 +243,6 @@ public:
     uint64_t PdtIndex();
     uint64_t PtIndex();
     uint64_t Offset();
-
-    uint64_t ToPhysicalAddress();
 
 private:
 	uint64_t owner_kproc_addr_;

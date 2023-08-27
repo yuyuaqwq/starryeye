@@ -115,5 +115,5 @@ public:
 	}
 };
 
-fustd::Option<uint64_t> GetBitAreaValue(PVOID buffer, size_t buf_size, size_t pos, uint8_t bits);
+fustd::Option<uint64_t> GetBitAreaValue(PVOID buffer, size_t buf_size, size_t bit_pos, uint8_t bits);
 }

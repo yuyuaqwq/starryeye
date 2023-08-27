@@ -21,36 +21,41 @@ VirtualAddressFormater LocatePml4Base()
 }
 }
 
-bool MmPte::Handware::IsVaild()
-{
+
+
+bool MmPte::Handware::IsVaild() {
     return (pte_ & 0x1) == 1;
 }
-
+uint64_t MmPte::Handware::PageFrameNumber() {
+    return GetBitAreaValue(&pte_, 8, PageFrameNumberBitPos, PageFrameNumberBitSize).SomeVal();
+}
 MmPte::Handware::Handware(details::VirtualAddressFormater pte_base)
 {
     pte_base_ = pte_base;
     address_ = pte_base_.quad_part;
     pte_ = *pte_base_.ptr;
 }
-
 void MmPte::Init()
 {
     Handware::PageFrameNumberBitPos = 12;
     Handware::PageFrameNumberBitSize = 36;
 }
-
 MmPte::MmPte(details::VirtualAddressFormater pte_base)
 {
     pte_base_ = pte_base;
     address_ = pte_base.quad_part;
 }
+MmPte::Handware MmPte::Hand() {
+    return { pte_base_ };
+}
+
+
 
 MmPt::MmPt(details::VirtualAddressFormater pt_base)
 {
     pt_base_ = pt_base;
     address_ = pt_base.quad_part;
 }
-
 MmPte MmPt::operator[](size_t pti)
 {
     auto pxti = pt_base_.bits.pdti;
@@ -64,12 +69,13 @@ MmPte MmPt::operator[](size_t pti)
     return { page_base };
 }
 
+
+
 MmPdt::MmPdt(details::VirtualAddressFormater pdt_base)
 {
     pdt_base_ = pdt_base;
     address_ = pdt_base.quad_part;
 }
-
 MmPt MmPdt::operator[](size_t pdti)
 {
     auto pxti = pdt_base_.bits.pti;
@@ -81,12 +87,13 @@ MmPt MmPdt::operator[](size_t pdti)
     return { pt_base };
 }
 
+
+
 MmPpt::MmPpt(details::VirtualAddressFormater pdpt_base)
 {
     ppt_base_ = pdpt_base;
     address_ = ppt_base_.quad_part;
 }
-
 MmPdt MmPpt::operator[](size_t ppti)
 {
     auto pxti = ppt_base_.bits.offset;
@@ -96,13 +103,14 @@ MmPdt MmPpt::operator[](size_t ppti)
     return { pdt_base };
 }
 
+
+
 MmPxt::MmPxt(uint64_t kproc_addr) {
     KeAttachProcess((PRKPROCESS)kproc_addr);
     pxt_base_ = details::LocatePml4Base();
     KeDetachProcess();
     address_ = pxt_base_.quad_part;
 }
-
 MmPpt MmPxt::operator[](size_t pxti)
 {
     auto ppt_base = pxt_base_;
@@ -126,10 +134,10 @@ MmVirtualAddress::MmVirtualAddress(uint64_t va, uint64_t owner_kproc_addr)
 //
 //}
 
-uint64_t MmVirtualAddress::Pml4Index() {
+uint64_t MmVirtualAddress::PxtIndex() {
     return vaddr_.bits.pxti;
 }
-uint64_t MmVirtualAddress::PdptIndex() {
+uint64_t MmVirtualAddress::PptIndex() {
     return vaddr_.bits.ppti;
 }
 uint64_t MmVirtualAddress::PdtIndex() {
@@ -141,9 +149,8 @@ uint64_t MmVirtualAddress::PtIndex() {
 uint64_t MmVirtualAddress::Offset() {
     return vaddr_.bits.offset;
 }
-uint64_t MmVirtualAddress::ToPhysicalAddress()
+MmPte MmVirtualAddress::PageProperty()
 {
-    auto pte = directory_table_[Pml4Index()][PdptIndex()][PdtIndex()][PtIndex()];
-    return (pte.Hand().PageFrameNumber() << PAGE_SHIFT) + Offset();
+    return directory_table_[PxtIndex()][PptIndex()][PdtIndex()][PtIndex()];
 }
 }
