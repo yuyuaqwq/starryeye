@@ -19,7 +19,7 @@ union PdteFormater
         uint64_t ignored : 1;               // 6
         uint64_t large_page : 1;            // 7
         uint64_t ignored2 : 3;              // 8
-        uint64_t accessed : 1;              // 11
+        uint64_t restart : 1;               // 11
         uint64_t pdt_align : 40;            // 12
         uint64_t ignored3 : 11;             // 52
         uint64_t execute_disable : 1;       // 63
@@ -238,11 +238,13 @@ public:
 
     //static MmVirtualAddress FromPhysicalAddress(uint64_t phyaddr, uint64_t kproc_addr);
 
-    uint64_t Pml4Index();
-    uint64_t PdptIndex();
+    uint64_t PxtIndex();
+    uint64_t PptIndex();
     uint64_t PdtIndex();
     uint64_t PtIndex();
     uint64_t Offset();
+
+    MmPte PageProperty();
 
 private:
 	uint64_t owner_kproc_addr_;

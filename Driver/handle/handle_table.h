@@ -32,7 +32,7 @@ public:
 	uint64_t MaxTableSize();
 
 	// 根据索引获取Handle对象
-	ObjectHeader GetHandleObject(uint64_t index);
+	fustd::Option<ObjectHeader> GetHandleObject(uint64_t index);
 
 	// 自动根据TableCode等级遍历所有Handle
 	bool AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback);
@@ -49,11 +49,11 @@ private:
 	static bool ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
 
 	// 获取一级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index);
+	static fustd::Option<ObjectHeader> GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index);
 	// 获取二级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv2TableCode(uint64_t* table, uint64_t index_lv2, uint64_t index_lv1);
+	static fustd::Option<ObjectHeader> GetHandleObjectInLv2TableCode(uint64_t* table, uint64_t index_lv2, uint64_t index_lv1);
 	// 获取三级TableCode下指定索引的Handle对象
-	static ObjectHeader GetHandleObjectInLv3TableCode(uint64_t* table, uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1);
+	static fustd::Option<ObjectHeader> GetHandleObjectInLv3TableCode(uint64_t* table, uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1);
 
 	inline static uint64_t TableCodeOffset;
 };

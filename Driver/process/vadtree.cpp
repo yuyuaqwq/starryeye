@@ -114,7 +114,7 @@ MmVadShort VadTree::Search(uint64_t address)
 
 MmVadShort VadTree::SearchRecursion(MmVadShort& root, uint64_t address)
 {
-	if (!root.IsVaild()) return nullptr;
+	if (!root.IsVaild()) return {};
 	if (address < root->GetStartingAddress())
 		return SearchRecursion(root.Left(), address);
 	else if (address > root->GetEndingAddress())
