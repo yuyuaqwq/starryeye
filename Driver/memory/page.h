@@ -5,6 +5,36 @@
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....
 namespace StarryEye {
 namespace details {
+union VirtualAddressFormater
+{
+    uint64_t quad_part;
+    uint64_t* ptr;
+    struct
+    {
+        uint64_t offset : 12;           // 0
+        uint64_t pti : 9;               // 12
+        uint64_t pdti : 9;              // 21
+        uint64_t ppti : 9;             // 30
+        uint64_t pxti : 9;             // 39
+        uint64_t sign_extend : 16;      // 48
+    } bits;
+};
+
+#define VIRTUAL_ADDRESS_OFFSET(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.offset)
+#define VIRTUAL_ADDRESS_PTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.pti)
+#define VIRTUAL_ADDRESS_PDTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.pdti)
+#define VIRTUAL_ADDRESS_PPTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.ppti)
+#define VIRTUAL_ADDRESS_PXTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.pxti)
+#define VALID_VIRTUAL_ADDRESS_MASK 0x7FFFFFFFF8ull
+
+VirtualAddressFormater LocatePxtBase();
+VirtualAddressFormater LocatePteBase();
+VirtualAddressFormater GetPteVirtualAddress(uint64_t address);
+VirtualAddressFormater GetPdteVirtualAddress(uint64_t address);
+VirtualAddressFormater GetPpteVirtualAddress(uint64_t address);
+VirtualAddressFormater GetPxteVirtualAddress(uint64_t address);
+}
+
 union PdteFormater
 {
     uint64_t quad_part;
@@ -47,7 +77,7 @@ union PdteFormater
 };
 
 
-union PdpteFormater
+union PpteFormater
 {
     uint64_t quad_part;
     struct
@@ -88,7 +118,7 @@ union PdpteFormater
     } bits_1g;
 };
 
-union Pml4Formater
+union PxteFormater
 {
     uint64_t quad_part;
     struct
@@ -123,24 +153,6 @@ union Cr3Formater
     } bits;
 };
 
-union VirtualAddressFormater
-{
-    uint64_t quad_part;
-    uint64_t* ptr;
-    struct
-    {
-        uint64_t offset : 12;           // 0
-        uint64_t pti : 9;               // 12
-        uint64_t pdti : 9;              // 21
-        uint64_t ppti : 9;             // 30
-        uint64_t pxti : 9;             // 39
-        uint64_t sign_extend : 16;      // 48
-    } bits;
-};
-
-VirtualAddressFormater LocatePml4Base();
-}
-
 class MmPte : public KObjectBase
 {
 public:
@@ -159,75 +171,15 @@ public:
         static inline uint64_t PageFrameNumberBitPos;
         static inline uint64_t PageFrameNumberBitSize;
 
-        Handware(details::VirtualAddressFormater pte_base);
-        details::VirtualAddressFormater pte_base_;
-        uint64_t pte_;
+        Handware(uint64_t address);
     };
 
     MmPte() = default;
-    MmPte(details::VirtualAddressFormater pte_base);
+    MmPte(uint64_t address);
     ~MmPte() = default;
 
     Handware Hand();
-
-private:
-    details::VirtualAddressFormater pte_base_;
 };
-
-
-class MmPt : public KObjectBase
-{
-public:
-    MmPt() = default;
-    MmPt(details::VirtualAddressFormater pt_base);
-    ~MmPt() = default;
-
-    MmPte operator[](size_t pti);
-
-private:
-    details::VirtualAddressFormater pt_base_;
-};
-
-
-class MmPdt : public KObjectBase
-{
-public:
-    MmPdt() = default;
-    MmPdt(details::VirtualAddressFormater pdt_base);
-    ~MmPdt() = default;
-
-    MmPt operator[](size_t pdti);
-
-private:
-    details::VirtualAddressFormater pdt_base_;
-};
-
-class MmPpt : public KObjectBase
-{
-public:
-    MmPpt() = default;
-    MmPpt(details::VirtualAddressFormater ppt_base);
-    ~MmPpt() = default;
-
-    MmPdt operator[](size_t ppti);
-
-private:
-    details::VirtualAddressFormater ppt_base_;
-};
-
-class MmPxt : public KObjectBase
-{
-public:
-    MmPxt() = default;
-    MmPxt(uint64_t kproc_addr);
-    ~MmPxt() = default;
-
-    MmPpt operator[](size_t pxti);
-
-private:
-    details::VirtualAddressFormater pxt_base_;
-};
-
 
 class MmVirtualAddress : public KObjectBase
 {
@@ -244,11 +196,12 @@ public:
     uint64_t PtIndex();
     uint64_t Offset();
 
-    MmPte PageProperty();
+    MmPte GetPte();
+    PdteFormater* GetPdte();
+    PpteFormater* GetPpte();
+    PxteFormater* GetPxte();
 
 private:
 	uint64_t owner_kproc_addr_;
-    MmPxt directory_table_;
-    details::VirtualAddressFormater vaddr_;
 };
 }
