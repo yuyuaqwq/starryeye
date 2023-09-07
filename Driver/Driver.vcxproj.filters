@@ -118,6 +118,9 @@
     <ClCompile Include="memory\page.cpp">
       <Filter>Source Files\memory</Filter>
     </ClCompile>
+    <ClCompile Include="memory\utils.cpp">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">
@@ -172,6 +175,9 @@
       <Filter>Header Files\io</Filter>
     </ClInclude>
     <ClInclude Include="memory\page.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\utils.h">
       <Filter>Header Files\memory</Filter>
     </ClInclude>
   </ItemGroup>

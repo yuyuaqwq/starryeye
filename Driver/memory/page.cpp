@@ -66,12 +66,27 @@ VirtualAddressFormater GetPxteVirtualAddress(uint64_t address)
 
 
 
-bool MmPte::Handware::IsVaild() {
+bool MmPte::Handware::IsVaild() const {
     return (*(uint64_t*)address_ & 0x1) == 1;
 }
 uint64_t MmPte::Handware::PageFrameNumber() {
     return GetBitAreaValue((uint64_t*)address_, 8, PageFrameNumberBitPos, PageFrameNumberBitSize).SomeVal();
 }
+char MmPte::Handware::ExecuteDisable()
+{
+    return (*(uint64_t*)address_) >> 63;
+}
+
+void MmPte::Handware::SetExecuteDisable(bool disable)
+{
+    if (disable) {
+        (*(uint64_t*)address_) |= (1ull << 63);
+    }
+    else {
+        (*(uint64_t*)address_) &= (~(1ull << 63));
+    }
+}
+
 MmPte::Handware::Handware(uint64_t address): KObjectBase(address){}
 void MmPte::Init()
 {
@@ -83,37 +98,49 @@ MmPte::Handware MmPte::Hand() {
     return { address_ };
 }
 
+MmVirtualAddress::MmVirtualAddress()
+    : owner_kproc_addr_(0),
+    max_size_(0) {}
 
-
-MmVirtualAddress::MmVirtualAddress(uint64_t va, uint64_t owner_kproc_addr)
+MmVirtualAddress::MmVirtualAddress(uint64_t va, uint64_t owner_kproc_addr, size_t size)
     : KObjectBase(va),
-    owner_kproc_addr_(owner_kproc_addr){}
+    owner_kproc_addr_(owner_kproc_addr),
+    max_size_(size){}
 
-uint64_t MmVirtualAddress::PxtIndex() {
+uint64_t MmVirtualAddress::PxtIndex() const {
     return VIRTUAL_ADDRESS_PXTI(address_);
 }
-uint64_t MmVirtualAddress::PptIndex() {
+uint64_t MmVirtualAddress::PptIndex() const {
     return VIRTUAL_ADDRESS_PPTI(address_);
 }
-uint64_t MmVirtualAddress::PdtIndex() {
+uint64_t MmVirtualAddress::PdtIndex() const {
     return VIRTUAL_ADDRESS_PDTI(address_);
 }
-uint64_t MmVirtualAddress::PtIndex() {
+uint64_t MmVirtualAddress::PtIndex() const {
     return VIRTUAL_ADDRESS_PTI(address_);
 }
-uint64_t MmVirtualAddress::Offset() {
+uint64_t MmVirtualAddress::Offset() const {
     return VIRTUAL_ADDRESS_OFFSET(address_);
 }
-MmPte MmVirtualAddress::GetPte() {
+MmPte MmVirtualAddress::GetPte() const {
     return MmPte(details::GetPteVirtualAddress(address_).quad_part);
 }
-PdteFormater* MmVirtualAddress::GetPdte() {
+PdteFormater* MmVirtualAddress::GetPdte() const {
     return reinterpret_cast<PdteFormater*>(details::GetPdteVirtualAddress(address_).ptr);
 }
-PpteFormater* MmVirtualAddress::GetPpte() {
+PpteFormater* MmVirtualAddress::GetPpte() const {
     return reinterpret_cast<PpteFormater*>(details::GetPpteVirtualAddress(address_).ptr);
 }
-PxteFormater* MmVirtualAddress::GetPxte() {
+PxteFormater* MmVirtualAddress::GetPxte() const {
     return reinterpret_cast<PxteFormater*>(details::GetPxteVirtualAddress(address_).ptr);
+}
+bool MmVirtualAddress::WriteMemory(void* buf, size_t size) const
+{
+    if (max_size_ != 0 && size <= max_size_)
+    {
+        RtlCopyMemory((void*)address_, buf, size);
+        return true;
+    }
+    return false;
 }
 }

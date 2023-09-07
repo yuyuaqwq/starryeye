@@ -51,43 +51,20 @@ void InitOffsets()
 extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
 	UNREFERENCED_PARAMETER(pRegistryPath);
 
-	g_device = new io::Device;
-	g_device->Create(pDriverObject, L"\\Device\\StarryEye");
+	//g_device = new io::Device;
+	//g_device->Create(pDriverObject, L"\\Device\\StarryEye");
 
-	g_control = new io::Control;
-	g_control->Create(g_device, L"\\??\\StarrtEye");
+	//g_control = new io::Control;
+	//g_control->Create(g_device, L"\\??\\StarrtEye");
 
-	g_control->Register(1, [](void* buf, size_t len)->size_t {
-		return -1;
-		}
-	);
+	//g_control->Register(1, [](void* buf, size_t len)->size_t {
+	//	return -1;
+	//	}
+	//);
 
 	pDriverObject->DriverUnload = DriverUnload;
-
+	
 	InitOffsets();
-
-
-	HandleTable table{*(uint64_t*)HandleTable::PspCidTable};
-	//DbgBreakPoint();
-
-	table.AutoForeachAllHandleObjects([&](ObjectHeader obj) {
-		if (auto res = obj.ConvToEProc(); res.IsSome()) {
-			auto eproc = res.SomeVal();
-			//if (eproc.CompareFileName("Everything.exe")) {
-			//	eproc.VadRoot().Foreach([&](MmVadShort& mmvad_short) {
-			//		if (auto res = mmvad_short->ConvToMmVad(); res.IsSome()) {
-			//			auto mmvad = res.SomeVal();
-			//			if (auto file_obj = mmvad->Subsection().ControlArea().FilePointer(); file_obj.IsVaild())
-			//				DebugPrintf("File Name: %wZ\n", file_obj.FileName());
-			//		}
-			//		return true;
-			//	});
-			//	return false;
-			//}
-			DebugPrintf("Proc Name: %s\n", eproc.ImageFileName());
-			return true;
-		}
-		//return true;
-	});
+	
 	return STATUS_SUCCESS;
 }

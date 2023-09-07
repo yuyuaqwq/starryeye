@@ -13,11 +13,19 @@ public:
 	KObjectBase(uint64_t address);
 	~KObjectBase();
 
-	virtual bool IsVaild();
+	virtual bool IsVaild() const;
 
-	virtual uint64_t Address();
+	virtual uint64_t Address() const;
+	template<class T = char>
+	T* Pointer() const;
 
 protected:
 	uint64_t address_;
 };
+
+template<class T>
+inline T* KObjectBase::Pointer() const
+{
+	return (T*)Address();
+}
 }

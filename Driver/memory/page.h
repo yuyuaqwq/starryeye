@@ -20,11 +20,11 @@ union VirtualAddressFormater
     } bits;
 };
 
-#define VIRTUAL_ADDRESS_OFFSET(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.offset)
-#define VIRTUAL_ADDRESS_PTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.pti)
-#define VIRTUAL_ADDRESS_PDTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.pdti)
-#define VIRTUAL_ADDRESS_PPTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.ppti)
-#define VIRTUAL_ADDRESS_PXTI(address) (reinterpret_cast<details::VirtualAddressFormater*>(&address)->bits.pxti)
+#define VIRTUAL_ADDRESS_OFFSET(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.offset)
+#define VIRTUAL_ADDRESS_PTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.pti)
+#define VIRTUAL_ADDRESS_PDTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.pdti)
+#define VIRTUAL_ADDRESS_PPTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.ppti)
+#define VIRTUAL_ADDRESS_PXTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.pxti)
 #define VALID_VIRTUAL_ADDRESS_MASK 0x7FFFFFFFF8ull
 
 VirtualAddressFormater LocatePxtBase();
@@ -162,8 +162,10 @@ public:
     {
     public:
         ~Handware() = default;
-        bool IsVaild() override;
+        bool IsVaild() const override;
         uint64_t PageFrameNumber();
+        char ExecuteDisable();
+        void SetExecuteDisable(bool disable);
 
     private:
         friend class MmPte;
@@ -179,29 +181,35 @@ public:
     ~MmPte() = default;
 
     Handware Hand();
+
+private:
+    bool IsVaild() const override { return false; }
 };
 
 class MmVirtualAddress : public KObjectBase
 {
 public:
-	MmVirtualAddress() = default;
-	MmVirtualAddress(uint64_t va, uint64_t owner_kproc_addr);
+	MmVirtualAddress();
+	MmVirtualAddress(uint64_t va, uint64_t owner_kproc_addr, size_t size=0);
 	~MmVirtualAddress() = default;
 
     //static MmVirtualAddress FromPhysicalAddress(uint64_t phyaddr, uint64_t kproc_addr);
 
-    uint64_t PxtIndex();
-    uint64_t PptIndex();
-    uint64_t PdtIndex();
-    uint64_t PtIndex();
-    uint64_t Offset();
+    uint64_t PxtIndex() const;
+    uint64_t PptIndex() const;
+    uint64_t PdtIndex() const;
+    uint64_t PtIndex() const;
+    uint64_t Offset() const;
 
-    MmPte GetPte();
-    PdteFormater* GetPdte();
-    PpteFormater* GetPpte();
-    PxteFormater* GetPxte();
+    MmPte GetPte() const;
+    PdteFormater* GetPdte() const;
+    PpteFormater* GetPpte() const;
+    PxteFormater* GetPxte() const;
+
+    bool WriteMemory(void* buf, size_t size) const;
 
 private:
 	uint64_t owner_kproc_addr_;
+    uint64_t max_size_;
 };
 }

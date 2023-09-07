@@ -131,6 +131,7 @@
     <ClCompile Include="Memory\control_area.cpp" />
     <ClCompile Include="Memory\subsection.cpp" />
     <ClCompile Include="memory\page.cpp" />
+    <ClCompile Include="memory\utils.cpp" />
     <ClCompile Include="Process\eprocess.cpp" />
     <ClCompile Include="Process\kprocess.cpp" />
     <ClCompile Include="Process\vadtree.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Memory\control_area.h" />
     <ClInclude Include="memory\page.h" />
     <ClInclude Include="Memory\subsection.h" />
+    <ClInclude Include="memory\utils.h" />
     <ClInclude Include="Process\eprocess.h" />
     <ClInclude Include="Process\kprocess.h" />
     <ClInclude Include="Process\vadtree.h" />
