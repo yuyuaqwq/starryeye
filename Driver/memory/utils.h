@@ -1,6 +1,6 @@
 #pragma once
 
-#include "memory/page.h"
+#include "memory/virtual_addr.h"
 
 namespace StarryEye {
 	class MemoryUtils {
@@ -11,7 +11,7 @@ namespace StarryEye {
 			kPageReadWrite = 0b010,
 			kPageCopyOnWrite = 0b100,
 		};
-		static MmVirtualAddress AllocatePage(POOL_TYPE pool_type, size_t number_of_bytes, const char tag[4], PageProtection protection);
-		static void SetPageProtection(const MmVirtualAddress& address, PageProtection protection);
+		static MmVirtualAddress AllocatePage(POOL_TYPE pool_type, size_t number_of_bytes, uint32_t tag, PageProtection protection);
+		static bool SetPageProtection(const MmVirtualAddress& address, PageProtection protection);
 	};
 }

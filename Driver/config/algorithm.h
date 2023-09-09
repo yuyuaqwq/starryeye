@@ -1,6 +1,5 @@
 #pragma once
 #include <ntifs.h>
-#include "config/base.h"
 #include <krnlib/functional.hpp>
 #include <krnlib/stl_container.hpp>
 #include <fustd/generic/option.hpp>
@@ -10,7 +9,7 @@ namespace StarryEye {
 #define HIGH_UINT32(x) (reinterpret_cast<uint16_t*>(&x)[1])
 #define SET_HIGH_ULONG64(x, val) reinterpret_cast<uint32_t*>(&x)[1] = val
 
-class ListEntry: public KObjectBase
+class ListEntry
 {
 public:
 	ListEntry(uint64_t list_addr, uint64_t offset);
@@ -31,7 +30,7 @@ private:
 };
 
 template<class DataT>
-class RtlBalanceNode: public KObjectBase
+class RtlBalanceNode
 {
 public:
 	RtlBalanceNode(uint64_t address): KObjectBase(address), data_(address) {}
@@ -59,7 +58,7 @@ private:
 };
 
 template<class DataT>
-class RtlAvlTree: public KObjectBase
+class RtlAvlTree
 {
 public:
 	using NodeT = RtlBalanceNode<DataT>;
@@ -115,5 +114,14 @@ public:
 	}
 };
 
-fustd::Option<uint64_t> GetBitAreaValue(PVOID buffer, size_t buf_size, size_t bit_pos, uint8_t bits);
+fustd::Option<uint64_t> GetBitAreaValue(void* buffer, size_t buf_byte_size, size_t bit_pos, uint8_t bit_size);
+bool SetBitAreaValue(void* dest_buf, size_t dest_byte_size, size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size);
+
+class ProcessAutoAttacker {
+public:
+	ProcessAutoAttacker(PEPROCESS proc);
+	~ProcessAutoAttacker();
+private:
+	PEPROCESS proc_;
+};
 }

@@ -174,10 +174,13 @@
     <ClInclude Include="io\control.h">
       <Filter>Header Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="memory\page.h">
+    <ClInclude Include="memory\virtual_addr.h">
       <Filter>Header Files\memory</Filter>
     </ClInclude>
     <ClInclude Include="memory\utils.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\init.hpp">
       <Filter>Header Files\memory</Filter>
     </ClInclude>
   </ItemGroup>

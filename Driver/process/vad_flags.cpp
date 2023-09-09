@@ -11,8 +11,6 @@ namespace StarryEye {
 
 	uint8_t MmVadFlags::PrivateMemory()
 	{
-		if (auto res = GetBitAreaValue((PVOID)address_, 4, PrivateMemoryBitPos, PrivateMemoryBitSize); res.IsSome())
-			return res.SomeVal();
-		return 0;
+		return GetBitAreaValue((PVOID)address_, 4, PrivateMemoryBitPos, PrivateMemoryBitSize).Default(0);
 	}
 }

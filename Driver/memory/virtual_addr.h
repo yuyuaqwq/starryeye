@@ -1,5 +1,6 @@
 #pragma once
-#include "config/base.h"
+#include "config/algorithm.h"
+#include <stdint.h>
 #include <intrin.h>
 
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....
@@ -20,11 +21,11 @@ union VirtualAddressFormater
     } bits;
 };
 
-#define VIRTUAL_ADDRESS_OFFSET(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.offset)
-#define VIRTUAL_ADDRESS_PTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.pti)
-#define VIRTUAL_ADDRESS_PDTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.pdti)
-#define VIRTUAL_ADDRESS_PPTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.ppti)
-#define VIRTUAL_ADDRESS_PXTI(address) (reinterpret_cast<const details::VirtualAddressFormater*>(&address)->bits.pxti)
+#define VIRTUAL_ADDRESS_OFFSET(vaddr) (reinterpret_cast<const details::VirtualAddressFormater*>(&vaddr)->bits.offset)
+#define VIRTUAL_ADDRESS_PTI(vaddr) (reinterpret_cast<const details::VirtualAddressFormater*>(&vaddr)->bits.pti)
+#define VIRTUAL_ADDRESS_PDTI(vaddr) (reinterpret_cast<const details::VirtualAddressFormater*>(&vaddr)->bits.pdti)
+#define VIRTUAL_ADDRESS_PPTI(vaddr) (reinterpret_cast<const details::VirtualAddressFormater*>(&vaddr)->bits.ppti)
+#define VIRTUAL_ADDRESS_PXTI(vaddr) (reinterpret_cast<const details::VirtualAddressFormater*>(&vaddr)->bits.pxti)
 #define VALID_VIRTUAL_ADDRESS_MASK 0x7FFFFFFFF8ull
 
 VirtualAddressFormater LocatePxtBase();
@@ -37,43 +38,43 @@ VirtualAddressFormater GetPxteVirtualAddress(uint64_t address);
 
 union PdteFormater
 {
-    uint64_t quad_part;
-    struct
-    {
-        uint64_t valid : 1;                 // 0
-        uint64_t read_write : 1;            // 1
-        uint64_t user_supervisor : 1;       // 2
-        uint64_t write_through : 1;         // 3
-        uint64_t cache_disable : 1;         // 4
-        uint64_t accessed : 1;              // 5
-        uint64_t ignored : 1;               // 6
-        uint64_t large_page : 1;            // 7
-        uint64_t ignored2 : 3;              // 8
-        uint64_t restart : 1;               // 11
-        uint64_t pdt_align : 40;            // 12
-        uint64_t ignored3 : 11;             // 52
-        uint64_t execute_disable : 1;       // 63
-    } bits;
-    struct
-    {
-        uint64_t valid : 1;                // 0
-        uint64_t read_write : 1;           // 1
-        uint64_t user_supervisor : 1;      // 2
-        uint64_t write_through : 1;        // 3
-        uint64_t cache_disable : 1;        // 4
-        uint64_t accessed : 1;             // 5
-        uint64_t dirty : 1;                // 6
-        uint64_t large_page : 1;           // 7
-        uint64_t global : 1;               // 8
-        uint64_t ignored2 : 2;             // 9
-        uint64_t restart : 1;              // 11
-        uint64_t pat : 1;                  // 12
-        uint64_t reserved : 8;             // 13
-        uint64_t page_align : 31;          // 21
-        uint64_t ignored : 7;              // 52
-        uint64_t protection_key : 4;       // 59
-        uint64_t execute_disable : 1;      // 63
-    } bits_2m;
+uint64_t quad_part;
+struct
+{
+    uint64_t valid : 1;                 // 0
+    uint64_t read_write : 1;            // 1
+    uint64_t user_supervisor : 1;       // 2
+    uint64_t write_through : 1;         // 3
+    uint64_t cache_disable : 1;         // 4
+    uint64_t accessed : 1;              // 5
+    uint64_t ignored : 1;               // 6
+    uint64_t large_page : 1;            // 7
+    uint64_t ignored2 : 3;              // 8
+    uint64_t restart : 1;               // 11
+    uint64_t pdt_align : 40;            // 12
+    uint64_t ignored3 : 11;             // 52
+    uint64_t execute_disable : 1;       // 63
+} bits;
+struct
+{
+    uint64_t valid : 1;                // 0
+    uint64_t read_write : 1;           // 1
+    uint64_t user_supervisor : 1;      // 2
+    uint64_t write_through : 1;        // 3
+    uint64_t cache_disable : 1;        // 4
+    uint64_t accessed : 1;             // 5
+    uint64_t dirty : 1;                // 6
+    uint64_t large_page : 1;           // 7
+    uint64_t global : 1;               // 8
+    uint64_t ignored2 : 2;             // 9
+    uint64_t restart : 1;              // 11
+    uint64_t pat : 1;                  // 12
+    uint64_t reserved : 8;             // 13
+    uint64_t page_align : 31;          // 21
+    uint64_t ignored : 7;              // 52
+    uint64_t protection_key : 4;       // 59
+    uint64_t execute_disable : 1;      // 63
+} bits_2m;
 };
 
 
@@ -153,47 +154,57 @@ union Cr3Formater
     } bits;
 };
 
-class MmPte : public KObjectBase
+class MmPte
 {
 public:
     static void Init();
 
-    class Handware : public KObjectBase
+    class Handware
     {
     public:
         ~Handware() = default;
-        bool IsVaild() const override;
+        bool Vaild() const;
         uint64_t PageFrameNumber();
-        char ExecuteDisable();
-        void SetExecuteDisable(bool disable);
+        char NoExecute();
+        void SetNoExecute(bool no_exec);
+        char Write();
+        void SetWrite(bool writable);
+        char CopyOnWrite();
+        void SetCopyOnWrite(bool copy_on_writable);
 
     private:
         friend class MmPte;
 
         static inline uint64_t PageFrameNumberBitPos;
         static inline uint64_t PageFrameNumberBitSize;
+        static inline uint64_t CopyOnWriteBitPos;
+        static inline uint64_t CopyOnWriteBitSize;
+        static inline uint64_t WriteBitPos;
+        static inline uint64_t WriteBitSize;
 
-        Handware(uint64_t address);
+        Handware(void* pte_ptr);
+
+        uint64_t* pte_ptr_;
     };
 
     MmPte() = default;
-    MmPte(uint64_t address);
+    MmPte(void* pte_ptr);
     ~MmPte() = default;
 
     Handware Hand();
 
 private:
-    bool IsVaild() const override { return false; }
+    uint64_t* pte_ptr_;
 };
 
-class MmVirtualAddress : public KObjectBase
+class MmVirtualAddress
 {
 public:
-	MmVirtualAddress();
-	MmVirtualAddress(uint64_t va, uint64_t owner_kproc_addr, size_t size=0);
-	~MmVirtualAddress() = default;
+    static void Init();
 
-    //static MmVirtualAddress FromPhysicalAddress(uint64_t phyaddr, uint64_t kproc_addr);
+    MmVirtualAddress();
+    MmVirtualAddress(uint64_t vaddr, size_t mem_size = SIZE_MAX, PEPROCESS owner = nullptr);
+    ~MmVirtualAddress() = default;
 
     uint64_t PxtIndex() const;
     uint64_t PptIndex() const;
@@ -206,10 +217,27 @@ public:
     PpteFormater* GetPpte() const;
     PxteFormater* GetPxte() const;
 
-    bool WriteMemory(void* buf, size_t size) const;
+    template<class T=char>
+    T* Pointer(size_t pos = 0) const { return (T*)(vaddr_ + pos); }
+    std::vector<char> ReadBuffer(size_t size, size_t pos = 0) const;
+    template<class T = char>
+    T ReadValue(size_t pos = 0) const {
+        return *(T*)ReadBuffer(sizeof(T), pos).data();
+    }
+    uint64_t ReadUint64(size_t pos = 0) const;
+
+    template<class T>
+    bool WriteValue(size_t pos, T val) const {
+        return WriteBuffer(pos, &val, sizeof(val));
+    }
+    bool WriteBuffer(size_t pos, void* buffer, size_t buf_size);
+
+    friend bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y);
+    friend bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y);
 
 private:
-	uint64_t owner_kproc_addr_;
-    uint64_t max_size_;
+    uint64_t mem_size_;
+    uint64_t vaddr_;
+    PEPROCESS owner_;
 };
 }

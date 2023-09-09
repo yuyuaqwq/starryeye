@@ -150,7 +150,8 @@
     <ClInclude Include="io\device.h" />
     <ClInclude Include="io\symbolic_link.h" />
     <ClInclude Include="Memory\control_area.h" />
-    <ClInclude Include="memory\page.h" />
+    <ClInclude Include="memory\init.hpp" />
+    <ClInclude Include="memory\virtual_addr.h" />
     <ClInclude Include="Memory\subsection.h" />
     <ClInclude Include="memory\utils.h" />
     <ClInclude Include="Process\eprocess.h" />

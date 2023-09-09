@@ -13,6 +13,8 @@
 #include "thread/ethread.h"
 #include "thread/kthread.h"
 
+#include "memory/init.hpp"
+
 #include <io/control.h>
 
 //#define _SCN krnlib::
@@ -42,8 +44,7 @@ void InitOffsets()
 	EThread::Init();
 	KThread::Init();
 
-	ControlArea::Init();
-	SubSection::Init();
+	MemoryInit();
 
 	AlogrithmOffsets::Init();
 }
