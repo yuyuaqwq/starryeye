@@ -1,4 +1,4 @@
-#include "memory/virtual_addr.h"
+#include "config/virtual_addr.h"
 #include "process/kprocess.h"
 
 namespace StarryEye {
@@ -38,67 +38,61 @@ VirtualAddressFormater LocatePteBase()
     return PteBaseCache;
 }
 
-VirtualAddressFormater GetPteVirtualAddress(uint64_t address)
+VirtualAddressFormater GetPteVirtualAddress(uint64_t vaddr)
 {
     auto pte_base = LocatePteBase();
     if (pte_base.quad_part == 0) return { 0 };
-    return { ((address >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part };
+    return { ((vaddr >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part };
 }
-VirtualAddressFormater GetPdteVirtualAddress(uint64_t address)
+VirtualAddressFormater GetPdteVirtualAddress(uint64_t vaddr)
 {
     auto pte_base = LocatePteBase();
     if (pte_base.quad_part == 0) return { 0 };
-    return { ((GetPteVirtualAddress(address).quad_part >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part};
+    return { ((GetPteVirtualAddress(vaddr).quad_part >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part};
 }
-VirtualAddressFormater GetPpteVirtualAddress(uint64_t address)
+VirtualAddressFormater GetPpteVirtualAddress(uint64_t vaddr)
 {
     auto pte_base = LocatePteBase();
     if (pte_base.quad_part == 0) return { 0 };
-    return { ((GetPdteVirtualAddress(address).quad_part >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part };
+    return { ((GetPdteVirtualAddress(vaddr).quad_part >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part };
 }
-VirtualAddressFormater GetPxteVirtualAddress(uint64_t address)
+VirtualAddressFormater GetPxteVirtualAddress(uint64_t vaddr)
 {
     auto pte_base = LocatePteBase();
     if (pte_base.quad_part == 0) return { 0 };
-    return { ((GetPpteVirtualAddress(address).quad_part >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part };
+    return { ((GetPpteVirtualAddress(vaddr).quad_part >> 9) & VALID_VIRTUAL_ADDRESS_MASK) + pte_base.quad_part };
 }
 }
 
 
 
 bool MmPte::Handware::Vaild() const {
-    return (*pte_ptr_ & 0x1) == 1;
+    return parent_->pte_vaddr_.BitArea(0, 1).Default(0);
 }
 uint64_t MmPte::Handware::PageFrameNumber() {
-    return GetBitAreaValue(pte_ptr_, 8, PageFrameNumberBitPos, PageFrameNumberBitSize).Default(~0ull);
+    return parent_->pte_vaddr_.BitArea(PageFrameNumberBitPos, PageFrameNumberBitSize).Default(0);
 }
-char MmPte::Handware::NoExecute()
-{
-    return (*pte_ptr_) >> 63;
+char MmPte::Handware::NoExecute() {
+    return parent_->pte_vaddr_.BitArea(63, 1).Default(0);
 }
-void MmPte::Handware::SetNoExecute(bool no_exec)
-{
-    if (no_exec) {
-        (*pte_ptr_) |= (1ull << 63);
-    }
-    else {
-        (*pte_ptr_) &= (~(1ull << 63));
-    }
+bool MmPte::Handware::SetNoExecute(bool no_exec) {
+    return parent_->pte_vaddr_.WriteBitArea(63, no_exec ? 1 : 0, 1);
 }
 char MmPte::Handware::Write() {
-    return GetBitAreaValue(pte_ptr_, 8, WriteBitPos, WriteBitSize).Default(0);
+    return parent_->pte_vaddr_.BitArea(WriteBitPos, WriteBitSize).Default(0);
 }
-void MmPte::Handware::SetWrite(bool writable) {
-    SetBitAreaValue(pte_ptr_, 8, WriteBitPos, writable ? 1 : 0, WriteBitSize);
+bool MmPte::Handware::SetWrite(bool writable) {
+    return parent_->pte_vaddr_.WriteBitArea(WriteBitPos, writable ? 1 : 0, WriteBitSize);
 }
 char MmPte::Handware::CopyOnWrite() {
-    return GetBitAreaValue(pte_ptr_, 8, CopyOnWriteBitPos, CopyOnWriteBitSize).Default(0);
+    return parent_->pte_vaddr_.BitArea(CopyOnWriteBitPos, CopyOnWriteBitSize).Default(0);
 }
-void MmPte::Handware::SetCopyOnWrite(bool copy_on_writable) {
-    SetBitAreaValue(pte_ptr_, 8, CopyOnWriteBitPos, copy_on_writable ? 1 : 0, CopyOnWriteBitSize);
+bool MmPte::Handware::SetCopyOnWrite(bool copy_on_writable) {
+    return parent_->pte_vaddr_.WriteBitArea(CopyOnWriteBitPos, copy_on_writable ? 1 : 0, CopyOnWriteBitSize);
 }
 
-MmPte::Handware::Handware(void* pte_ptr) : pte_ptr_(static_cast<uint64_t*>(pte_ptr)) {}
+
+
 void MmPte::Init()
 {
     Handware::PageFrameNumberBitPos = 12;
@@ -108,13 +102,12 @@ void MmPte::Init()
     Handware::CopyOnWriteBitPos = 9;
     Handware::CopyOnWriteBitSize = 1;
 }
-MmPte::MmPte(void* pte_ptr) : pte_ptr_(static_cast<uint64_t*>(pte_ptr)) {}
+MmPte::MmPte(const MmVirtualAddress& pte_vaddr): pte_vaddr_(pte_vaddr) {}
 MmPte::Handware MmPte::Hand() {
-    return { pte_ptr_ };
+    return { this };
 }
 
-void MmVirtualAddress::Init()
-{
+void MmVirtualAddress::Init() {
     MmPte::Init();
 }
 MmVirtualAddress::MmVirtualAddress()
@@ -142,7 +135,7 @@ uint64_t MmVirtualAddress::Offset() const {
     return VIRTUAL_ADDRESS_OFFSET(vaddr_);
 }
 MmPte MmVirtualAddress::GetPte() const {
-    return MmPte(details::GetPteVirtualAddress(vaddr_).ptr);
+    return MmPte({ details::GetPteVirtualAddress(vaddr_).quad_part, 8, owner_ });
 }
 PdteFormater* MmVirtualAddress::GetPdte() const {
     return reinterpret_cast<PdteFormater*>(details::GetPdteVirtualAddress(vaddr_).ptr);
@@ -153,23 +146,57 @@ PpteFormater* MmVirtualAddress::GetPpte() const {
 PxteFormater* MmVirtualAddress::GetPxte() const {
     return reinterpret_cast<PxteFormater*>(details::GetPxteVirtualAddress(vaddr_).ptr);
 }
-std::vector<char> MmVirtualAddress::ReadBuffer(size_t size, size_t pos) const
+fustd::Option<krnlib::vector<char>> MmVirtualAddress::Buffer(size_t size, size_t pos) const
 {
+    if (size + pos > mem_size_) return fustd::None();
     ProcessAutoAttacker pa{ owner_ };
-    std::vector<char> buf;
+    krnlib::vector<char> buf;
     buf.resize(size);
-    RtlCopyMemory(buf.data(), Pointer(pos), size);
-    return buf;
+    RtlCopyMemory(buf.data(), PtrUnsafe(pos), size);
+    return fustd::Some(std::move(buf));
 }
-uint64_t MmVirtualAddress::ReadUint64(size_t pos) const
+fustd::Option<uint64_t> MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size)
 {
-    return ReadValue<uint64_t>();
+    if (bit_size > 64 || !IsBitAreaValid(mem_size_, bit_pos, bit_size)) {
+        return fustd::None();
+    }
+
+    uint64_t value = 0;
+    uint8_t* bytes_buf = PtrUnsafe<uint8_t>();
+
+    for (uint64_t i = 0; i < bit_size; ++i) {
+        uint64_t byte_idx = (bit_pos + i) / 8;
+        uint64_t bit_idx = (bit_pos + i) % 8;
+
+        uint64_t bit_val = (bytes_buf[byte_idx] >> bit_idx) & 1;
+        value |= (bit_val << i);
+    }
+
+    return fustd::Some(std::move(value));
 }
-bool MmVirtualAddress::WriteBuffer(size_t pos, void* buffer, size_t buf_size)
-{
+bool MmVirtualAddress::WriteBuffer(size_t pos, void* buffer, size_t buf_size) const {
     if (buf_size > (pos + mem_size_)) return false;
     ProcessAutoAttacker pa{ owner_ };
-    RtlMoveMemory(Pointer(pos), buffer, buf_size);
+    RtlMoveMemory(PtrUnsafe(pos), buffer, buf_size);
+}
+bool MmVirtualAddress::WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const {
+    if (src_bit_size > 64 || !IsBitAreaValid(mem_size_, beg_bit_pos, src_bit_size)) {
+        return false;
+    }
+
+    uint8_t* bytes_buf = PtrUnsafe<uint8_t>();
+
+    for (size_t i = 0; i < src_bit_size; ++i) {
+        size_t byte_idx = (beg_bit_pos + i) / 8;
+        size_t bit_idx = (beg_bit_pos + i) % 8;
+
+        uint64_t bit_val = (src_value >> i) & 1;
+
+        bytes_buf[byte_idx] &= ~(1 << bit_idx);
+        bytes_buf[byte_idx] |= (bit_val << bit_idx);
+    }
+
+    return true;
 }
 bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y) {
     return x.vaddr_ == y.vaddr_ &&

@@ -2,9 +2,13 @@
 #include "config/algorithm.h"
 #include <stdint.h>
 #include <intrin.h>
+#include <krnlib/stl_container.hpp>
+#include <fustd/generic/option.hpp>
 
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....
 namespace StarryEye {
+class MmPte;
+
 namespace details {
 union VirtualAddressFormater
 {
@@ -12,12 +16,12 @@ union VirtualAddressFormater
     uint64_t* ptr;
     struct
     {
-        uint64_t offset : 12;           // 0
-        uint64_t pti : 9;               // 12
-        uint64_t pdti : 9;              // 21
+        uint64_t offset : 12;          // 0
+        uint64_t pti : 9;              // 12
+        uint64_t pdti : 9;             // 21
         uint64_t ppti : 9;             // 30
         uint64_t pxti : 9;             // 39
-        uint64_t sign_extend : 16;      // 48
+        uint64_t sign_extend : 16;     // 48
     } bits;
 };
 
@@ -30,10 +34,10 @@ union VirtualAddressFormater
 
 VirtualAddressFormater LocatePxtBase();
 VirtualAddressFormater LocatePteBase();
-VirtualAddressFormater GetPteVirtualAddress(uint64_t address);
-VirtualAddressFormater GetPdteVirtualAddress(uint64_t address);
-VirtualAddressFormater GetPpteVirtualAddress(uint64_t address);
-VirtualAddressFormater GetPxteVirtualAddress(uint64_t address);
+VirtualAddressFormater GetPteVirtualAddress(uint64_t vaddr);
+VirtualAddressFormater GetPdteVirtualAddress(uint64_t vaddr);
+VirtualAddressFormater GetPpteVirtualAddress(uint64_t vaddr);
+VirtualAddressFormater GetPxteVirtualAddress(uint64_t vaddr);
 }
 
 union PdteFormater
@@ -154,48 +158,7 @@ union Cr3Formater
     } bits;
 };
 
-class MmPte
-{
-public:
-    static void Init();
 
-    class Handware
-    {
-    public:
-        ~Handware() = default;
-        bool Vaild() const;
-        uint64_t PageFrameNumber();
-        char NoExecute();
-        void SetNoExecute(bool no_exec);
-        char Write();
-        void SetWrite(bool writable);
-        char CopyOnWrite();
-        void SetCopyOnWrite(bool copy_on_writable);
-
-    private:
-        friend class MmPte;
-
-        static inline uint64_t PageFrameNumberBitPos;
-        static inline uint64_t PageFrameNumberBitSize;
-        static inline uint64_t CopyOnWriteBitPos;
-        static inline uint64_t CopyOnWriteBitSize;
-        static inline uint64_t WriteBitPos;
-        static inline uint64_t WriteBitSize;
-
-        Handware(void* pte_ptr);
-
-        uint64_t* pte_ptr_;
-    };
-
-    MmPte() = default;
-    MmPte(void* pte_ptr);
-    ~MmPte() = default;
-
-    Handware Hand();
-
-private:
-    uint64_t* pte_ptr_;
-};
 
 class MmVirtualAddress
 {
@@ -217,27 +180,75 @@ public:
     PpteFormater* GetPpte() const;
     PxteFormater* GetPxte() const;
 
-    template<class T=char>
-    T* Pointer(size_t pos = 0) const { return (T*)(vaddr_ + pos); }
-    std::vector<char> ReadBuffer(size_t size, size_t pos = 0) const;
+    fustd::Option<krnlib::vector<char>> Buffer(size_t size, size_t pos = 0) const;
     template<class T = char>
-    T ReadValue(size_t pos = 0) const {
-        return *(T*)ReadBuffer(sizeof(T), pos).data();
+    fustd::Option<T> Value(size_t pos = 0) const {
+        if (auto opt = Buffer(sizeof(T), pos); opt.IsSome())
+            return fustd::Some<T>(*(T*)opt.SomeVal().data());
+        return fustd::None();
     }
-    uint64_t ReadUint64(size_t pos = 0) const;
+    fustd::Option<uint64_t> BitArea(size_t bit_pos, uint8_t bit_size);
 
     template<class T>
     bool WriteValue(size_t pos, T val) const {
         return WriteBuffer(pos, &val, sizeof(val));
     }
-    bool WriteBuffer(size_t pos, void* buffer, size_t buf_size);
+    bool WriteBuffer(size_t pos, void* buffer, size_t buf_size) const;
+    bool WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const;
 
     friend bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y);
 
 private:
+    template<class T = char>
+    T* PtrUnsafe(size_t pos = 0) const {
+        return (T*)(vaddr_ + pos);
+    }
     uint64_t mem_size_;
     uint64_t vaddr_;
     PEPROCESS owner_;
+};
+
+
+class MmPte
+{
+public:
+    static void Init();
+
+    class Handware
+    {
+    public:
+        ~Handware() = default;
+        bool Vaild() const;
+        uint64_t PageFrameNumber();
+        char NoExecute();
+        bool SetNoExecute(bool no_exec);
+        char Write();
+        bool SetWrite(bool writable);
+        char CopyOnWrite();
+        bool SetCopyOnWrite(bool copy_on_writable);
+
+    private:
+        friend class MmPte;
+
+        static inline uint64_t PageFrameNumberBitPos;
+        static inline uint64_t PageFrameNumberBitSize;
+        static inline uint64_t CopyOnWriteBitPos;
+        static inline uint64_t CopyOnWriteBitSize;
+        static inline uint64_t WriteBitPos;
+        static inline uint64_t WriteBitSize;
+
+        Handware(MmPte* parent);
+
+        MmPte* parent_;
+    };
+    MmPte() = default;
+    MmPte(const MmVirtualAddress& pte_vaddr);
+    ~MmPte() = default;
+
+    Handware Hand();
+
+private:
+    MmVirtualAddress pte_vaddr_;
 };
 }

@@ -115,11 +115,11 @@
     <ClCompile Include="io\control.cpp">
       <Filter>Source Files\io</Filter>
     </ClCompile>
-    <ClCompile Include="memory\page.cpp">
-      <Filter>Source Files\memory</Filter>
-    </ClCompile>
     <ClCompile Include="memory\utils.cpp">
       <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="config\virtual_addr.cpp">
+      <Filter>Source Files\config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,9 +143,6 @@
     </ClInclude>
     <ClInclude Include="Process\kprocess.h">
       <Filter>Header Files\process</Filter>
-    </ClInclude>
-    <ClInclude Include="Config\base.h">
-      <Filter>Header Files\config</Filter>
     </ClInclude>
     <ClInclude Include="Config\algorithm.h">
       <Filter>Header Files\config</Filter>
@@ -174,14 +171,20 @@
     <ClInclude Include="io\control.h">
       <Filter>Header Files\io</Filter>
     </ClInclude>
-    <ClInclude Include="memory\virtual_addr.h">
-      <Filter>Header Files\memory</Filter>
-    </ClInclude>
     <ClInclude Include="memory\utils.h">
       <Filter>Header Files\memory</Filter>
     </ClInclude>
     <ClInclude Include="memory\init.hpp">
       <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="config\init.hpp">
+      <Filter>Header Files\config</Filter>
+    </ClInclude>
+    <ClInclude Include="config\structs.h">
+      <Filter>Header Files\config</Filter>
+    </ClInclude>
+    <ClInclude Include="config\virtual_addr.h">
+      <Filter>Header Files\config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

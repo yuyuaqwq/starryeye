@@ -120,6 +120,7 @@
   <ItemGroup>
     <ClCompile Include="Config\algorithm.cpp" />
     <ClCompile Include="Config\base.cpp" />
+    <ClCompile Include="config\virtual_addr.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="File\file_object.cpp" />
     <ClCompile Include="Handle\handle_table.cpp" />
@@ -130,7 +131,6 @@
     <ClCompile Include="io\symbolic_link.cpp" />
     <ClCompile Include="Memory\control_area.cpp" />
     <ClCompile Include="Memory\subsection.cpp" />
-    <ClCompile Include="memory\page.cpp" />
     <ClCompile Include="memory\utils.cpp" />
     <ClCompile Include="Process\eprocess.cpp" />
     <ClCompile Include="Process\kprocess.cpp" />
@@ -141,7 +141,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\algorithm.h" />
-    <ClInclude Include="Config\base.h" />
+    <ClInclude Include="config\init.hpp" />
+    <ClInclude Include="config\structs.h" />
+    <ClInclude Include="config\virtual_addr.h" />
     <ClInclude Include="File\file_object.h" />
     <ClInclude Include="Handle\handle_table.h" />
     <ClInclude Include="Handle\object_header.h" />
@@ -151,7 +153,6 @@
     <ClInclude Include="io\symbolic_link.h" />
     <ClInclude Include="Memory\control_area.h" />
     <ClInclude Include="memory\init.hpp" />
-    <ClInclude Include="memory\virtual_addr.h" />
     <ClInclude Include="Memory\subsection.h" />
     <ClInclude Include="memory\utils.h" />
     <ClInclude Include="Process\eprocess.h" />
