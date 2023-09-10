@@ -121,6 +121,9 @@
     <ClCompile Include="config\virtual_addr.cpp">
       <Filter>Source Files\config</Filter>
     </ClCompile>
+    <ClCompile Include="config\structs.cpp">
+      <Filter>Source Files\config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">

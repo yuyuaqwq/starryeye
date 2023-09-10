@@ -1,8 +1,8 @@
 #pragma once
-#include "config/algorithm.h"
+#include "config/virtual_addr.h"
 
 namespace StarryEye {
 	void ConfigInit() {
-
+		MmVirtualAddress::Init();
 	}
 }

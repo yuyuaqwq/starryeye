@@ -1,43 +1,46 @@
 #pragma once
 
 #include "config/virtual_addr.h"
+#include <krnlib/functional.hpp>
 
 namespace StarryEye {
-template<class DataT>
-class RtlAvlTree
+class KObject {
+public:
+	KObject() = default;
+	KObject(const MmVirtualAddress& vaddr);
+	const MmVirtualAddress& VAddr() const;
+
+protected:
+	MmVirtualAddress vaddr_;
+};
+
+
+class RtlBalanceNode: public KObject
 {
 public:
-	using ForeachCallBackT = const krnlib::function<bool(NodeT&)>&;
+	RtlBalanceNode(const MmVirtualAddress& vaddr);
+	~RtlBalanceNode() = default;
 
-	RtlAvlTree(uint64_t address) : KObjectBase(address) {}
+	RtlBalanceNode Left() const;
+	RtlBalanceNode Right() const;
+	RtlBalanceNode Parent() const;
+};
+
+class RtlAvlTree : public KObject
+{
+public:
+	using ForeachCallBackT = const krnlib::function<bool(const RtlBalanceNode&)>&;
+
+	RtlAvlTree(const MmVirtualAddress& vaddr);
 	RtlAvlTree() = default;
 	~RtlAvlTree() = default;
 
-	NodeT Root() {
-		return NodeT(*(uint64_t*)(address_ + AlogrithmOffsets::RtlAvlTree_RootOffset));
-	}
-
-	void Foreach(ForeachCallBackT callback) {
-		ForeachRecursion(Root(), callback);
-	}
-
+	RtlBalanceNode Root();
+	void Foreach(ForeachCallBackT callback);
 	// 获取所有节点(性能差, 不推荐使用!!!)
-	krnlib::list<NodeT> GetAllNodes() {
-		krnlib::list<NodeT> total;
-		Foreach([&](NodeT& node) {
-			total.push_back(node);
-			return true;
-			});
-		return total;
-	}
+	krnlib::list<RtlBalanceNode> GetAllNodes();
 
 private:
-	bool ForeachRecursion(NodeT& root, ForeachCallBackT callback)
-	{
-		if (!root.IsVaild()) return true;
-		if (!ForeachRecursion(root.Left(), callback)) return false;
-		if (!callback(root)) return false;
-		return ForeachRecursion(root.Right(), callback);
-	}
+	bool ForeachRecursion(const RtlBalanceNode& root, ForeachCallBackT callback);
 };
 }

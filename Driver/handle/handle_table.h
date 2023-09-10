@@ -1,12 +1,12 @@
 #pragma once
 #include <krnlib/functional.hpp>
 #include <krnlib/stl_container.hpp>
-#include "config/base.h"
+#include "config/structs.h"
 #include "handle/object_header.h"
 
 namespace StarryEye {
 
-class HandleTable: public KObjectBase
+class HandleTable: public KObject
 {
 public:
 	using ForeachHandleObjectsCallBack = const krnlib::function<bool(ObjectHeader&)>&;
@@ -15,7 +15,7 @@ public:
 	static void Init();
 
 	HandleTable() = default;
-	HandleTable(uint64_t address);
+	HandleTable(const MmVirtualAddress& vaddr);
 	~HandleTable() = default;
 
 	// 解密HandleTable中Handle项的路径

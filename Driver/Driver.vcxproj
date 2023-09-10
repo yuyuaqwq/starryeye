@@ -120,6 +120,7 @@
   <ItemGroup>
     <ClCompile Include="Config\algorithm.cpp" />
     <ClCompile Include="Config\base.cpp" />
+    <ClCompile Include="config\structs.cpp" />
     <ClCompile Include="config\virtual_addr.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="File\file_object.cpp" />

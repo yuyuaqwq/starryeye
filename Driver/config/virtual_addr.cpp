@@ -119,6 +119,11 @@ MmVirtualAddress::MmVirtualAddress(uint64_t vaddr, size_t mem_size, PEPROCESS ow
     mem_size_(mem_size),
     vaddr_(vaddr) {}
 
+MmVirtualAddress::MmVirtualAddress(void* ptr, size_t mem_size, PEPROCESS owner)
+    : owner_(owner),
+    mem_size_(mem_size),
+    vaddr_((uint64_t)ptr) {}
+
 uint64_t MmVirtualAddress::PxtIndex() const {
     return VIRTUAL_ADDRESS_PXTI(vaddr_);
 }
@@ -145,6 +150,9 @@ PpteFormater* MmVirtualAddress::GetPpte() const {
 }
 PxteFormater* MmVirtualAddress::GetPxte() const {
     return reinterpret_cast<PxteFormater*>(details::GetPxteVirtualAddress(vaddr_).ptr);
+}
+bool MmVirtualAddress::IsValid() const {
+    return MmIsAddressValid(PtrUnsafe());
 }
 fustd::Option<krnlib::vector<char>> MmVirtualAddress::Buffer(size_t size, size_t pos) const
 {

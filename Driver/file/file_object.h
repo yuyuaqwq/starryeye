@@ -1,18 +1,17 @@
 #pragma once
-#include "config/base.h"
+#include "config/structs.h"
 
 namespace StarryEye {
-	class FileObject: public KObjectBase
+	class FileObject: public KObject
 	{
 	public:
-		FileObject(uint64_t address);
+		FileObject(const MmVirtualAddress& vaddr, uint8_t property);
 		FileObject() = default;
 		~FileObject() = default;
 
 		PUNICODE_STRING FileName();
 
 	private:
-		PFILE_OBJECT file_object_;
 		uint8_t property_;
 	};
 }
