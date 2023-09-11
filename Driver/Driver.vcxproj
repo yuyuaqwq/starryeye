@@ -93,7 +93,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(KernelLib)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>\krnlib\x64\krnlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>\krnlib\x64\krnlib-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>

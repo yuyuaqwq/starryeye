@@ -136,7 +136,7 @@ uint64_t MmVirtualAddress::PdtIndex() const {
 uint64_t MmVirtualAddress::PtIndex() const {
     return VIRTUAL_ADDRESS_PTI(vaddr_);
 }
-uint64_t MmVirtualAddress::Offset() const {
+uint64_t MmVirtualAddress::PteOffset() const {
     return VIRTUAL_ADDRESS_OFFSET(vaddr_);
 }
 MmPte MmVirtualAddress::GetPte() const {
@@ -153,6 +153,11 @@ PxteFormater* MmVirtualAddress::GetPxte() const {
 }
 bool MmVirtualAddress::IsValid() const {
     return MmIsAddressValid(PtrUnsafe());
+}
+fustd::Option<MmVirtualAddress> MmVirtualAddress::Offset(size_t offset)
+{
+    if (offset > mem_size_) return fustd::None();
+    return fustd::Some(MmVirtualAddress(vaddr_, mem_size_ - offset, owner_));
 }
 fustd::Option<krnlib::vector<char>> MmVirtualAddress::Buffer(size_t size, size_t pos) const
 {

@@ -20,7 +20,7 @@ uint8_t ObjectHeader::DecryptTypeIndex(uint64_t obj_addr, uint8_t type_index)
 	return type_index ^ x ^ (*ObHeaderCookie);
 }
 
-ObjectHeader::ObjectHeader(uint64_t address) : KObjectBase(address) {}
+ObjectHeader::ObjectHeader(const MmVirtualAddress& vaddr): KObject(vaddr) {}
 
 uint8_t ObjectHeader::TypeIndex()
 {

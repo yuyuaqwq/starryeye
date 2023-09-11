@@ -174,7 +174,7 @@ public:
     uint64_t PptIndex() const;
     uint64_t PdtIndex() const;
     uint64_t PtIndex() const;
-    uint64_t Offset() const;
+    uint64_t PteOffset() const;
 
     MmPte GetPte() const;
     PdteFormater* GetPdte() const;
@@ -183,18 +183,11 @@ public:
 
     bool IsValid() const;
 
-    template<class T = char>
-    T* PtrUnsafe(size_t pos = 0) const {
-        return (T*)(vaddr_ + pos);
-    }
+    fustd::Option<MmVirtualAddress> Offset(size_t offset);
 
     fustd::Option<krnlib::vector<char>> Buffer(size_t size, size_t pos = 0) const;
     template<class T = char>
-    fustd::Option<T> Value(size_t pos = 0) const {
-        if (sizeof(T) + pos > mem_size_) return fustd::None();
-        ProcessAutoAttacker pa{ owner_ };
-        return fustd::Some(std::move(*PtrUnsafe<T>()));
-    }
+    fustd::Option<T> Value(size_t pos = 0) const;
     fustd::Option<uint64_t> BitArea(size_t bit_pos, uint8_t bit_size);
 
     template<class T>
@@ -208,6 +201,11 @@ public:
     friend bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y);
 
 private:
+    template<class T = char>
+    T* PtrUnsafe(size_t pos = 0) const {
+        return (T*)(vaddr_ + pos);
+    }
+
     uint64_t mem_size_;
     uint64_t vaddr_;
     PEPROCESS owner_;
@@ -255,4 +253,10 @@ public:
 private:
     MmVirtualAddress pte_vaddr_;
 };
+template<class T>
+inline fustd::Option<T> MmVirtualAddress::Value(size_t pos) const {
+    if (sizeof(T) + pos > mem_size_) return fustd::None();
+    ProcessAutoAttacker pa{ owner_ };
+    return fustd::Some(std::move(*PtrUnsafe<T>()));
+}
 }
