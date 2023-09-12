@@ -1,6 +1,6 @@
 #pragma once
 
-#include "basic/virtual_addr.h"
+#include "virtual_addr.h"
 #include <krnlib/functional.hpp>
 
 namespace StarryEye {
@@ -54,11 +54,12 @@ private:
 
 
 
-template<class T, EnableIfInheritKObject<T> = 0>
+template<class T>
 class ListEntry : public KObject
 {
 public:
 	ListEntry() = default;
+	template<EnableIfInheritKObject<T> = 0>
 	ListEntry(const MmVirtualAddress& vaddr, ptrdiff_t off_to_head): KObject(vaddr), off_to_head_(off_to_head) {}
 	~ListEntry() = default;
 
@@ -78,11 +79,14 @@ private:
 	ptrdiff_t off_to_head_;
 };
 
-template<class ObjectT, EnableIfInheritKObject<ObjectT> = 0>
+template<class ObjectT>
 class ExFastRef : public KObject
 {
 public:
+	ExFastRef() = default;
+	template<EnableIfInheritKObject<ObjectT> = 0>
 	ExFastRef(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+	~ExFastRef() = default;
 
 	ObjectT Object() {
 		return vaddr_.Value<uint64_t>() & ~0xFull;

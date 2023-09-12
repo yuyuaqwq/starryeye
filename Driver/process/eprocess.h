@@ -1,9 +1,9 @@
 #pragma once
 #include "basic/structs.h"
-#include "process/kprocess.h"
+#include "kprocess.h"
+#include "vadtree.h"
 #include "thread/ethread.h"
 #include "handle/handle_table.h"
-#include "process/vadtree.h"
 
 namespace StarryEye {
 class EThread;

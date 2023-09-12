@@ -6,15 +6,13 @@ void EThread::Init()
 	ThreadListEntryOffset = 0x4e8;
 }
 
-EThread::EThread(uint64_t address) : KObjectBase(address) {}
+EThread::EThread(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
-KThread EThread::Tcb()
-{
-	return KThread(address_);
+KThread EThread::Tcb() {
+	return vaddr_;
 }
 
-ListEntry EThread::ThreadListEntry()
-{
-	return ListEntry(address_ + ThreadListEntryOffset, ThreadListEntryOffset);
+ListEntry<EThread> EThread::ThreadListEntry() {
+	return ListEntry<EThread>(vaddr_ + ThreadListEntryOffset, ThreadListEntryOffset);
 }
 }

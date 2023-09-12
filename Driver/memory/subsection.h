@@ -1,5 +1,5 @@
 #pragma once
-#include "memory/control_area.h"
+#include "control_area.h"
 
 namespace StarryEye {
 	class SubSection: public KObject

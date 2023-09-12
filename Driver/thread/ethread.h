@@ -1,21 +1,20 @@
 #pragma once
-#include "config/base.h"
-#include "config/algorithm.h"
-#include "thread/kthread.h"
+#include "basic/structs.h"
+#include "kthread.h"
 #include "process/eprocess.h"
 
 namespace StarryEye {
-class EThread: public KObjectBase
+class EThread: public KObject
 {
 public:
 	static void Init();
 
-	EThread(uint64_t address);
+	EThread(const MmVirtualAddress& vaddr);
 	EThread() = default;
 	~EThread() = default;
 
 	KThread Tcb();
-	ListEntry ThreadListEntry();
+	ListEntry<EThread> ThreadListEntry();
 
 private:
 	friend class EProcess;

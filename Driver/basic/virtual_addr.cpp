@@ -5,7 +5,7 @@ namespace StarryEye {
 namespace details {
 VirtualAddressFormater LocatePxtBase()
 {
-    inline static VirtualAddressFormater PxtBaseCache{0};
+    static VirtualAddressFormater PxtBaseCache{0};
     if (PxtBaseCache.quad_part == 0)
     {
         for (size_t i = PAGE_SIZE / 8; i > 0; i--)
@@ -28,7 +28,7 @@ _success:
 
 VirtualAddressFormater LocatePteBase()
 {
-    inline static VirtualAddressFormater PteBaseCache{0};
+    static VirtualAddressFormater PteBaseCache{0};
     if (PteBaseCache.quad_part == 0) {
         PteBaseCache = LocatePxtBase();
         PteBaseCache.bits.pti = 0;
@@ -66,6 +66,7 @@ VirtualAddressFormater GetPxteVirtualAddress(uint64_t vaddr)
 
 
 
+MmPte::Handware::Handware(MmPte* parent) : parent_(parent) {}
 bool MmPte::Handware::Vaild() const {
     return parent_->pte_vaddr_.BitArea(0, 1);
 }
@@ -228,11 +229,22 @@ MmVirtualAddress& MmVirtualAddress::operator-=(ptrdiff_t offset) {
     return *this;
 }
 bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y) {
-    return x.vaddr_ == y.vaddr_ &&
-        x.owner_ == y.owner_;
+    return x.vaddr_ == y.vaddr_;
 }
 bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
-    return !(x == y);
+    return x.vaddr_ != y.vaddr_;
+}
+bool operator>(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+    return x.vaddr_ > y.vaddr_;
+}
+bool operator<(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+    return x.vaddr_ < y.vaddr_;
+}
+bool operator>=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+    return x.vaddr_ >= y.vaddr_;
+}
+bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+    return x.vaddr_ <= y.vaddr_;
 }
 MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next)
 {

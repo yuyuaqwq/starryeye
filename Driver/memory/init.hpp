@@ -1,6 +1,6 @@
 #pragma once
-#include "memory/control_area.h"
-#include "memory/subsection.h"
+#include "control_area.h"
+#include "subsection.h"
 
 namespace StarryEye {
 	void MemoryInit()

@@ -18,7 +18,7 @@ EProcess::EProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
 char* EProcess::ImageFileName()
 {
-	return (vaddr_ + ImageFileNameOffset).Value<char*>();
+	return (vaddr_ + ImageFileNameOffset).Pointer();
 }
 
 KProcess EProcess::Pcb()
@@ -28,7 +28,7 @@ KProcess EProcess::Pcb()
 
 ListEntry<EProcess> EProcess::ActiveProcessLinks()
 {
-	return { vaddr_ + ActiveProcessLinksOffset , ActiveProcessLinksOffset };
+	return ListEntry<EProcess>(vaddr_ + ActiveProcessLinksOffset, ActiveProcessLinksOffset);
 }
 
 HandleTable EProcess::ObjectTable()
@@ -43,17 +43,17 @@ uint64_t EProcess::InheritedFromUniqueProcessId()
 
 uint8_t EProcess::OwnerProcessId()
 {
-	return (vaddr_ + OwnerProcessIdOffset).ValU8()
+	return (vaddr_ + OwnerProcessIdOffset).ValU8();
 }
 
 uint8_t EProcess::PriorityClass()
 {
-	return (vaddr_ + PriorityClassOffset).ValU8()
+	return (vaddr_ + PriorityClassOffset).ValU8();
 }
 
 ListEntry<EThread> EProcess::ThreadListHead()
 {
-	return { vaddr_ + ThreadListHeadOffset, EThread::ThreadListEntryOffset };
+	return ListEntry<EThread>(vaddr_ + ThreadListHeadOffset, EThread::ThreadListEntryOffset);
 }
 
 MmVadTree EProcess::VadRoot()

@@ -2,7 +2,7 @@
 #include <krnlib/functional.hpp>
 #include <krnlib/stl_container.hpp>
 #include "basic/structs.h"
-#include "handle/object_header.h"
+#include "object_header.h"
 
 namespace StarryEye {
 
@@ -17,10 +17,6 @@ public:
 	HandleTable() = default;
 	HandleTable(const MmVirtualAddress& vaddr);
 	~HandleTable() = default;
-
-	// 解密HandleTable中Handle项的路径
-	static uint64_t DecryptHandleAddress(uint64_t addr);
-
 
 	// 获取TableCode
 	uint64_t TableCode();
@@ -42,6 +38,9 @@ public:
 	krnlib::list<ObjectHeader> GetAllHandleObjects();
 
 private:
+	// 解密HandleTable中Handle项的路径
+	static uint64_t DecryptHandleAddress(uint64_t addr);
+
 	// 获取一级TableCode下所有Handle对象
 	static bool ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
 	// 获取二级TableCode下所有Handle对象

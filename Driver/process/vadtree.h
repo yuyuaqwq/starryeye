@@ -1,5 +1,6 @@
+#pragma once
 #include "memory/subsection.h"
-#include "process/vad_flags.h"
+#include "vad_flags.h"
 #include <fustd/generic/option.hpp>
 
 namespace StarryEye {
@@ -25,8 +26,6 @@ public:
 	MmVirtualAddress EndingAddress();
 
 private:
-	friend class MmVadData;
-
 	static inline uint64_t StartingVpnOffset;
 	static inline uint64_t EndingVpnOffset;
 	static inline uint64_t StartingVpnHighOffset;
@@ -59,8 +58,12 @@ private:
 class MmVadTree: public RtlAvlTree
 {
 public:
+	static void Init();
+
 	MmVadTree() = default;
 	MmVadTree(const MmVirtualAddress& vaddr);
 	~MmVadTree() = default;
+
+	fustd::Option<MmVadShort> SearchNode(const MmVirtualAddress& vaddr);
 };
 }

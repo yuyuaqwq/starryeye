@@ -1,5 +1,5 @@
 #pragma once
-#include "basic/algorithm.h"
+#include "algorithm.h"
 #include <stdint.h>
 #include <intrin.h>
 #include <krnlib/stl_container.hpp>
@@ -202,6 +202,10 @@ public:
 
     friend bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y);
+    friend bool operator>(const MmVirtualAddress& x, const MmVirtualAddress& y);
+    friend bool operator<(const MmVirtualAddress& x, const MmVirtualAddress& y);
+    friend bool operator>=(const MmVirtualAddress& x, const MmVirtualAddress& y);
+    friend bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next);
 
     MmVirtualAddress operator+(ptrdiff_t offset);

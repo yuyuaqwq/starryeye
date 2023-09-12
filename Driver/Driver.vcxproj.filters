@@ -186,5 +186,14 @@
     <ClInclude Include="basic\virtual_addr.h">
       <Filter>Header Files\basic</Filter>
     </ClInclude>
+    <ClInclude Include="handle\init.hpp">
+      <Filter>Header Files\Handle</Filter>
+    </ClInclude>
+    <ClInclude Include="process\init.hpp">
+      <Filter>Header Files\process</Filter>
+    </ClInclude>
+    <ClInclude Include="thread\init.hpp">
+      <Filter>Header Files\thread</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Driver", "Driver\Driver.vcxproj", "{88A299FF-7768-4574-947B-E1E4652AF2CC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stareye", "stareye\stareye.vcxproj", "{C13DD37C-9CB6-4F64-A69E-BDE22C464505}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -27,14 +25,6 @@ Global
 		{88A299FF-7768-4574-947B-E1E4652AF2CC}.Release|x64.ActiveCfg = Release|x64
 		{88A299FF-7768-4574-947B-E1E4652AF2CC}.Release|x64.Build.0 = Release|x64
 		{88A299FF-7768-4574-947B-E1E4652AF2CC}.Release|x64.Deploy.0 = Release|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Debug|ARM64.ActiveCfg = Debug|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Debug|ARM64.Build.0 = Debug|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Debug|x64.ActiveCfg = Debug|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Debug|x64.Build.0 = Debug|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Release|ARM64.ActiveCfg = Release|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Release|ARM64.Build.0 = Release|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Release|x64.ActiveCfg = Release|x64
-		{C13DD37C-9CB6-4F64-A69E-BDE22C464505}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

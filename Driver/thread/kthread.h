@@ -1,14 +1,13 @@
 #pragma once
-#include "config/base.h"
 #include "process/kprocess.h"
 
 namespace StarryEye {
-class KThread: public KObjectBase
+class KThread: public KObject
 {
 public:
 	static void Init();
 
-	KThread(uint64_t address);
+	KThread(const MmVirtualAddress& vaddr);
 	KThread() = default;
 	~KThread() = default;
 

@@ -1,19 +1,11 @@
 #include <ntifs.h>
 #include <stdexcept>
-#include "config/algorithm.h"
 
-#include "handle/handle_table.h"
-#include "handle/object_header.h"
-#include "handle/object_type.h"
-
-#include "process/eprocess.h"
-#include "process/kprocess.h"
-#include "process/vadtree.h"
-
-#include "thread/ethread.h"
-#include "thread/kthread.h"
-
+#include "basic/init.hpp"
+#include "handle/init.hpp"
 #include "memory/init.hpp"
+#include "process/init.hpp"
+#include "thread/init.hpp"
 
 #include <io/control.h>
 
@@ -31,41 +23,23 @@ void DriverUnload(PDRIVER_OBJECT pDriverObject)
 	return;
 }
 
-void InitOffsets()
+void GlobalInit()
 {
-	HandleTable::Init();
-	ObjectHeader::Init();
-	ObjectType::Init();
-
-	EProcess::Init();
-	KProcess::Init();
-	VadTree::Init();
-
-	EThread::Init();
-	KThread::Init();
-
+	BasicInit();
+	HandleInit();
 	MemoryInit();
-
-	AlogrithmOffsets::Init();
+	ProcessInit();
+	ThreadInit();
 }
 
 extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
 	UNREFERENCED_PARAMETER(pRegistryPath);
-
-	//g_device = new io::Device;
-	//g_device->Create(pDriverObject, L"\\Device\\StarryEye");
-
-	//g_control = new io::Control;
-	//g_control->Create(g_device, L"\\??\\StarrtEye");
-
-	//g_control->Register(1, [](void* buf, size_t len)->size_t {
-	//	return -1;
-	//	}
-	//);
-
 	pDriverObject->DriverUnload = DriverUnload;
 	
-	InitOffsets();
+	GlobalInit();
+
+	auto a = StarryEye::EProcess(0xffff80888294a2c0).ImageFileName();
+	DebugPrintf("%s\n", a);
 	
 	return STATUS_SUCCESS;
 }

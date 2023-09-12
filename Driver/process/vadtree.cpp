@@ -1,36 +1,7 @@
 #include "vadtree.h"
-#include "process/eprocess.h"
+//#include "eprocess.h"
 
 namespace StarryEye {
-//uint64_t MmVadShortData::GetStartingAddress()
-//{
-//	auto res = static_cast<uint64_t>(StartingVpn()) * SIZE_OF_PAGE;
-//	SET_HIGH_ULONG64(res, StartingVpnHigh());
-//	return res;
-//}
-//
-//uint64_t MmVadShortData::GetEndingAddress()
-//{
-//	auto res = static_cast<uint64_t>(EndingVpn()) * SIZE_OF_PAGE + SIZE_OF_PAGE - 1;
-//	SET_HIGH_ULONG64(res, EndingVpnHigh());
-//	return res;
-//}
-//
-//MmVadShort VadTree::Search(uint64_t address)
-//{
-//	return SearchRecursion(Root(), address);
-//}
-//
-//MmVadShort VadTree::SearchRecursion(MmVadShort& root, uint64_t address)
-//{
-//	if (!root.IsVaild()) return {};
-//	if (address < root->GetStartingAddress())
-//		return SearchRecursion(root.Left(), address);
-//	else if (address > root->GetEndingAddress())
-//		return SearchRecursion(root.Right(), address);
-//	else
-//		return root;
-//}
 void MmVadShort::Init() {
 	StartingVpnOffset = 0x18;
 	EndingVpnOffset = 0x1C;
@@ -86,9 +57,29 @@ SubSection MmVad::Subsection() {
 	return (vaddr_ + SubsectionOffset).ValU64();
 }
 ListEntry<MmVad> MmVad::ViewLinks() {
-	return { vaddr_ + ViewLinksOffset , ViewLinksOffset };
+	return ListEntry<MmVad>(vaddr_ + ViewLinksOffset, ViewLinksOffset);
 }
 
 
+void MmVadTree::Init()
+{
+	MmVadShort::Init();
+	MmVad::Init();
+}
+
 MmVadTree::MmVadTree(const MmVirtualAddress& vaddr) : RtlAvlTree(vaddr) {}
+fustd::Option<MmVadShort> MmVadTree::SearchNode(const MmVirtualAddress& vaddr)
+{
+	auto cur_vad = Root().Impl<MmVadShort>();
+	while (cur_vad.VAddr().IsValid()) {
+		if (cur_vad.StartingAddress() > vaddr) {
+			cur_vad = cur_vad.Left().Impl<MmVadShort>();
+		}
+		else if (cur_vad.EndingAddress() < vaddr) {
+			cur_vad = cur_vad.Right().Impl<MmVadShort>();
+		}
+		else return fustd::Some(std::move(cur_vad));
+	}
+	return fustd::None();
+}
 }

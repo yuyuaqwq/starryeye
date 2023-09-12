@@ -11,7 +11,7 @@ KProcess::KProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
 ListEntry<KProcess> KProcess::ProcessListEntry()
 {
-    return { vaddr_ + ProcessListEntryOffset, ProcessListEntryOffset };
+    return ListEntry<KProcess>(vaddr_ + ProcessListEntryOffset, ProcessListEntryOffset);
 }
 uint64_t KProcess::DirectoryTableBase()
 {
