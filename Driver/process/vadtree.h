@@ -1,5 +1,3 @@
-#include "config/base.h"
-#include "config/algorithm.h"
 #include "memory/subsection.h"
 #include "process/vad_flags.h"
 #include <fustd/generic/option.hpp>
@@ -7,37 +5,24 @@
 namespace StarryEye {
 #define SIZE_OF_PAGE 0x1000
 
-class EProcess;
-namespace details {
-	class MmVadData;
-	class MmVadShortData;
-}
-
-using MmVad = RtlBalanceNode<details::MmVadData>;
-using MmVadShort = RtlBalanceNode<details::MmVadShortData>;
-
-namespace details {
-
-class MmVadShortData : public KObjectBase
+class MmVadShort : public RtlBalanceNode
 {
 public:
 	static void Init();
 
-	MmVadShortData(uint64_t address);
-	MmVadShortData() = default;
-	~MmVadShortData() = default;
+	MmVadShort(const MmVirtualAddress& vaddr);
+	MmVadShort() = default;
+	~MmVadShort() = default;
 
-	ULONG32 StartingVpn();
-	ULONG32 EndingVpn();
+	uint32_t StartingVpn();
+	uint32_t EndingVpn();
 	uint8_t StartingVpnHigh();
 	uint8_t EndingVpnHigh();
-	LONG64 ReferenceCount();
-	MmVadFlags u();
+	uint64_t ReferenceCount();
+	MmVadFlags VadFlags();
 
-	uint64_t GetStartingAddress();
-	uint64_t GetEndingAddress();
-
-	fustd::Option<MmVad> ConvToMmVad();
+	MmVirtualAddress StartingAddress();
+	MmVirtualAddress EndingAddress();
 
 private:
 	friend class MmVadData;
@@ -50,44 +35,32 @@ private:
 	static inline uint64_t uOffset;
 };
 
-class MmVadData : public KObjectBase
+class MmVad : public KObject
 {
 public:
 	static void Init();
 
-	MmVadData(uint64_t vadnode_addr);
-	MmVadData() = default;
-	~MmVadData() = default;
+	MmVad(const MmVirtualAddress& vaddr);
+	MmVad() = default;
+	~MmVad() = default;
 
-	MmVadShortData Core();
+	MmVadShort Core();
 	SubSection Subsection();
-	ListEntry ViewLinks();
-	EProcess VadsProcess();
+	ListEntry<MmVad> ViewLinks();
 
 private:
 	friend class EProcess;
 
-	static inline uint64_t CoreOffset;
 	static inline uint64_t SubsectionOffset;
 	static inline uint64_t ViewLinksOffset;
 	static inline uint64_t VadsProcessOffset;
 };
-}
 
-class VadTree: public RtlAvlTree<details::MmVadShortData>
+class MmVadTree: public RtlAvlTree
 {
 public:
-	static void Init();
-	using Inherit = RtlAvlTree<details::MmVadShortData>;
-
-	VadTree(uint64_t address);
-	VadTree() = default;
-	~VadTree() = default;
-	
-	//TODO ´ý²âÊÔ
-	MmVadShort Search(uint64_t address);
-
-private:
-	MmVadShort SearchRecursion(MmVadShort& root, uint64_t address);
+	MmVadTree() = default;
+	MmVadTree(const MmVirtualAddress& vaddr);
+	~MmVadTree() = default;
 };
 }

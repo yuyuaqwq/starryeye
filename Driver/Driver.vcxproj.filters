@@ -26,9 +26,6 @@
     <Filter Include="Source Files\io">
       <UniqueIdentifier>{fb692ca2-3815-4ef3-910d-af2ec3385d64}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\config">
-      <UniqueIdentifier>{9b0ca28c-812b-4624-983b-bbc2bd1a0e77}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\file">
       <UniqueIdentifier>{a2e37e7c-c5ea-4d08-b9c1-1d55ff026d26}</UniqueIdentifier>
     </Filter>
@@ -59,6 +56,9 @@
     <Filter Include="Source Files\thread">
       <UniqueIdentifier>{10c3f868-8d2f-47c4-a16d-eecaafbe96fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\basic">
+      <UniqueIdentifier>{9b0ca28c-812b-4624-983b-bbc2bd1a0e77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Handle\handle_table.cpp">
@@ -84,12 +84,6 @@
     </ClCompile>
     <ClCompile Include="entry.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Config\base.cpp">
-      <Filter>Source Files\config</Filter>
-    </ClCompile>
-    <ClCompile Include="Config\algorithm.cpp">
-      <Filter>Source Files\config</Filter>
     </ClCompile>
     <ClCompile Include="Process\vadtree.cpp">
       <Filter>Source Files\process</Filter>
@@ -118,10 +112,13 @@
     <ClCompile Include="memory\utils.cpp">
       <Filter>Source Files\memory</Filter>
     </ClCompile>
-    <ClCompile Include="config\virtual_addr.cpp">
+    <ClCompile Include="basic\algorithm.cpp">
       <Filter>Source Files\config</Filter>
     </ClCompile>
-    <ClCompile Include="config\structs.cpp">
+    <ClCompile Include="basic\structs.cpp">
+      <Filter>Source Files\config</Filter>
+    </ClCompile>
+    <ClCompile Include="basic\virtual_addr.cpp">
       <Filter>Source Files\config</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,9 +143,6 @@
     </ClInclude>
     <ClInclude Include="Process\kprocess.h">
       <Filter>Header Files\process</Filter>
-    </ClInclude>
-    <ClInclude Include="Config\algorithm.h">
-      <Filter>Header Files\config</Filter>
     </ClInclude>
     <ClInclude Include="Process\vadtree.h">
       <Filter>Header Files\process</Filter>
@@ -180,14 +174,17 @@
     <ClInclude Include="memory\init.hpp">
       <Filter>Header Files\memory</Filter>
     </ClInclude>
-    <ClInclude Include="config\init.hpp">
-      <Filter>Header Files\config</Filter>
+    <ClInclude Include="basic\algorithm.h">
+      <Filter>Header Files\basic</Filter>
     </ClInclude>
-    <ClInclude Include="config\structs.h">
-      <Filter>Header Files\config</Filter>
+    <ClInclude Include="basic\init.hpp">
+      <Filter>Header Files\basic</Filter>
     </ClInclude>
-    <ClInclude Include="config\virtual_addr.h">
-      <Filter>Header Files\config</Filter>
+    <ClInclude Include="basic\structs.h">
+      <Filter>Header Files\basic</Filter>
+    </ClInclude>
+    <ClInclude Include="basic\virtual_addr.h">
+      <Filter>Header Files\basic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

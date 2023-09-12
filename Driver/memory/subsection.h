@@ -2,12 +2,12 @@
 #include "memory/control_area.h"
 
 namespace StarryEye {
-	class SubSection: public KObjectBase
+	class SubSection: public KObject
 	{
 	public:
 		static void Init();
 
-		SubSection(uint64_t address);
+		SubSection(const MmVirtualAddress& vaddr);
 		SubSection() = default;
 		~SubSection() = default;
 

@@ -1,15 +1,15 @@
 #pragma once
-#include "config/base.h"
+#include "basic/structs.h"
 
 namespace StarryEye {
-	class ObjectType: public KObjectBase
+	class ObjectType: public KObject
 	{
 	public:
 		inline static uint64_t* ObTypeIndexTable;
 
 		static void Init();
 
-		ObjectType(uint64_t address);
+		ObjectType(const MmVirtualAddress& vaddr);
 		ObjectType() = default;
 		~ObjectType() = default;
 

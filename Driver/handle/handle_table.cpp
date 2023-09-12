@@ -11,7 +11,7 @@ bool HandleTable::ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, Foreach
 	ObjectHeader temp{};
 	for (SHORT i = 0; i < 512; i++) {
 		if (auto opt = GetHandleObjectInLv1TableCode(table, i); opt.IsSome()) {
-			if (temp = opt.SomeVal(); temp.IsVaild() && !callback(temp)) {
+			if (temp = opt.SomeVal(); temp.VAddr().IsValid() && !callback(temp)) {
 				return false;
 			}
 		}
@@ -49,7 +49,7 @@ HandleTable::HandleTable(const MmVirtualAddress& vaddr) :KObject(vaddr) {}
 
 uint64_t HandleTable::TableCode()
 {
-	return vaddr_.Value<uint64_t>(TableCodeOffset).Default(0);
+	return (vaddr_ + TableCodeOffset).ValU64();
 }
 
 uint8_t HandleTable::TableLevel()

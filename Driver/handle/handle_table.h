@@ -1,7 +1,7 @@
 #pragma once
 #include <krnlib/functional.hpp>
 #include <krnlib/stl_container.hpp>
-#include "config/structs.h"
+#include "basic/structs.h"
 #include "handle/object_header.h"
 
 namespace StarryEye {
@@ -24,6 +24,7 @@ public:
 
 	// 获取TableCode
 	uint64_t TableCode();
+
 	// 获取TableCode等级
 	uint8_t TableLevel();
 	// 获取TableCode真正地址(最后2位清零)

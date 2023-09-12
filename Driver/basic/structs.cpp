@@ -8,18 +8,19 @@ namespace StarryEye {
 
 	RtlBalanceNode::RtlBalanceNode(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 	RtlBalanceNode RtlBalanceNode::Left() const {
-		return vaddr_.PtrUnsafe<RTL_BALANCED_NODE>()->Left;
+		return vaddr_.Pointer<RTL_BALANCED_NODE>()->Left;
 	}
 	RtlBalanceNode RtlBalanceNode::Right() const {
-		return vaddr_.PtrUnsafe<RTL_BALANCED_NODE>()->Right;
+		return vaddr_.Pointer<RTL_BALANCED_NODE>()->Right;
 	}
 	RtlBalanceNode RtlBalanceNode::Parent() const {
-		return (PRTL_BALANCED_NODE)vaddr_.PtrUnsafe<RTL_BALANCED_NODE>()->ParentValue;
+		return (PRTL_BALANCED_NODE)vaddr_.Pointer<RTL_BALANCED_NODE>()->ParentValue;
 	}
+
 
 	RtlAvlTree::RtlAvlTree(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 	RtlBalanceNode RtlAvlTree::Root() {
-		return vaddr_.PtrUnsafe<RTL_BALANCED_NODE>();
+		return vaddr_.Pointer<RTL_BALANCED_NODE>();
 	}
 	void RtlAvlTree::Foreach(ForeachCallBackT callback) {
 		ForeachRecursion(Root(), callback);

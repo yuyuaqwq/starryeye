@@ -1,19 +1,17 @@
 #pragma once
-#include "config/base.h"
-#include "config/algorithm.h"
-#include "memory/page.h"
+#include "basic/structs.h"
 
 namespace StarryEye {
-class KProcess: public KObjectBase
+class KProcess: public KObject
 {
 public:
 	static void Init();
 
-	KProcess(uint64_t address);
+	KProcess(const MmVirtualAddress& vaddr);
 	KProcess() = default;
 	~KProcess() = default;
 
-	ListEntry ProcessListEntry();
+	ListEntry<KProcess> ProcessListEntry();
 	uint64_t DirectoryTableBase();
 
 private:

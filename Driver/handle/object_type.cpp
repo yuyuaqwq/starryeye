@@ -7,11 +7,11 @@ void ObjectType::Init()
 	NameOffset = 0x10;
 }
 
-ObjectType::ObjectType(uint64_t address) : KObjectBase(address) {}
+ObjectType::ObjectType(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
 PUNICODE_STRING ObjectType::Name()
 {
-	return (PUNICODE_STRING)(NameOffset + address_);
+	return &(vaddr_ + NameOffset).Value<UNICODE_STRING>();
 }
 
 bool ObjectType::CompareTypeName(PCWSTR name)

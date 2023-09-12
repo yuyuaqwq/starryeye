@@ -1,16 +1,16 @@
 #include "vad_flags.h"
 
 namespace StarryEye {
-	void MmVadFlags::Init()
-	{
-		PrivateMemoryBitPos = 20;
-		PrivateMemoryBitSize = 1;
-	}
+void MmVadFlags::Init()
+{
+	PrivateMemoryBitPos = 20;
+	PrivateMemoryBitSize = 1;
+}
 
-	MmVadFlags::MmVadFlags(uint64_t address) : KObjectBase(address) {}
+MmVadFlags::MmVadFlags(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
-	uint8_t MmVadFlags::PrivateMemory()
-	{
-		return GetBitAreaValue((PVOID)address_, 4, PrivateMemoryBitPos, PrivateMemoryBitSize).Default(0);
-	}
+uint8_t MmVadFlags::PrivateMemory()
+{
+	return vaddr_.BitArea(PrivateMemoryBitPos, PrivateMemoryBitSize);
+}
 }

@@ -7,14 +7,14 @@ void KProcess::Init()
     DirectoryTableBaseOffset = 0x28;
 }
 
-KProcess::KProcess(uint64_t address) : KObjectBase(address) {}
+KProcess::KProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
-ListEntry KProcess::ProcessListEntry()
+ListEntry<KProcess> KProcess::ProcessListEntry()
 {
-    return ListEntry(address_ + ProcessListEntryOffset, ProcessListEntryOffset);
+    return { vaddr_ + ProcessListEntryOffset, ProcessListEntryOffset };
 }
 uint64_t KProcess::DirectoryTableBase()
 {
-    return *(uint64_t*)(address_ + DirectoryTableBaseOffset);
+    return (vaddr_ + DirectoryTableBaseOffset).ValU64();
 }
 }

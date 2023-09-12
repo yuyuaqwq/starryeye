@@ -6,10 +6,9 @@ void ControlArea::Init()
 	FilePointerOffset = 0x40;
 }
 
-ControlArea::ControlArea(uint64_t address) : KObjectBase(address) {}
+ControlArea::ControlArea(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
-FileObject ControlArea::FilePointer()
-{
-	return FileObject(*(uint64_t*)(address_ + FilePointerOffset));
+ExFastRef<FileObject> ControlArea::FilePointer() {
+	return vaddr_ + FilePointerOffset;
 }
 }

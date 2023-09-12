@@ -9,27 +9,21 @@ void ObjectHeader::Init()
 	ObHeaderCookie = (PUCHAR)0xfffff80260efc72c;	//TODO ObHeaderCookie
 }
 
-uint64_t ObjectHeader::GetBodyOffset()
-{
+uint64_t ObjectHeader::GetBodyOffset() {
 	return BodyOffset;
-}
-
-uint8_t ObjectHeader::DecryptTypeIndex(uint64_t obj_addr, uint8_t type_index)
-{
-	auto x = (uint8_t)(obj_addr >> 8);
-	return type_index ^ x ^ (*ObHeaderCookie);
 }
 
 ObjectHeader::ObjectHeader(const MmVirtualAddress& vaddr): KObject(vaddr) {}
 
 uint8_t ObjectHeader::TypeIndex()
 {
-	return *(uint8_t*)(address_ + TypeIndexOffset);
+	return (vaddr_ + TypeIndexOffset).ValU64();
 }
 
 uint8_t ObjectHeader::TypeIndexDecrypted()
 {
-	return DecryptTypeIndex(address_, TypeIndex());
+	auto x = (uint8_t)(vaddr_.Address() >> 8);
+	return TypeIndex() ^ x ^ (*ObHeaderCookie);
 }
 
 ObjectType ObjectHeader::Type()
@@ -40,12 +34,5 @@ ObjectType ObjectHeader::Type()
 bool ObjectHeader::IsProcess()
 {
 	return Type().CompareTypeName(L"Process");
-}
-fustd::Option<EProcess> ObjectHeader::ConvToEProc()
-{
-	if (IsProcess())
-		return fustd::Some(Body<EProcess>());
-	else
-		return fustd::None();
 }
 }

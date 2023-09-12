@@ -1,5 +1,5 @@
 #pragma once
-#include "config/structs.h"
+#include "basic/structs.h"
 #include "handle/object_type.h"
 #include <fustd/generic/option.hpp>
 
@@ -13,9 +13,6 @@ public:
 
 	static void Init();
 	static uint64_t GetBodyOffset();
-
-	// 解密TypeIndex
-	static uint8_t DecryptTypeIndex(uint64_t obj_addr, uint8_t type_index);
 
 	ObjectHeader() = default;
 	ObjectHeader(const MmVirtualAddress& vaddr);
@@ -32,21 +29,15 @@ public:
 
 	bool IsProcess();
 
-	fustd::Option<EProcess> ConvToEProc();
-
 	// 获取Body并转换为对象
-	template<class T, std::enable_if<std::is_convertible_v<T*, KObject*>, int> = 0>
-	T Body();
+	template<class T, EnableIfInheritKObject<T> = 0>
+	T Body() {
+		return vaddr_ + BodyOffset;
+	}
 
 private:
 	inline static uint64_t TypeIndexOffset;
 	inline static uint64_t BodyOffset;
 };
-
-template<class T, std::enable_if<std::is_convertible_v<T*, KObject*>, int> = 0>
-inline T ObjectHeader::Body()
-{
-	return vaddr_.Offset(BodyOffset).SomeVal();
-}
 
 }

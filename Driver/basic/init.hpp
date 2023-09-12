@@ -1,5 +1,5 @@
 #pragma once
-#include "config/virtual_addr.h"
+#include "basic/virtual_addr.h"
 
 namespace StarryEye {
 	void ConfigInit() {

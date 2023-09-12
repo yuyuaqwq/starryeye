@@ -1,32 +1,31 @@
 #pragma once
-#include "config/base.h"
-#include "config/algorithm.h"
+#include "basic/structs.h"
 #include "process/kprocess.h"
 #include "thread/ethread.h"
 #include "handle/handle_table.h"
+#include "process/vadtree.h"
 
 namespace StarryEye {
 class EThread;
-class VadTree;
 
-class EProcess: public KObjectBase
+class EProcess: public KObject
 {
 public:
 	static void Init();
 
-	EProcess(uint64_t address);
+	EProcess(const MmVirtualAddress& vaddr);
 	EProcess() = default;
 	~EProcess() = default;
 
-	PCHAR ImageFileName();
+	char* ImageFileName();
 	KProcess Pcb();
-	ListEntry ActiveProcessLinks();
+	ListEntry<EProcess> ActiveProcessLinks();
 	HandleTable ObjectTable();
 	uint64_t InheritedFromUniqueProcessId();
-	UINT8 OwnerProcessId();
+	uint8_t OwnerProcessId();
 	uint8_t PriorityClass();
-	ListEntry ThreadListHead();
-	VadTree VadRoot();
+	ListEntry<EThread> ThreadListHead();
+	MmVadTree VadRoot();
 
 	bool CompareFileName(PCCHAR file_name);
 

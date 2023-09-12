@@ -118,10 +118,9 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Config\algorithm.cpp" />
-    <ClCompile Include="Config\base.cpp" />
-    <ClCompile Include="config\structs.cpp" />
-    <ClCompile Include="config\virtual_addr.cpp" />
+    <ClCompile Include="basic\algorithm.cpp" />
+    <ClCompile Include="basic\structs.cpp" />
+    <ClCompile Include="basic\virtual_addr.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="File\file_object.cpp" />
     <ClCompile Include="Handle\handle_table.cpp" />
@@ -141,10 +140,10 @@
     <ClCompile Include="Thread\kthread.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config\algorithm.h" />
-    <ClInclude Include="config\init.hpp" />
-    <ClInclude Include="config\structs.h" />
-    <ClInclude Include="config\virtual_addr.h" />
+    <ClInclude Include="basic\algorithm.h" />
+    <ClInclude Include="basic\init.hpp" />
+    <ClInclude Include="basic\structs.h" />
+    <ClInclude Include="basic\virtual_addr.h" />
     <ClInclude Include="File\file_object.h" />
     <ClInclude Include="Handle\handle_table.h" />
     <ClInclude Include="Handle\object_header.h" />

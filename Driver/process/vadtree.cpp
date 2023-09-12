@@ -2,9 +2,36 @@
 #include "process/eprocess.h"
 
 namespace StarryEye {
-namespace details {
-void MmVadShortData::Init()
-{
+//uint64_t MmVadShortData::GetStartingAddress()
+//{
+//	auto res = static_cast<uint64_t>(StartingVpn()) * SIZE_OF_PAGE;
+//	SET_HIGH_ULONG64(res, StartingVpnHigh());
+//	return res;
+//}
+//
+//uint64_t MmVadShortData::GetEndingAddress()
+//{
+//	auto res = static_cast<uint64_t>(EndingVpn()) * SIZE_OF_PAGE + SIZE_OF_PAGE - 1;
+//	SET_HIGH_ULONG64(res, EndingVpnHigh());
+//	return res;
+//}
+//
+//MmVadShort VadTree::Search(uint64_t address)
+//{
+//	return SearchRecursion(Root(), address);
+//}
+//
+//MmVadShort VadTree::SearchRecursion(MmVadShort& root, uint64_t address)
+//{
+//	if (!root.IsVaild()) return {};
+//	if (address < root->GetStartingAddress())
+//		return SearchRecursion(root.Left(), address);
+//	else if (address > root->GetEndingAddress())
+//		return SearchRecursion(root.Right(), address);
+//	else
+//		return root;
+//}
+void MmVadShort::Init() {
 	StartingVpnOffset = 0x18;
 	EndingVpnOffset = 0x1C;
 	StartingVpnHighOffset = 0x20;
@@ -12,114 +39,56 @@ void MmVadShortData::Init()
 	ReferenceCountOffset = 0x24;
 	uOffset = 0x30;
 }
-
-MmVadShortData::MmVadShortData(uint64_t address) : KObjectBase(address) {}
-
-ULONG32 MmVadShortData::StartingVpn()
-{
-	return *(PULONG32)(address_ + StartingVpnOffset);
+MmVadShort::MmVadShort(const MmVirtualAddress& vaddr) : RtlBalanceNode(vaddr) {}
+uint32_t MmVadShort::StartingVpn() {
+	return (vaddr_ + StartingVpnOffset).ValU32();
 }
-
-ULONG32 MmVadShortData::EndingVpn()
-{
-	return *(PULONG32)(address_ + EndingVpnOffset);
+uint32_t MmVadShort::EndingVpn() {
+	return (vaddr_ + EndingVpnOffset).ValU32();
 }
-
-uint8_t MmVadShortData::StartingVpnHigh()
-{
-	return *(PUCHAR)(address_ + StartingVpnHighOffset);
+uint8_t MmVadShort::StartingVpnHigh() {
+	return (vaddr_ + StartingVpnHighOffset).ValU32();
 }
-
-uint8_t MmVadShortData::EndingVpnHigh()
-{
-	return *(PUCHAR)(address_ + EndingVpnHighOffset);
+uint8_t MmVadShort::EndingVpnHigh() {
+	return (vaddr_ + EndingVpnHighOffset).ValU32();
 }
-
-uint64_t MmVadShortData::GetStartingAddress()
+uint64_t MmVadShort::ReferenceCount() {
+	return (vaddr_ + ReferenceCountOffset).ValU64();
+}
+MmVadFlags MmVadShort::VadFlags() {
+	return vaddr_ + uOffset;
+}
+MmVirtualAddress MmVadShort::StartingAddress()
 {
 	auto res = static_cast<uint64_t>(StartingVpn()) * SIZE_OF_PAGE;
 	SET_HIGH_ULONG64(res, StartingVpnHigh());
 	return res;
 }
-
-uint64_t MmVadShortData::GetEndingAddress()
+MmVirtualAddress MmVadShort::EndingAddress()
 {
 	auto res = static_cast<uint64_t>(EndingVpn()) * SIZE_OF_PAGE + SIZE_OF_PAGE - 1;
 	SET_HIGH_ULONG64(res, EndingVpnHigh());
 	return res;
 }
 
-fustd::Option<MmVad> MmVadShortData::ConvToMmVad()
-{
-	if (u().PrivateMemory() == 0)
-		return fustd::Some(MmVad(address_));
-	else
-		return fustd::None();
-}
 
-LONG64 MmVadShortData::ReferenceCount()
+void MmVad::Init()
 {
-	return *(PLONG64)(address_ + ReferenceCountOffset);
-}
-
-MmVadFlags MmVadShortData::u()
-{
-	return MmVadFlags(address_ + uOffset);
-}
-
-void MmVadData::Init()
-{
-	CoreOffset = 0;
 	SubsectionOffset = 0x48;
 	ViewLinksOffset = 0x60;
 	VadsProcessOffset = 0x70;
 }
-
-MmVadData::MmVadData(uint64_t vadnode_addr) : KObjectBase(vadnode_addr) {}
-
-MmVadShortData MmVadData::Core()
-{
-	return MmVadShortData(address_ + CoreOffset);
+MmVad::MmVad(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+MmVadShort MmVad::Core() {
+	return vaddr_;
+}
+SubSection MmVad::Subsection() {
+	return (vaddr_ + SubsectionOffset).ValU64();
+}
+ListEntry<MmVad> MmVad::ViewLinks() {
+	return { vaddr_ + ViewLinksOffset , ViewLinksOffset };
 }
 
-ListEntry MmVadData::ViewLinks()
-{
-	return ListEntry(address_ + ViewLinksOffset, VadsProcessOffset);
-}
 
-SubSection MmVadData::Subsection()
-{
-	return SubSection(*(uint64_t*)(address_ + SubsectionOffset));
-}
-
-EProcess MmVadData::VadsProcess()
-{
-	return EProcess(*(uint64_t*)(address_ + VadsProcessOffset));
-}
-}
-
-void VadTree::Init()
-{
-	details::MmVadData::Init();
-	details::MmVadShortData::Init();
-	MmVadFlags::Init();
-}
-
-VadTree::VadTree(uint64_t address) : Inherit(address) {}
-
-MmVadShort VadTree::Search(uint64_t address)
-{
-	return SearchRecursion(Root(), address);
-}
-
-MmVadShort VadTree::SearchRecursion(MmVadShort& root, uint64_t address)
-{
-	if (!root.IsVaild()) return {};
-	if (address < root->GetStartingAddress())
-		return SearchRecursion(root.Left(), address);
-	else if (address > root->GetEndingAddress())
-		return SearchRecursion(root.Right(), address);
-	else
-		return root;
-}
+MmVadTree::MmVadTree(const MmVirtualAddress& vaddr) : RtlAvlTree(vaddr) {}
 }

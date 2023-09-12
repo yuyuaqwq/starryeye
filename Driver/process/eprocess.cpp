@@ -1,5 +1,5 @@
 #include "eprocess.h"
-#include "process/vadtree.h"
+#include "thread/ethread.h"
 
 namespace StarryEye {
 void EProcess::Init()
@@ -14,51 +14,51 @@ void EProcess::Init()
 	VadRootOffset = 0x7d8;
 }
 
-EProcess::EProcess(uint64_t address) : KObjectBase(address) {}
+EProcess::EProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
-PCHAR EProcess::ImageFileName()
+char* EProcess::ImageFileName()
 {
-	return (PCHAR)(address_ + ImageFileNameOffset);
+	return (vaddr_ + ImageFileNameOffset).Value<char*>();
 }
 
 KProcess EProcess::Pcb()
 {
-	return KProcess(address_);
+	return vaddr_;
 }
 
-ListEntry EProcess::ActiveProcessLinks()
+ListEntry<EProcess> EProcess::ActiveProcessLinks()
 {
-	return ListEntry(address_ + ActiveProcessLinksOffset, ActiveProcessLinksOffset);
+	return { vaddr_ + ActiveProcessLinksOffset , ActiveProcessLinksOffset };
 }
 
 HandleTable EProcess::ObjectTable()
 {
-	return HandleTable(address_ + ObjectTableOffset);
+	return (vaddr_ + ObjectTableOffset).ValU64();
 }
 
 uint64_t EProcess::InheritedFromUniqueProcessId()
 {
-	return *(uint64_t*)(address_ + InheritedFromUniqueProcessIdOffset);
+	return (vaddr_ + InheritedFromUniqueProcessIdOffset).ValU64();
 }
 
-UINT8 EProcess::OwnerProcessId()
+uint8_t EProcess::OwnerProcessId()
 {
-	return *(PUINT8)(address_ + OwnerProcessIdOffset);
+	return (vaddr_ + OwnerProcessIdOffset).ValU8()
 }
 
 uint8_t EProcess::PriorityClass()
 {
-	return *(PUCHAR)(address_ + PriorityClassOffset);
+	return (vaddr_ + PriorityClassOffset).ValU8()
 }
 
-ListEntry EProcess::ThreadListHead()
+ListEntry<EThread> EProcess::ThreadListHead()
 {
-	return ListEntry(address_ + ThreadListHeadOffset, EThread::ThreadListEntryOffset);
+	return { vaddr_ + ThreadListHeadOffset, EThread::ThreadListEntryOffset };
 }
 
-VadTree EProcess::VadRoot()
+MmVadTree EProcess::VadRoot()
 {
-	return VadTree(address_ + VadRootOffset);
+	return vaddr_ + VadRootOffset;
 }
 bool EProcess::CompareFileName(PCCHAR file_name)
 {

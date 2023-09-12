@@ -7,15 +7,15 @@ void SubSection::Init()
 	NextSubsectionOffset = 0x10;
 }
 
-SubSection::SubSection(uint64_t address) : KObjectBase(address) {}
+SubSection::SubSection(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
 ControlArea SubSection::ControlArea()
 {
-	return StarryEye::ControlArea(*(uint64_t*)(address_ + ControlAreaOffset));
+	return (vaddr_ + ControlAreaOffset).ValU64();
 }
 
 SubSection SubSection::NextSubsection()
 {
-	return SubSection(*(uint64_t*)(address_ + NextSubsectionOffset));
+	return (vaddr_ + NextSubsectionOffset).ValU64();
 }
 }

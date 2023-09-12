@@ -1,5 +1,5 @@
 #pragma once
-#include "config/algorithm.h"
+#include "basic/algorithm.h"
 #include <stdint.h>
 #include <intrin.h>
 #include <krnlib/stl_container.hpp>
@@ -165,9 +165,9 @@ class MmVirtualAddress
 public:
     static void Init();
 
-    MmVirtualAddress();
-    MmVirtualAddress(uint64_t vaddr, size_t mem_size = SIZE_MAX, PEPROCESS owner = nullptr);
-    MmVirtualAddress(void* ptr, size_t mem_size = SIZE_MAX, PEPROCESS owner = nullptr);
+    MmVirtualAddress() = default;
+    MmVirtualAddress(uint64_t vaddr, PEPROCESS owner = nullptr);
+    MmVirtualAddress(void* ptr, PEPROCESS owner = nullptr);
     ~MmVirtualAddress() = default;
 
     uint64_t PxtIndex() const;
@@ -183,30 +183,34 @@ public:
 
     bool IsValid() const;
 
-    fustd::Option<MmVirtualAddress> Offset(size_t offset);
-
-    fustd::Option<krnlib::vector<char>> Buffer(size_t size, size_t pos = 0) const;
     template<class T = char>
-    fustd::Option<T> Value(size_t pos = 0) const;
-    fustd::Option<uint64_t> BitArea(size_t bit_pos, uint8_t bit_size);
-
-    template<class T>
-    bool WriteValue(size_t pos, T val) const {
-        return WriteBuffer(pos, &val, sizeof(val));
+    T* Pointer() const {
+        return (T*)vaddr_;
     }
-    bool WriteBuffer(size_t pos, void* buffer, size_t buf_size) const;
-    bool WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const;
+    uint64_t Address() const;
+    krnlib::vector<char> Buffer(size_t size) const;
+    template<class T = char>
+    T& Value() const;
+    uint64_t ValU64();
+    uint32_t ValU32();
+    uint16_t ValU16();
+    uint8_t ValU8();
+    uint64_t BitArea(size_t bit_pos, uint8_t bit_size);
+
+    void WriteBuffer(size_t pos, void* buffer, size_t buf_size) const;
+    void WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const;
 
     friend bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y);
+    friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next);
+
+    MmVirtualAddress operator+(ptrdiff_t offset);
+    MmVirtualAddress operator-(ptrdiff_t offset);
+
+    MmVirtualAddress& operator+=(ptrdiff_t offset);
+    MmVirtualAddress& operator-=(ptrdiff_t offset);
 
 private:
-    template<class T = char>
-    T* PtrUnsafe(size_t pos = 0) const {
-        return (T*)(vaddr_ + pos);
-    }
-
-    uint64_t mem_size_;
     uint64_t vaddr_;
     PEPROCESS owner_;
 };
@@ -224,11 +228,11 @@ public:
         bool Vaild() const;
         uint64_t PageFrameNumber();
         char NoExecute();
-        bool SetNoExecute(bool no_exec);
+        void SetNoExecute(bool no_exec);
         char Write();
-        bool SetWrite(bool writable);
+        void SetWrite(bool writable);
         char CopyOnWrite();
-        bool SetCopyOnWrite(bool copy_on_writable);
+        void SetCopyOnWrite(bool copy_on_writable);
 
     private:
         friend class MmPte;
@@ -254,9 +258,8 @@ private:
     MmVirtualAddress pte_vaddr_;
 };
 template<class T>
-inline fustd::Option<T> MmVirtualAddress::Value(size_t pos) const {
-    if (sizeof(T) + pos > mem_size_) return fustd::None();
+inline T& MmVirtualAddress::Value() const {
     ProcessAutoAttacker pa{ owner_ };
-    return fustd::Some(std::move(*PtrUnsafe<T>()));
+    return *Pointer<T>();
 }
 }

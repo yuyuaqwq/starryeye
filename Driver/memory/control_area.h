@@ -2,16 +2,16 @@
 #include "file/file_object.h"
 
 namespace StarryEye {
-	class ControlArea: public KObjectBase
+	class ControlArea: public KObject
 	{
 	public:
 		static void Init();
 
-		ControlArea(uint64_t address);
+		ControlArea(const MmVirtualAddress& vaddr);
 		ControlArea() = default;
 		~ControlArea() = default;
 
-		FileObject FilePointer();
+		ExFastRef<FileObject> FilePointer();
 
 	private:
 		inline static uint64_t FilePointerOffset;

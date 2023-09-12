@@ -1,15 +1,14 @@
 #include "utils.h"
 
 namespace StarryEye {
-MmVirtualAddress StarryEye::MemoryUtils::AllocatePage(POOL_TYPE pool_type, size_t number_of_bytes, uint32_t tag, PageProtection protection)
+MmBuffer StarryEye::MemoryUtils::AllocatePage(size_t size, uint32_t tag, PageProtection protection)
 {
-	/* 分配内存 */
-	auto buf = ExAllocatePoolWithTag(pool_type, number_of_bytes, tag);
-	/* 构造对象 */
-	MmVirtualAddress va((uint64_t)buf, number_of_bytes);
+	MmBuffer buf;
+	buf.resize(size);
+	MmVirtualAddress va(buf.data());
 	/* 设置保护属性 */
 	SetPageProtection(va, protection);
-	return va;
+	return buf;
 }
 
 bool MemoryUtils::SetPageProtection(const MmVirtualAddress& address, PageProtection protection)

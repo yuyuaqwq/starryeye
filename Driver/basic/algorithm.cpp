@@ -1,4 +1,4 @@
-#include "config/algorithm.h"
+#include "algorithm.h"
 
 namespace StarryEye {
 ProcessAutoAttacker::ProcessAutoAttacker(PEPROCESS proc)
