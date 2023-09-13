@@ -9,9 +9,9 @@ namespace StarryEye {
 class HandleTable: public KObject
 {
 public:
-	using ForeachHandleObjectsCallBack = const krnlib::function<bool(ObjectHeader&)>&;
+	using ForeachHandleObjectsCallBack = krnlib::function<bool(const ObjectHeader&)>;
 
-	inline static PVOID PspCidTable;
+	inline static MmVirtualAddress PspCidTable;
 	static void Init();
 
 	HandleTable() = default;
@@ -32,7 +32,7 @@ public:
 	fustd::Option<ObjectHeader> GetHandleObject(uint64_t index);
 
 	// 自动根据TableCode等级遍历所有Handle
-	bool AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback);
+	bool AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback);
 
 	// 获取所有Handle对象(性能差, 不推荐使用!!!)
 	krnlib::list<ObjectHeader> GetAllHandleObjects();
@@ -42,11 +42,11 @@ private:
 	static uint64_t DecryptHandleAddress(uint64_t addr);
 
 	// 获取一级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
+	static bool ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback);
 	// 获取二级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
+	static bool ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback);
 	// 获取三级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback);
+	static bool ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback);
 
 	// 获取一级TableCode下指定索引的Handle对象
 	static fustd::Option<ObjectHeader> GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index);

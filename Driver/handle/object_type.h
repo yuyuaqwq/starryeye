@@ -5,7 +5,7 @@ namespace StarryEye {
 	class ObjectType: public KObject
 	{
 	public:
-		inline static uint64_t* ObTypeIndexTable;
+		inline static MmVirtualAddress ObTypeIndexTable;
 
 		static void Init();
 

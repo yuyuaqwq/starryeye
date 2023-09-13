@@ -187,15 +187,19 @@ public:
     T* Pointer() const {
         return (T*)vaddr_;
     }
+    uint8_t* PtrU8() const;
+    uint16_t* PtrU16() const;
+    uint32_t* PtrU32() const;
+    uint64_t* PtrU64() const;
     uint64_t Address() const;
     krnlib::vector<char> Buffer(size_t size) const;
-    template<class T = char>
+    template<class T>
     T& Value() const;
-    uint64_t ValU64();
-    uint32_t ValU32();
-    uint16_t ValU16();
-    uint8_t ValU8();
-    uint64_t BitArea(size_t bit_pos, uint8_t bit_size);
+    uint64_t ValU64() const;
+    uint32_t ValU32() const;
+    uint16_t ValU16() const;
+    uint8_t ValU8() const;
+    uint64_t BitArea(size_t bit_pos, uint8_t bit_size) const;
 
     void WriteBuffer(size_t pos, void* buffer, size_t buf_size) const;
     void WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const;
@@ -208,8 +212,8 @@ public:
     friend bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next);
 
-    MmVirtualAddress operator+(ptrdiff_t offset);
-    MmVirtualAddress operator-(ptrdiff_t offset);
+    MmVirtualAddress operator+(ptrdiff_t offset) const;
+    MmVirtualAddress operator-(ptrdiff_t offset) const;
 
     MmVirtualAddress& operator+=(ptrdiff_t offset);
     MmVirtualAddress& operator-=(ptrdiff_t offset);

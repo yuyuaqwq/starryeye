@@ -38,8 +38,23 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	
 	GlobalInit();
 
-	auto a = StarryEye::EProcess(0xffff80888294a2c0).ImageFileName();
-	DebugPrintf("%s\n", a);
-	
+	DbgBreakPoint();
+	try
+	{
+		auto handle = StarryEye::HandleTable(StarryEye::HandleTable::PspCidTable.ValU64());
+		handle.AutoForeachAllHandleObjects([&](const StarryEye::ObjectHeader& obj) -> bool {
+			if (obj.IsProcess()) {
+				auto eproc = obj.Body<EProcess>();
+				DebugPrintf("%s", eproc.ImageFileName());
+			}
+			return true;
+			});
+	}
+	catch (const std::exception& ex)
+	{
+		DebugPrintf("³öÏÖ´íÎó: %s", ex.what());
+		return STATUS_UNSUCCESSFUL;
+	}
+
 	return STATUS_SUCCESS;
 }

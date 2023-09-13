@@ -4,38 +4,39 @@
 #include <fustd/generic/option.hpp>
 
 namespace StarryEye {
-class EProcess;
+class HandleTable;
 
 class ObjectHeader: public KObject
 {
 public:
-	inline static PUCHAR ObHeaderCookie;
+	inline static MmVirtualAddress ObHeaderCookie;
 
 	static void Init();
-	static uint64_t GetBodyOffset();
 
 	ObjectHeader() = default;
 	ObjectHeader(const MmVirtualAddress& vaddr);
 	~ObjectHeader() = default;
 
 	// 获取TypeIndex
-	uint8_t TypeIndex();
+	uint8_t TypeIndex() const;
 
 	// 获取解密后的TypeIndex
-	uint8_t TypeIndexDecrypted();
+	uint8_t TypeIndexDecrypted() const;
 
 	// 获取Type对象
-	ObjectType Type();
+	ObjectType Type() const;
 
-	bool IsProcess();
+	bool IsProcess() const;
 
 	// 获取Body并转换为对象
 	template<class T, EnableIfInheritKObject<T> = 0>
-	T Body() {
+	T Body() const {
 		return vaddr_ + BodyOffset;
 	}
 
 private:
+	friend class HandleTable;
+
 	inline static uint64_t TypeIndexOffset;
 	inline static uint64_t BodyOffset;
 };

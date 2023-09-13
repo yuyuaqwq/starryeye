@@ -150,6 +150,18 @@ PxteFormater* MmVirtualAddress::GetPxte() const {
 bool MmVirtualAddress::IsValid() const {
     return MmIsAddressValid(Pointer());
 }
+uint8_t* MmVirtualAddress::PtrU8() const {
+    return Pointer<uint8_t>();
+}
+uint16_t* MmVirtualAddress::PtrU16() const {
+    return Pointer<uint16_t>();
+}
+uint32_t* MmVirtualAddress::PtrU32() const {
+    return Pointer<uint32_t>();
+}
+uint64_t* MmVirtualAddress::PtrU64() const {
+    return Pointer<uint64_t>();
+}
 uint64_t MmVirtualAddress::Address() const
 {
     return vaddr_;
@@ -162,19 +174,19 @@ krnlib::vector<char> MmVirtualAddress::Buffer(size_t size) const
     RtlCopyMemory(buf.data(), Pointer(), size);
     return buf;
 }
-uint64_t MmVirtualAddress::ValU64() {
+uint64_t MmVirtualAddress::ValU64() const {
     return Value<uint64_t>();
 }
-uint32_t MmVirtualAddress::ValU32() {
+uint32_t MmVirtualAddress::ValU32() const {
     return Value<uint32_t>();
 }
-uint16_t MmVirtualAddress::ValU16() {
+uint16_t MmVirtualAddress::ValU16() const {
     return Value<uint16_t>();
 }
-uint8_t MmVirtualAddress::ValU8() {
+uint8_t MmVirtualAddress::ValU8() const {
     return Value<uint8_t>();
 }
-uint64_t MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size)
+uint64_t MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size) const
 {
     NT_ASSERT(bit_size > 64);
 
@@ -210,12 +222,12 @@ void MmVirtualAddress::WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size
         bytes_buf[byte_idx] |= (bit_val << bit_idx);
     }
 }
-MmVirtualAddress MmVirtualAddress::operator+(ptrdiff_t offset) {
+MmVirtualAddress MmVirtualAddress::operator+(ptrdiff_t offset) const {
     auto tmp = *this;
     tmp.vaddr_ += offset;
     return tmp;
 }
-MmVirtualAddress MmVirtualAddress::operator-(ptrdiff_t offset) {
+MmVirtualAddress MmVirtualAddress::operator-(ptrdiff_t offset) const {
     auto tmp = *this;
     tmp.vaddr_ -= offset;
     return tmp;
@@ -246,8 +258,7 @@ bool operator>=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
 bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
     return x.vaddr_ <= y.vaddr_;
 }
-MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next)
-{
+MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) {
     return next += offset;
 }
 }

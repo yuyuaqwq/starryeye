@@ -6,7 +6,7 @@ uint64_t HandleTable::DecryptHandleAddress(uint64_t addr)
 	return ((LONG64)addr >> 0x10) & ~0xF;
 }
 
-bool HandleTable::ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback)
+bool HandleTable::ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback)
 {
 	ObjectHeader temp{};
 	for (SHORT i = 0; i < 512; i++) {
@@ -19,7 +19,7 @@ bool HandleTable::ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, Foreach
 	return true;
 }
 
-bool HandleTable::ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback)
+bool HandleTable::ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback)
 {
 	for (size_t i = 0; i < 512; i++) {
 		if (MmIsAddressValid(table + i)) {
@@ -29,7 +29,7 @@ bool HandleTable::ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, Foreach
 	return true;
 }
 
-bool HandleTable::ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, ForeachHandleObjectsCallBack callback)
+bool HandleTable::ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback)
 {
 	for (size_t i = 0; i < 512; i++) {
 		if (MmIsAddressValid(table + i)) {
@@ -42,7 +42,7 @@ bool HandleTable::ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, Foreach
 void HandleTable::Init()
 {
 	TableCodeOffset = 0x8;
-	PspCidTable = (PVOID)0xfffff80260efc5d0;	//TODO PspCidTable
+	PspCidTable = 0xfffff80260efc5d0;	//TODO PspCidTable
 }
 
 HandleTable::HandleTable(const MmVirtualAddress& vaddr) :KObject(vaddr) {}
@@ -87,7 +87,7 @@ fustd::Option<ObjectHeader> HandleTable::GetHandleObject(uint64_t index)
 	}
 }
 
-bool HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callback)
+bool HandleTable::AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback)
 {
 	switch (TableLevel())
 	{
@@ -108,7 +108,7 @@ bool HandleTable::AutoForeachAllHandleObjects(ForeachHandleObjectsCallBack callb
 krnlib::list<ObjectHeader> HandleTable::GetAllHandleObjects()
 {
 	krnlib::list<ObjectHeader> total;
-	AutoForeachAllHandleObjects([&](ObjectHeader& obj) {
+	AutoForeachAllHandleObjects([&](const ObjectHeader& obj) {
 		total.push_back(obj);
 		return true;
 		});
@@ -120,7 +120,7 @@ fustd::Option<ObjectHeader> HandleTable::GetHandleObjectInLv1TableCode(uint64_t*
 {
 	if (MmIsAddressValid(table) && index < 512)
 		return fustd::Some(ObjectHeader(
-			DecryptHandleAddress(table[index]) - ObjectHeader::GetBodyOffset()));
+			DecryptHandleAddress(table[index]) - ObjectHeader::BodyOffset));
 	return fustd::None();
 }
 
