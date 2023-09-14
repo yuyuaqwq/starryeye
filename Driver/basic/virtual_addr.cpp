@@ -162,8 +162,7 @@ uint32_t* MmVirtualAddress::PtrU32() const {
 uint64_t* MmVirtualAddress::PtrU64() const {
     return Pointer<uint64_t>();
 }
-uint64_t MmVirtualAddress::Address() const
-{
+uint64_t MmVirtualAddress::Address() const {
     return vaddr_;
 }
 krnlib::vector<char> MmVirtualAddress::Buffer(size_t size) const
@@ -189,6 +188,7 @@ uint8_t MmVirtualAddress::ValU8() const {
 uint64_t MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size) const
 {
     NT_ASSERT(bit_size > 64);
+    ThrowIfReadInvalid();
 
     uint64_t value = 0;
     uint8_t* bytes_buf = Pointer<uint8_t>();
@@ -204,11 +204,13 @@ uint64_t MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size) const
     return value;
 }
 void MmVirtualAddress::WriteBuffer(size_t pos, void* buffer, size_t buf_size) const {
+    ThrowIfWriteInvalid();
     ProcessAutoAttacker pa{ owner_ };
     RtlMoveMemory(Pointer(), buffer, buf_size);
 }
 void MmVirtualAddress::WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const {
     NT_ASSERT(src_bit_size > 64);
+    ThrowIfWriteInvalid();
 
     uint8_t* bytes_buf = Pointer<uint8_t>();
 
@@ -239,6 +241,18 @@ MmVirtualAddress& MmVirtualAddress::operator+=(ptrdiff_t offset) {
 MmVirtualAddress& MmVirtualAddress::operator-=(ptrdiff_t offset) {
     vaddr_ -= offset;
     return *this;
+}
+void MmVirtualAddress::ThrowIfReadInvalid() const {
+    ThrowIfInvalid("读取了无效内存:");
+}
+void MmVirtualAddress::ThrowIfWriteInvalid() const {
+    ThrowIfInvalid("写入了无效内存:");
+}
+void MmVirtualAddress::ThrowIfInvalid(const char* format) const
+{
+    if (!IsValid()) {
+        std::_Xruntime_error((format + krnlib::to_string(Address()) + '\n').c_str());
+    }
 }
 bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y) {
     return x.vaddr_ == y.vaddr_;

@@ -4,6 +4,7 @@
 #include <intrin.h>
 #include <krnlib/stl_container.hpp>
 #include <fustd/generic/option.hpp>
+#include <krnlib/string.hpp>
 
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....
 namespace StarryEye {
@@ -219,6 +220,10 @@ public:
     MmVirtualAddress& operator-=(ptrdiff_t offset);
 
 private:
+    void ThrowIfReadInvalid() const;
+    void ThrowIfWriteInvalid() const;
+    void ThrowIfInvalid(const char* format) const;
+
     uint64_t vaddr_;
     PEPROCESS owner_;
 };
@@ -267,6 +272,7 @@ private:
 };
 template<class T>
 inline T& MmVirtualAddress::Value() const {
+    
     ProcessAutoAttacker pa{ owner_ };
     return *Pointer<T>();
 }
