@@ -1,7 +1,9 @@
 #include "utils.h"
+#include "utils.h"
+#include "utils.h"
 
-namespace StarryEye {
-MmBuffer StarryEye::MemoryUtils::AllocatePage(size_t size, uint32_t tag, PageProtection protection)
+namespace stareye {
+MmBuffer MemoryUtils::AllocatePage(size_t size, uint32_t tag, PageProtection protection)
 {
 	MmBuffer buf;
 	buf.resize(size);

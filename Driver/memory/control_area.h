@@ -1,7 +1,7 @@
 #pragma once
 #include "file/file_object.h"
 
-namespace StarryEye {
+namespace stareye {
 	class ControlArea: public KObject
 	{
 	public:

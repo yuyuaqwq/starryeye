@@ -5,7 +5,7 @@
 #include "thread/ethread.h"
 #include "handle/handle_table.h"
 
-namespace StarryEye {
+namespace stareye {
 class EThread;
 
 class EProcess: public KObject

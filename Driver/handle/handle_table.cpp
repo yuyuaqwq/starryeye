@@ -1,6 +1,6 @@
 #include "handle_table.h"
 
-namespace StarryEye {
+namespace stareye {
 uint64_t HandleTable::DecryptHandleAddress(uint64_t addr)
 {
 	return ((LONG64)addr >> 0x10) & ~0xF;
@@ -47,22 +47,22 @@ void HandleTable::Init()
 
 HandleTable::HandleTable(const MmVirtualAddress& vaddr) :KObject(vaddr) {}
 
-uint64_t HandleTable::TableCode()
+uint64_t HandleTable::TableCode() const
 {
 	return (vaddr_ + TableCodeOffset).ValU64();
 }
-
-uint8_t HandleTable::TableLevel()
+ 
+uint8_t HandleTable::TableLevel() const
 {
 	return TableCode() & 0b11;
 }
 
-uint64_t HandleTable::TableAddress()
+uint64_t HandleTable::TableAddress() const
 {
 	return TableCode() & ~0b11;
 }
 
-uint64_t HandleTable::MaxTableSize()
+uint64_t HandleTable::MaxTableSize() const
 {
 	uint64_t total = 1;
 	for (uint8_t i = 0; i < TableLevel() + 1; i++)
@@ -70,7 +70,7 @@ uint64_t HandleTable::MaxTableSize()
 	return total;
 }
 
-fustd::Option<ObjectHeader> HandleTable::GetHandleObject(uint64_t index)
+fustd::Option<ObjectHeader> HandleTable::GetHandleObject(uint64_t index) const
 {
 	if (index >= MaxTableSize()) return fustd::None();
 
@@ -87,7 +87,7 @@ fustd::Option<ObjectHeader> HandleTable::GetHandleObject(uint64_t index)
 	}
 }
 
-bool HandleTable::AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback)
+bool HandleTable::AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback) const
 {
 	switch (TableLevel())
 	{
@@ -105,7 +105,7 @@ bool HandleTable::AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack
 	}
 }
 
-krnlib::list<ObjectHeader> HandleTable::GetAllHandleObjects()
+krnlib::list<ObjectHeader> HandleTable::GetAllHandleObjects() const
 {
 	krnlib::list<ObjectHeader> total;
 	AutoForeachAllHandleObjects([&](const ObjectHeader& obj) {

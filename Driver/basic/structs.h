@@ -3,7 +3,7 @@
 #include "virtual_addr.h"
 #include <krnlib/functional.hpp>
 
-namespace StarryEye {
+namespace stareye {
 class KObject {
 public:
 	KObject() = default;

@@ -1,7 +1,7 @@
 #include "object_header.h"
 #include "process/eprocess.h"
 
-namespace StarryEye {
+namespace stareye {
 void ObjectHeader::Init()
 {
 	TypeIndexOffset = 0x18;

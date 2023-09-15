@@ -4,7 +4,7 @@
 #include "basic/structs.h"
 #include "object_header.h"
 
-namespace StarryEye {
+namespace stareye {
 
 class HandleTable: public KObject
 {
@@ -19,23 +19,23 @@ public:
 	~HandleTable() = default;
 
 	// 获取TableCode
-	uint64_t TableCode();
+	uint64_t TableCode() const;
 
 	// 获取TableCode等级
-	uint8_t TableLevel();
+	uint8_t TableLevel() const;
 	// 获取TableCode真正地址(最后2位清零)
-	uint64_t TableAddress();
+	uint64_t TableAddress() const;
 	// TableCode最大大小
-	uint64_t MaxTableSize();
+	uint64_t MaxTableSize() const;
 
 	// 根据索引获取Handle对象
-	fustd::Option<ObjectHeader> GetHandleObject(uint64_t index);
+	fustd::Option<ObjectHeader> GetHandleObject(uint64_t index) const;
 
 	// 自动根据TableCode等级遍历所有Handle
-	bool AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback);
+	bool AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback) const;
 
 	// 获取所有Handle对象(性能差, 不推荐使用!!!)
-	krnlib::list<ObjectHeader> GetAllHandleObjects();
+	krnlib::list<ObjectHeader> GetAllHandleObjects() const;
 
 private:
 	// 解密HandleTable中Handle项的路径

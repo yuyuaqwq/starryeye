@@ -17,9 +17,6 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
-    <Filter Include="Header Files\Handle">
-      <UniqueIdentifier>{ce9a505c-5d55-42eb-bf0a-0436256e1181}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\io">
       <UniqueIdentifier>{99103e2e-ebc4-42fb-aa47-213c87b445af}</UniqueIdentifier>
     </Filter>
@@ -58,6 +55,9 @@
     </Filter>
     <Filter Include="Header Files\basic">
       <UniqueIdentifier>{9b0ca28c-812b-4624-983b-bbc2bd1a0e77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\handle">
+      <UniqueIdentifier>{ce9a505c-5d55-42eb-bf0a-0436256e1181}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -121,16 +121,19 @@
     <ClCompile Include="basic\virtual_addr.cpp">
       <Filter>Source Files\config</Filter>
     </ClCompile>
+    <ClCompile Include="handle\utils.cpp">
+      <Filter>Source Files\handle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Handle\handle_table.h">
-      <Filter>Header Files\Handle</Filter>
+      <Filter>Header Files\handle</Filter>
     </ClInclude>
     <ClInclude Include="Handle\object_header.h">
-      <Filter>Header Files\Handle</Filter>
+      <Filter>Header Files\handle</Filter>
     </ClInclude>
     <ClInclude Include="Handle\object_type.h">
-      <Filter>Header Files\Handle</Filter>
+      <Filter>Header Files\handle</Filter>
     </ClInclude>
     <ClInclude Include="Thread\ethread.h">
       <Filter>Header Files\thread</Filter>
@@ -187,13 +190,16 @@
       <Filter>Header Files\basic</Filter>
     </ClInclude>
     <ClInclude Include="handle\init.hpp">
-      <Filter>Header Files\Handle</Filter>
+      <Filter>Header Files\handle</Filter>
     </ClInclude>
     <ClInclude Include="process\init.hpp">
       <Filter>Header Files\process</Filter>
     </ClInclude>
     <ClInclude Include="thread\init.hpp">
       <Filter>Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="handle\utils.h">
+      <Filter>Header Files\handle</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

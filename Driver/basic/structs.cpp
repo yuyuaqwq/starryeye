@@ -1,6 +1,6 @@
 #include "structs.h"
 
-namespace StarryEye {
+namespace stareye {
 	KObject::KObject(const MmVirtualAddress& vaddr): vaddr_(vaddr) {}
 	const MmVirtualAddress& KObject::VAddr() const {
 		return vaddr_;
@@ -20,7 +20,7 @@ namespace StarryEye {
 
 	RtlAvlTree::RtlAvlTree(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 	RtlBalanceNode RtlAvlTree::Root() {
-		return vaddr_.Pointer<RTL_BALANCED_NODE>();
+		return vaddr_.ValU64();
 	}
 	void RtlAvlTree::Foreach(ForeachCallBackT callback) {
 		ForeachRecursion(Root(), callback);

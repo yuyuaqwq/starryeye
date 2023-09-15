@@ -2,7 +2,7 @@
 
 #include "basic/virtual_addr.h"
 
-namespace StarryEye {
+namespace stareye {
 	using MmBuffer = krnlib::vector<char>;
 
 	class MemoryUtils {

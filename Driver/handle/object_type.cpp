@@ -1,6 +1,6 @@
 #include "object_type.h"
 
-namespace StarryEye {
+namespace stareye {
 void ObjectType::Init()
 {
 	ObTypeIndexTable = 0xfffff80260efce80;	//TODO ObTypeIndexTable

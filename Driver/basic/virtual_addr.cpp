@@ -1,7 +1,7 @@
 #include "virtual_addr.h"
 #include "process/kprocess.h"
 
-namespace StarryEye {
+namespace stareye {
 namespace details {
 VirtualAddressFormater LocatePxtBase()
 {

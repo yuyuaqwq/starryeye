@@ -1,7 +1,7 @@
 #pragma once
 #include "basic/structs.h"
 
-namespace StarryEye {
+namespace stareye {
 class KProcess: public KObject
 {
 public:

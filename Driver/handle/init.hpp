@@ -3,7 +3,7 @@
 #include "object_header.h"
 #include "object_type.h"
 
-namespace StarryEye {
+namespace stareye {
 void HandleInit() {
 	HandleTable::Init();
 	ObjectHeader::Init();

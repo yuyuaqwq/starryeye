@@ -7,7 +7,7 @@
 #include <krnlib/string.hpp>
 
 //TODO ·ÖÒ³»úÖÆ´ı²âÊÔ.....
-namespace StarryEye {
+namespace stareye {
 class MmPte;
 
 namespace details {

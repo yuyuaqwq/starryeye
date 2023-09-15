@@ -1,7 +1,7 @@
 #pragma once
 #include "process/kprocess.h"
 
-namespace StarryEye {
+namespace stareye {
 class KThread: public KObject
 {
 public:

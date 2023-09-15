@@ -1,6 +1,6 @@
 #include "vad_flags.h"
 
-namespace StarryEye {
+namespace stareye {
 void MmVadFlags::Init()
 {
 	PrivateMemoryBitPos = 20;

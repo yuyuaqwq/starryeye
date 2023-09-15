@@ -1,6 +1,6 @@
 #include "subsection.h"
 
-namespace StarryEye {
+namespace stareye {
 void SubSection::Init()
 {
 	ControlAreaOffset = 0;

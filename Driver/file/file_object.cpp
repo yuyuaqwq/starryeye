@@ -1,6 +1,6 @@
 #include "file_object.h"
 
-namespace StarryEye {
+namespace stareye {
 FileObject::FileObject(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
 PUNICODE_STRING FileObject::FileName() {

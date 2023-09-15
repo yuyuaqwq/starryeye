@@ -1,6 +1,6 @@
 #include "ethread.h"
 
-namespace StarryEye {
+namespace stareye {
 void EThread::Init()
 {
 	ThreadListEntryOffset = 0x4e8;

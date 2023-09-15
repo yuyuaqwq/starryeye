@@ -4,7 +4,7 @@
 #include "vad_flags.h"
 #include "vadtree.h"
 
-namespace StarryEye {
+namespace stareye {
 void ProcessInit() {
 	EProcess::Init();
 	KProcess::Init();

@@ -2,7 +2,7 @@
 #include "control_area.h"
 #include "subsection.h"
 
-namespace StarryEye {
+namespace stareye {
 	void MemoryInit()
 	{
 		ControlArea::Init();

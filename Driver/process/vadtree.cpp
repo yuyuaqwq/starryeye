@@ -1,7 +1,7 @@
 #include "vadtree.h"
 //#include "eprocess.h"
 
-namespace StarryEye {
+namespace stareye {
 void MmVadShort::Init() {
 	StartingVpnOffset = 0x18;
 	EndingVpnOffset = 0x1C;
@@ -32,13 +32,13 @@ MmVadFlags MmVadShort::VadFlags() {
 MmVirtualAddress MmVadShort::StartingAddress()
 {
 	auto res = static_cast<uint64_t>(StartingVpn()) * SIZE_OF_PAGE;
-	SET_HIGH_ULONG64(res, StartingVpnHigh());
+	fustd::SetIntegerHigh(res, StartingVpnHigh());
 	return res;
 }
 MmVirtualAddress MmVadShort::EndingAddress()
 {
 	auto res = static_cast<uint64_t>(EndingVpn()) * SIZE_OF_PAGE + SIZE_OF_PAGE - 1;
-	SET_HIGH_ULONG64(res, EndingVpnHigh());
+	fustd::SetIntegerHigh(res, EndingVpnHigh());
 	return res;
 }
 

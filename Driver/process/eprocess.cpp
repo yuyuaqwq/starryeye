@@ -1,7 +1,7 @@
 #include "eprocess.h"
 #include "thread/ethread.h"
 
-namespace StarryEye {
+namespace stareye {
 void EProcess::Init()
 {
 	ImageFileNameOffset = 0x5A8;

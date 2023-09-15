@@ -1,7 +1,7 @@
 #pragma once
 #include "control_area.h"
 
-namespace StarryEye {
+namespace stareye {
 	class SubSection: public KObject
 	{
 	public:
@@ -11,7 +11,7 @@ namespace StarryEye {
 		SubSection() = default;
 		~SubSection() = default;
 
-		StarryEye::ControlArea ControlArea();
+		ControlArea ControlArea();
 		SubSection NextSubsection();
 
 	private:

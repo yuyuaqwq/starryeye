@@ -1,6 +1,6 @@
 #include "kthread.h"
 
-namespace StarryEye {
+namespace stareye {
 void KThread::Init()
 {
 	ProcessOffset = 0x220;

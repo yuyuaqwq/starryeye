@@ -1,6 +1,6 @@
 #include "control_area.h"
 
-namespace StarryEye {
+namespace stareye {
 void ControlArea::Init()
 {
 	FilePointerOffset = 0x40;

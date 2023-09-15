@@ -126,6 +126,7 @@
     <ClCompile Include="Handle\handle_table.cpp" />
     <ClCompile Include="Handle\object_header.cpp" />
     <ClCompile Include="Handle\object_type.cpp" />
+    <ClCompile Include="handle\utils.cpp" />
     <ClCompile Include="io\control.cpp" />
     <ClCompile Include="io\device.cpp" />
     <ClCompile Include="io\symbolic_link.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="handle\init.hpp" />
     <ClInclude Include="Handle\object_header.h" />
     <ClInclude Include="Handle\object_type.h" />
+    <ClInclude Include="handle\utils.h" />
     <ClInclude Include="io\control.h" />
     <ClInclude Include="io\device.h" />
     <ClInclude Include="io\symbolic_link.h" />

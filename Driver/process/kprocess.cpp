@@ -1,6 +1,6 @@
 #include "kprocess.h"
 
-namespace StarryEye {
+namespace stareye {
 void KProcess::Init()
 {
     ProcessListEntryOffset = 0x350;

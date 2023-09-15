@@ -5,7 +5,7 @@
 
 #include <basic.h>
 
-namespace StarryEye {
+namespace stareye {
 namespace io {
 
 class SymbolicLink {

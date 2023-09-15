@@ -9,7 +9,7 @@
 #include <io/device.h>
 #include <io/symbolic_link.h>
 
-namespace StarryEye {
+namespace stareye {
 namespace io {
 
 class Control {

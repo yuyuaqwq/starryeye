@@ -3,7 +3,7 @@
 #include "object_type.h"
 #include <fustd/generic/option.hpp>
 
-namespace StarryEye {
+namespace stareye {
 class HandleTable;
 
 class ObjectHeader: public KObject

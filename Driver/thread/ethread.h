@@ -3,7 +3,7 @@
 #include "kthread.h"
 #include "process/eprocess.h"
 
-namespace StarryEye {
+namespace stareye {
 class EThread: public KObject
 {
 public:
