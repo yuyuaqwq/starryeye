@@ -8,6 +8,7 @@ VirtualAddressFormater LocatePxtBase()
     static VirtualAddressFormater PxtBaseCache{0};
     if (PxtBaseCache.quad_part == 0)
     {
+        PxtBaseCache.bits.sign_extend = 0xFFFF;
         for (size_t i = PAGE_SIZE / 8; i > 0; i--)
         {
             PxtBaseCache.bits.pxti = i;
@@ -136,19 +137,25 @@ uint64_t MmVirtualAddress::PteOffset() const {
     return VIRTUAL_ADDRESS_OFFSET(vaddr_);
 }
 MmPte MmVirtualAddress::GetPte() const {
-    return MmPte({ details::GetPteVirtualAddress(vaddr_).quad_part, owner_ });
+    return MmVirtualAddress(GetPteUnsafe(), owner_);
 }
 PdteFormater* MmVirtualAddress::GetPdte() const {
-    return reinterpret_cast<PdteFormater*>(details::GetPdteVirtualAddress(vaddr_).ptr);
+    MmVirtualAddress ptr = GetPdteUnsafe();
+    ptr.ThrowIfInvalid("解析出来的Pdte是无效地址: ");
+    return ptr.Pointer<PdteFormater>();
 }
 PpteFormater* MmVirtualAddress::GetPpte() const {
-    return reinterpret_cast<PpteFormater*>(details::GetPpteVirtualAddress(vaddr_).ptr);
+    MmVirtualAddress ptr = GetPpteUnsafe();
+    ptr.ThrowIfInvalid("解析出来的Ppte是无效地址: ");
+    return ptr.Pointer<PpteFormater>();
 }
 PxteFormater* MmVirtualAddress::GetPxte() const {
-    return reinterpret_cast<PxteFormater*>(details::GetPxteVirtualAddress(vaddr_).ptr);
+    MmVirtualAddress ptr = GetPxteUnsafe();
+    ptr.ThrowIfInvalid("解析出来的Pxte是无效地址: ");
+    return ptr.Pointer<PxteFormater>();
 }
 bool MmVirtualAddress::IsValid() const {
-    return MmIsAddressValid(Pointer());
+    return MmIsAddressValid((void*)vaddr_);
 }
 uint8_t* MmVirtualAddress::PtrU8() const {
     return Pointer<uint8_t>();
@@ -187,7 +194,7 @@ uint8_t MmVirtualAddress::ValU8() const {
 }
 uint64_t MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size) const
 {
-    NT_ASSERT(bit_size > 64);
+    if (bit_size > 64) std::_Xinvalid_argument("bit_size必须小于64!");
     ThrowIfReadInvalid();
 
     uint64_t value = 0;
@@ -203,13 +210,49 @@ uint64_t MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size) const
 
     return value;
 }
+int MmVirtualAddress::Protection() {
+    ProcessAutoAttacker pa{ owner_ };
+    int protection = 0;
+    auto pxte = GetPxte();
+    auto ppte = GetPpte();
+    if (ppte->bits.large_page) {
+        if (!(pxte->bits.execute_disable && ppte->bits_1g.execute_disable))
+            protection |= kPageExecutable;
+        if (!(pxte->bits.read_write && ppte->bits_1g.read_write))
+            protection |= kPageWriteable;
+        return protection;
+    }
+    bool pxte_ppte_executable = !(pxte->bits.execute_disable && ppte->bits.execute_disable);
+    bool pxte_ppte_readwrite = pxte->bits.read_write && ppte->bits.read_write;
+    auto pdte = GetPdte();
+    if (pdte->bits.large_page) {
+        if (!pdte->bits_2m.execute_disable && pxte_ppte_executable)
+            protection |= kPageExecutable;
+        if (!pdte->bits_2m.read_write && pxte_ppte_readwrite)
+            protection |= kPageExecutable;
+        return protection;
+    }
+    bool pxte_ppte_pdte_executable = pxte_ppte_executable && !pdte->bits.execute_disable;
+    bool pxte_ppte_pdte_readwrite = pxte_ppte_readwrite && pdte->bits.read_write;
+    auto pte = GetPte();
+    if (pxte_ppte_pdte_executable && !pte.Hand().NoExecute())
+        protection |= kPageExecutable;
+    if (pxte_ppte_pdte_readwrite && pte.Hand().Write())
+        protection |= kPageWriteable;
+    if (pte.Hand().CopyOnWrite())
+        protection |= kPageCopyOnWrite;
+    return protection;
+}
+PEPROCESS MmVirtualAddress::Owner() const {
+    return owner_;
+}
 void MmVirtualAddress::WriteBuffer(size_t pos, void* buffer, size_t buf_size) const {
     ThrowIfWriteInvalid();
     ProcessAutoAttacker pa{ owner_ };
     RtlMoveMemory(Pointer(), buffer, buf_size);
 }
 void MmVirtualAddress::WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const {
-    NT_ASSERT(src_bit_size > 64);
+    if (src_bit_size > 64) std::_Xinvalid_argument("src_bit_size必须小于64!");
     ThrowIfWriteInvalid();
 
     uint8_t* bytes_buf = Pointer<uint8_t>();
@@ -223,6 +266,54 @@ void MmVirtualAddress::WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size
         bytes_buf[byte_idx] &= ~(1 << bit_idx);
         bytes_buf[byte_idx] |= (bit_val << bit_idx);
     }
+}
+bool MmVirtualAddress::SetProtection(int protection) {
+    ProcessAutoAttacker pa{ owner_ };
+    bool is_executable = protection & kPageExecutable;
+    bool is_writeable = protection & kPageWriteable;
+    bool is_writecopy = protection & kPageCopyOnWrite;
+    if (is_writeable && is_writecopy) return false;
+    auto pxte = GetPxte();
+    auto ppte = GetPpte();
+
+    if (is_executable)
+        pxte->bits.execute_disable = 0;
+    if (is_writeable)
+        pxte->bits.read_write = 1;
+
+    if (ppte->bits.large_page) {
+        ppte->bits_1g.execute_disable = !is_executable;
+        ppte->bits_1g.read_write = is_writeable;
+        return true;
+    }
+
+    auto pdte = GetPdte();
+
+    if (is_executable)
+        ppte->bits.execute_disable = 0;
+    if (is_writeable)
+        ppte->bits.read_write = 1;
+
+    if (pdte->bits.large_page) {
+        pdte->bits_2m.execute_disable = !is_executable;
+        pdte->bits_2m.read_write = is_writeable;
+        return true;
+    }
+
+    auto pte = GetPte();
+
+    if (is_executable)
+        pdte->bits.execute_disable = 0;
+    if (is_writeable)
+        pdte->bits.read_write = 1;
+
+    pte.Hand().SetNoExecute(!is_executable);
+    pte.Hand().SetWrite(is_writeable);
+    pte.Hand().SetCopyOnWrite(is_writecopy);
+    return true;
+}
+void MmVirtualAddress::SetOwner(PEPROCESS eproc) {
+    owner_ = eproc;
 }
 MmVirtualAddress MmVirtualAddress::operator+(ptrdiff_t offset) const {
     auto tmp = *this;
@@ -274,5 +365,18 @@ bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
 }
 MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) {
     return next += offset;
+}
+
+void* MmVirtualAddress::GetPteUnsafe() const {
+    return details::GetPteVirtualAddress(vaddr_).ptr;
+}
+void* MmVirtualAddress::GetPdteUnsafe() const {
+    return details::GetPdteVirtualAddress(vaddr_).ptr;
+}
+void* MmVirtualAddress::GetPpteUnsafe() const {
+    return details::GetPpteVirtualAddress(vaddr_).ptr;
+}
+void* MmVirtualAddress::GetPxteUnsafe() const {
+    return details::GetPxteVirtualAddress(vaddr_).ptr;
 }
 }

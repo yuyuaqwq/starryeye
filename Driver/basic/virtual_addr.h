@@ -160,6 +160,13 @@ union Cr3Formater
 };
 
 
+enum PageProtection
+{
+    kPageExecutable = 0b001,
+    kPageWriteable = 0b010,
+    kPageCopyOnWrite = 0b100,
+};
+
 
 class MmVirtualAddress
 {
@@ -186,6 +193,7 @@ public:
 
     template<class T = char>
     T* Pointer() const {
+        ThrowIfInvalid("无法将无效地址转换为指针: ");
         return (T*)vaddr_;
     }
     uint8_t* PtrU8() const;
@@ -201,9 +209,14 @@ public:
     uint16_t ValU16() const;
     uint8_t ValU8() const;
     uint64_t BitArea(size_t bit_pos, uint8_t bit_size) const;
+    int Protection();
+    PEPROCESS Owner() const;
 
     void WriteBuffer(size_t pos, void* buffer, size_t buf_size) const;
     void WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const;
+    bool SetProtection(int protection);
+
+    void SetOwner(PEPROCESS eproc);
 
     friend bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y);
@@ -220,6 +233,11 @@ public:
     MmVirtualAddress& operator-=(ptrdiff_t offset);
 
 private:
+    void* GetPteUnsafe() const;
+    void* GetPdteUnsafe() const;
+    void* GetPpteUnsafe() const;
+    void* GetPxteUnsafe() const;
+
     void ThrowIfReadInvalid() const;
     void ThrowIfWriteInvalid() const;
     void ThrowIfInvalid(const char* format) const;

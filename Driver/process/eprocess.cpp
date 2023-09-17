@@ -14,7 +14,9 @@ void EProcess::Init()
 	VadRootOffset = 0x7d8;
 }
 
-EProcess::EProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+EProcess::EProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {
+	vaddr_.SetOwner((PEPROCESS)vaddr.Address());
+}
 
 char* EProcess::ImageFileName()
 {
@@ -58,10 +60,14 @@ ListEntry<EThread> EProcess::ThreadListHead()
 
 MmVadTree EProcess::VadRoot()
 {
-	return vaddr_ + VadRootOffset;
+	return MmVirtualAddress(vaddr_ + VadRootOffset);
 }
 bool EProcess::CompareFileName(PCCHAR file_name)
 {
 	return strcmp(file_name, ImageFileName()) == 0;
+}
+EProcess::operator PEPROCESS() const
+{
+	return (PEPROCESS)vaddr_.Address();
 }
 }

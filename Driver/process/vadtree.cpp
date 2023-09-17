@@ -31,15 +31,18 @@ MmVadFlags MmVadShort::VadFlags() {
 }
 MmVirtualAddress MmVadShort::StartingAddress()
 {
-	auto res = static_cast<uint64_t>(StartingVpn()) * SIZE_OF_PAGE;
-	fustd::SetIntegerHigh(res, StartingVpnHigh());
-	return res;
+	uint64_t res = StartingVpn();
+	fustd::SetIntegerHigh<4>(res, StartingVpnHigh());
+	res <<= PAGE_SHIFT;
+	return MmVirtualAddress(res, vaddr_.Owner());
 }
 MmVirtualAddress MmVadShort::EndingAddress()
 {
-	auto res = static_cast<uint64_t>(EndingVpn()) * SIZE_OF_PAGE + SIZE_OF_PAGE - 1;
-	fustd::SetIntegerHigh(res, EndingVpnHigh());
-	return res;
+	uint64_t res = EndingVpn();
+	fustd::SetIntegerHigh<4>(res, EndingVpnHigh());
+	res <<= PAGE_SHIFT;
+	res += PAGE_SIZE - 1;
+	return MmVirtualAddress(res, vaddr_.Owner());
 }
 
 

@@ -46,9 +46,10 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	{
 		auto table = HandleTable(HandleTable::PspCidTable.ValU64());
 		auto res = HandleUtils::FindProcessInHandleTable(table, "Test.exe");
-		if (auto opt = res[0].VadRoot().SearchNode(0x7ff6271eac38); opt.IsSome()) {
-			auto node = opt.SomeVal();
-			DebugPrintf("Vad Node: %llx ~ %llx", node.StartingAddress().Address(), node.EndingAddress().Address());
+		if (!res.empty()) {
+			auto dest = MmVirtualAddress(0x7ff7b9c8ac38, res[0]);
+			dest.SetProtection(kPageExecutable | kPageWriteable);
+			auto b = dest.Protection();
 		}
 	}
 	catch (const std::exception& ex)

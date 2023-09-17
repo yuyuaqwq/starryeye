@@ -29,6 +29,8 @@ public:
 
 	bool CompareFileName(PCCHAR file_name);
 
+	operator PEPROCESS() const;
+
 private:
 	inline static uint64_t ImageFileNameOffset;
 	inline static uint64_t ObjectTableOffset;

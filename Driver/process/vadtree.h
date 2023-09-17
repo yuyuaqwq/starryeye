@@ -4,8 +4,6 @@
 #include <fustd/generic/option.hpp>
 
 namespace stareye {
-#define SIZE_OF_PAGE 0x1000
-
 class MmVadShort : public RtlBalanceNode
 {
 public:

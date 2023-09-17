@@ -31,7 +31,7 @@ public:
 	// 获取Body并转换为对象
 	template<class T, EnableIfInheritKObject<T> = 0>
 	T Body() const {
-		return vaddr_ + BodyOffset;
+		return T(vaddr_ + BodyOffset);
 	}
 
 private:
