@@ -10,8 +10,8 @@ bool HandleTable::ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, const F
 {
 	ObjectHeader temp{};
 	for (SHORT i = 0; i < 512; i++) {
-		if (auto opt = GetHandleObjectInLv1TableCode(table, i); opt.IsSome()) {
-			if (temp = opt.SomeVal(); temp.VAddr().IsValid() && !callback(temp)) {
+		if (auto opt = GetHandleObjectInLv1TableCode(table, i); opt.has_value()) {
+			if (temp = opt.value(); temp.VAddr().IsValid() && !callback(temp)) {
 				return false;
 			}
 		}
@@ -70,9 +70,9 @@ uint64_t HandleTable::MaxTableSize() const
 	return total;
 }
 
-fustd::Option<ObjectHeader> HandleTable::GetHandleObject(uint64_t index) const
+std::optional<ObjectHeader> HandleTable::GetHandleObject(uint64_t index) const
 {
-	if (index >= MaxTableSize()) return fustd::None();
+	if (index >= MaxTableSize()) return std::nullopt;
 
 	switch (TableLevel())
 	{
@@ -83,7 +83,7 @@ fustd::Option<ObjectHeader> HandleTable::GetHandleObject(uint64_t index) const
 	case 2:
 		return GetHandleObjectInLv3TableCode((uint64_t*)TableAddress(), index / (512ULL * 512), (index % (512ULL * 512)) / 512, (index % (512ULL * 512)) % 512);
 	default:
-		return fustd::None();
+		return std::nullopt;
 	}
 }
 
@@ -116,25 +116,25 @@ krnlib::list<ObjectHeader> HandleTable::GetAllHandleObjects() const
 }
 
 
-fustd::Option<ObjectHeader> HandleTable::GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index)
+std::optional<ObjectHeader> HandleTable::GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index)
 {
 	if (MmIsAddressValid(table) && index < 512)
-		return fustd::Some(ObjectHeader(
-			DecryptHandleAddress(table[index]) - ObjectHeader::BodyOffset));
-	return fustd::None();
+		return ObjectHeader(
+			DecryptHandleAddress(table[index]) - ObjectHeader::BodyOffset);
+	return std::nullopt;
 }
 
-fustd::Option<ObjectHeader> HandleTable::GetHandleObjectInLv2TableCode(uint64_t* table, uint64_t index_lv2, uint64_t index_lv1)
+std::optional<ObjectHeader> HandleTable::GetHandleObjectInLv2TableCode(uint64_t* table, uint64_t index_lv2, uint64_t index_lv1)
 {
 	if (MmIsAddressValid(table) && index_lv2 < 512 && index_lv1 < 512)
 		return GetHandleObjectInLv1TableCode((uint64_t*)table[index_lv2], index_lv1);
-	return fustd::None();
+	return std::nullopt;
 }
 
-fustd::Option<ObjectHeader> HandleTable::GetHandleObjectInLv3TableCode(uint64_t* table, uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1)
+std::optional<ObjectHeader> HandleTable::GetHandleObjectInLv3TableCode(uint64_t* table, uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1)
 {
 	if (MmIsAddressValid(table) && index_lv3 < 512 && index_lv2 < 512 && index_lv1 < 512)
 		return GetHandleObjectInLv2TableCode((uint64_t*)table[index_lv3], index_lv2, index_lv1);
-	return fustd::None();
+	return std::nullopt;
 }
 }

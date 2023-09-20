@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include "virtual_addr.h"
 #include <krnlib/functional.hpp>
 

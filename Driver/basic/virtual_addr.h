@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <intrin.h>
 #include <krnlib/stl_container.hpp>
-#include <fustd/generic/option.hpp>
 #include <krnlib/string.hpp>
 
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....

@@ -35,7 +35,7 @@ ListEntry<EProcess> EProcess::ActiveProcessLinks()
 
 HandleTable EProcess::ObjectTable()
 {
-	return (vaddr_ + ObjectTableOffset).ValU64();
+	return HandleTable((vaddr_ + ObjectTableOffset).ValU64());
 }
 
 uint64_t EProcess::InheritedFromUniqueProcessId()

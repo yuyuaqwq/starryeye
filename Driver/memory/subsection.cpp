@@ -11,11 +11,11 @@ SubSection::SubSection(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
 ControlArea SubSection::ControlArea()
 {
-	return (vaddr_ + ControlAreaOffset).ValU64();
+	return stareye::ControlArea((vaddr_ + ControlAreaOffset).ValU64());
 }
 
 SubSection SubSection::NextSubsection()
 {
-	return (vaddr_ + NextSubsectionOffset).ValU64();
+	return SubSection((vaddr_ + NextSubsectionOffset).ValU64());
 }
 }

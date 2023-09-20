@@ -57,7 +57,7 @@ MmVadShort MmVad::Core() {
 	return vaddr_;
 }
 SubSection MmVad::Subsection() {
-	return (vaddr_ + SubsectionOffset).ValU64();
+	return SubSection((vaddr_ + SubsectionOffset).ValU64());
 }
 ListEntry<MmVad> MmVad::ViewLinks() {
 	return ListEntry<MmVad>(vaddr_ + ViewLinksOffset, ViewLinksOffset);
@@ -71,7 +71,7 @@ void MmVadTree::Init()
 }
 
 MmVadTree::MmVadTree(const MmVirtualAddress& vaddr) : RtlAvlTree(vaddr) {}
-fustd::Option<MmVadShort> MmVadTree::SearchNode(const MmVirtualAddress& vaddr)
+std::optional<MmVadShort> MmVadTree::SearchNode(const MmVirtualAddress& vaddr)
 {
 	auto cur_vad = Root().Impl<MmVadShort>();
 	while (cur_vad.VAddr().IsValid()) {
@@ -81,8 +81,8 @@ fustd::Option<MmVadShort> MmVadTree::SearchNode(const MmVirtualAddress& vaddr)
 		else if (cur_vad.EndingAddress() < vaddr) {
 			cur_vad = cur_vad.Right().Impl<MmVadShort>();
 		}
-		else return fustd::Some(std::move(cur_vad));
+		else return cur_vad;
 	}
-	return fustd::None();
+	return std::nullopt;
 }
 }

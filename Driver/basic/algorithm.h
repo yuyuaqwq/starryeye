@@ -4,7 +4,6 @@
 #include <fustd/generic/algorithm.hpp>
 
 namespace stareye {
-
 constexpr bool IsBitAreaValid(size_t buf_size, size_t bit_pos, size_t bit_size);
 
 bool EqualString(const char* str1, const char* str2, bool case_in_sensitive);

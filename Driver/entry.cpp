@@ -16,15 +16,9 @@
 //#include <yuJson/json.hpp>
 using namespace stareye;
 
-io::Device* g_device;
-io::Control* g_control;
+//io::Device* g_device;
+//io::Control* g_control;
 
-void DriverUnload(PDRIVER_OBJECT pDriverObject)
-{
-	UNREFERENCED_PARAMETER(pDriverObject);
-	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "–∂‘ÿ!\n"));
-	return;
-}
 
 void GlobalInit()
 {
@@ -37,7 +31,9 @@ void GlobalInit()
 
 extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
 	UNREFERENCED_PARAMETER(pRegistryPath);
-	pDriverObject->DriverUnload = DriverUnload;
+	pDriverObject->DriverUnload = [](PDRIVER_OBJECT) {
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "–∂‘ÿ!\n"));
+	};
 	
 	GlobalInit();
 
@@ -57,5 +53,6 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 		DebugPrintf("≥ˆœ÷¥ÌŒÛ: %s\n", ex.what());
 		return STATUS_UNSUCCESSFUL;
 	}
+
 	return STATUS_SUCCESS;
 }

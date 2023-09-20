@@ -1,7 +1,6 @@
 #pragma once
 #include "basic/structs.h"
 #include "object_type.h"
-#include <fustd/generic/option.hpp>
 
 namespace stareye {
 class HandleTable;

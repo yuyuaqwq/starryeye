@@ -1,7 +1,6 @@
 #pragma once
 #include "memory/subsection.h"
 #include "vad_flags.h"
-#include <fustd/generic/option.hpp>
 
 namespace stareye {
 class MmVadShort : public RtlBalanceNode
@@ -62,6 +61,6 @@ public:
 	MmVadTree(const MmVirtualAddress& vaddr);
 	~MmVadTree() = default;
 
-	fustd::Option<MmVadShort> SearchNode(const MmVirtualAddress& vaddr);
+	std::optional<MmVadShort> SearchNode(const MmVirtualAddress& vaddr);
 };
 }

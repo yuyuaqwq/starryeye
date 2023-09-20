@@ -9,6 +9,6 @@ void KThread::Init()
 KThread::KThread(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 
 KProcess KThread::Process() {
-	return (vaddr_ + ProcessOffset).ValU64();
+	return KProcess((vaddr_ + ProcessOffset).ValU64());
 }
 }
