@@ -29,6 +29,13 @@ public:
 	RtlBalanceNode Right() const;
 	RtlBalanceNode Parent() const;
 
+	bool HasLeft() const;
+	bool HasRight() const;
+	bool HasParent() const;
+
+	friend bool operator==(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept;
+	friend bool operator!=(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept;
+
 	template<class T, std::enable_if_t<std::is_convertible_v<T*, RtlBalanceNode*>, int> = 0>
 	T Impl() {
 		return vaddr_;
@@ -38,6 +45,32 @@ public:
 class RtlAvlTree : public KObject
 {
 public:
+	class Iterator
+	{
+	public: 
+		using difference_type = std::ptrdiff_t;
+		using value_type = RtlBalanceNode;
+		using pointer = value_type*;
+		using reference = value_type&;
+		using iterator_category = std::bidirectional_iterator_tag;
+
+		Iterator(const RtlBalanceNode& cur);
+		~Iterator() = default;
+		RtlBalanceNode& operator*();
+
+		Iterator& operator++();
+		Iterator& operator--();
+
+		Iterator operator++(int);
+		Iterator operator--(int);
+
+	private:
+		void GoLeftMost(const RtlBalanceNode& node);
+		void GoRightMost(const RtlBalanceNode& node);
+
+		RtlBalanceNode cur_;
+	};
+
 	using ForeachCallBackT = const krnlib::function<bool(const RtlBalanceNode&)>&;
 
 	RtlAvlTree(const MmVirtualAddress& vaddr);

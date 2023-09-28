@@ -1,42 +1,111 @@
 #include "structs.h"
 
 namespace stareye {
-	KObject::KObject(const MmVirtualAddress& vaddr): vaddr_(vaddr) {}
-	const MmVirtualAddress& KObject::VAddr() const {
-		return vaddr_;
-	}
+KObject::KObject(const MmVirtualAddress& vaddr): vaddr_(vaddr) {}
+const MmVirtualAddress& KObject::VAddr() const {
+	return vaddr_;
+}
 
-	RtlBalanceNode::RtlBalanceNode(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
-	RtlBalanceNode RtlBalanceNode::Left() const {
-		return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Left, vaddr_.Owner());
-	}
-	RtlBalanceNode RtlBalanceNode::Right() const {
-		return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Right, vaddr_.Owner());
-	}
-	RtlBalanceNode RtlBalanceNode::Parent() const {
-		return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->ParentValue, vaddr_.Owner());
-	}
+RtlBalanceNode::RtlBalanceNode(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+RtlBalanceNode RtlBalanceNode::Left() const {
+	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Left, vaddr_.Owner());
+}
+RtlBalanceNode RtlBalanceNode::Right() const {
+	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Right, vaddr_.Owner());
+}
+RtlBalanceNode RtlBalanceNode::Parent() const {
+	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->ParentValue, vaddr_.Owner());
+}
+bool RtlBalanceNode::HasLeft() const {
+	return Left().vaddr_.IsValid();
+}
+bool RtlBalanceNode::HasRight() const {
+	return Right().vaddr_.IsValid();
+}
+bool RtlBalanceNode::HasParent() const {
+	return Parent().vaddr_.IsValid();
+}
+bool operator==(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept {
+	return x.vaddr_ == y.vaddr_;
+}
+bool operator!=(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept {
+	return x.vaddr_ != y.vaddr_;
+}
 
 
-	RtlAvlTree::RtlAvlTree(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
-	RtlBalanceNode RtlAvlTree::Root() {
-		return MmVirtualAddress(vaddr_.ValU64(), vaddr_.Owner());
+RtlAvlTree::RtlAvlTree(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+RtlBalanceNode RtlAvlTree::Root() {
+	return MmVirtualAddress(vaddr_.ValU64(), vaddr_.Owner());
+}
+void RtlAvlTree::Foreach(ForeachCallBackT callback) {
+	ForeachRecursion(Root(), callback);
+}
+krnlib::list<RtlBalanceNode> RtlAvlTree::GetAllNodes() {
+	krnlib::list<RtlBalanceNode> total;
+	Foreach([&](const RtlBalanceNode& node) {
+		total.push_back(node);
+		return true;
+		});
+	return total;
+}
+bool RtlAvlTree::ForeachRecursion(const RtlBalanceNode& root, ForeachCallBackT callback) {
+	if (!root.VAddr().IsValid()) return true;
+	if (!ForeachRecursion(root.Left(), callback)) return false;
+	if (!callback(root)) return false;
+	return ForeachRecursion(root.Right(), callback);
+}
+
+RtlAvlTree::Iterator::Iterator(const RtlBalanceNode& cur) : cur_(cur) {}
+RtlBalanceNode& RtlAvlTree::Iterator::operator*() { return cur_; }
+RtlAvlTree::Iterator& RtlAvlTree::Iterator::operator++() {
+	if (cur_.HasRight()) {
+		GoLeftMost(cur_.Right());
 	}
-	void RtlAvlTree::Foreach(ForeachCallBackT callback) {
-		ForeachRecursion(Root(), callback);
+	else {
+		while (cur_.HasParent() && cur_.Parent().Right() == cur_) {
+			cur_ = cur_.Parent();
+		}
+		cur_ = cur_.Parent();
 	}
-	krnlib::list<RtlBalanceNode> RtlAvlTree::GetAllNodes() {
-		krnlib::list<RtlBalanceNode> total;
-		Foreach([&](const RtlBalanceNode& node) {
-			total.push_back(node);
-			return true;
-			});
-		return total;
+	return *this;
+}
+RtlAvlTree::Iterator& RtlAvlTree::Iterator::operator--() {
+	if (cur_.HasLeft()) {
+		GoLeftMost(cur_.Left());
 	}
-	bool RtlAvlTree::ForeachRecursion(const RtlBalanceNode& root, ForeachCallBackT callback) {
-		if (!root.VAddr().IsValid()) return true;
-		if (!ForeachRecursion(root.Left(), callback)) return false;
-		if (!callback(root)) return false;
-		return ForeachRecursion(root.Right(), callback);
+	else {
+		while (cur_.HasParent() && cur_.Parent().Left() == cur_) {
+			cur_ = cur_.Parent();
+		}
+		cur_ = cur_.Parent();
 	}
+	return *this;
+
+}
+RtlAvlTree::Iterator RtlAvlTree::Iterator::operator++(int) {
+	auto tmp = *this;
+	++(*this);
+	return tmp;
+}
+RtlAvlTree::Iterator RtlAvlTree::Iterator::operator--(int) {
+	auto tmp = *this;
+	--(*this);
+	return tmp;
+}
+void RtlAvlTree::Iterator::GoLeftMost(const RtlBalanceNode& node)
+{
+	RtlBalanceNode tmp = node;
+	while (tmp.HasLeft()) {
+		tmp = tmp.Left();
+	}
+	cur_ = tmp;
+}
+void RtlAvlTree::Iterator::GoRightMost(const RtlBalanceNode& node)
+{
+	RtlBalanceNode tmp = node;
+	while (tmp.HasRight()) {
+		tmp = tmp.Right();
+	}
+	cur_ = tmp;
+}
 }
