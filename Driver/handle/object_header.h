@@ -28,7 +28,7 @@ public:
 	bool IsProcess() const;
 
 	// 获取Body并转换为对象
-	template<class T, EnableIfInheritKObject<T> = 0>
+	template<InheritKObjectT T>
 	T Body() const {
 		return T(vaddr_ + BodyOffset);
 	}

@@ -43,9 +43,11 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 		auto table = HandleTable(HandleTable::PspCidTable.ValU64());
 		auto res = HandleUtils::FindProcessInHandleTable(table, "Test.exe");
 		if (!res.empty()) {
-			auto dest = MmVirtualAddress(0x7ff7b9c8ac38, res[0]);
-			dest.SetProtection(kPageExecutable | kPageWriteable);
-			auto b = dest.Protection();
+			for (auto& node : res[0].VadRoot()) {
+				auto mmvad_short = node.Impl<MmVadShort>();
+				DebugPrintf("Start: %llx - End: %llx\n", mmvad_short.StartingAddress(), mmvad_short.EndingAddress());
+			}
+			std::is_convertible_v<EProcess*, KObject*>;
 		}
 	}
 	catch (const std::exception& ex)

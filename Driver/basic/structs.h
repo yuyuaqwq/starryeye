@@ -16,7 +16,7 @@ protected:
 };
 
 template<class T>
-using EnableIfInheritKObject = typename std::enable_if_t<std::is_convertible_v<T*, KObject*>, int>;
+concept InheritKObjectT = std::is_convertible_v<T*, KObject*>;
 
 class RtlBalanceNode: public KObject
 {
@@ -36,11 +36,13 @@ public:
 	friend bool operator==(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept;
 	friend bool operator!=(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept;
 
-	template<class T, std::enable_if_t<std::is_convertible_v<T*, RtlBalanceNode*>, int> = 0>
+	template<class T>
+		requires std::is_convertible_v<T*, RtlBalanceNode*>
 	T Impl() {
 		return vaddr_;
 	}
 };
+
 
 class RtlAvlTree : public KObject
 {
@@ -56,13 +58,15 @@ public:
 
 		Iterator(const RtlBalanceNode& cur);
 		~Iterator() = default;
-		RtlBalanceNode& operator*();
 
+		RtlBalanceNode& operator*();
+		RtlBalanceNode* operator->();
 		Iterator& operator++();
 		Iterator& operator--();
-
 		Iterator operator++(int);
 		Iterator operator--(int);
+		bool operator==(const Iterator& x);
+		bool operator!=(const Iterator& x);
 
 	private:
 		void GoLeftMost(const RtlBalanceNode& node);
@@ -82,6 +86,12 @@ public:
 	// 获取所有节点(性能差, 不推荐使用!!!)
 	krnlib::list<RtlBalanceNode> GetAllNodes();
 
+	RtlBalanceNode BeginNode();
+	RtlBalanceNode EndNode();
+
+	Iterator begin();
+	Iterator end();
+
 private:
 	bool ForeachRecursion(const RtlBalanceNode& root, ForeachCallBackT callback);
 };
@@ -93,7 +103,6 @@ class ListEntry : public KObject
 {
 public:
 	ListEntry() = default;
-	template<EnableIfInheritKObject<T> = 0>
 	ListEntry(const MmVirtualAddress& vaddr, ptrdiff_t off_to_head): KObject(vaddr), off_to_head_(off_to_head) {}
 	~ListEntry() = default;
 
@@ -118,7 +127,6 @@ class ExFastRef : public KObject
 {
 public:
 	ExFastRef() = default;
-	template<EnableIfInheritKObject<ObjectT> = 0>
 	ExFastRef(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 	~ExFastRef() = default;
 
