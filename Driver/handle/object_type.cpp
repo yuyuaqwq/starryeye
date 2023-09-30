@@ -3,7 +3,7 @@
 namespace stareye {
 void ObjectType::Init()
 {
-	ObTypeIndexTable = 0xfffff80260efce80;	//TODO ObTypeIndexTable
+	ObTypeIndexTable = 0xfffff802598fce80;	//TODO ObTypeIndexTable
 	NameOffset = 0x10;
 }
 

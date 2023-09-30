@@ -1,3 +1,5 @@
+#define FMT_HEADER_ONLY
+#include <fmt/format.h>
 #include <ntifs.h>
 #include <stdexcept>
 
@@ -41,13 +43,14 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	try
 	{
 		auto table = HandleTable(HandleTable::PspCidTable.ValU64());
-		auto res = HandleUtils::FindProcessInHandleTable(table, "Test.exe");
+		auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
 		if (!res.empty()) {
-			for (auto& node : res[0].VadRoot()) {
+			auto tree = res[0].VadRoot();
+			for (auto& node : tree) {
 				auto mmvad_short = node.Impl<MmVadShort>();
-				DebugPrintf("Start: %llx - End: %llx\n", mmvad_short.StartingAddress(), mmvad_short.EndingAddress());
+				DebugPrintf("Start: %llx - End: %llx\n", mmvad_short.StartingAddress().Address(), mmvad_short.EndingAddress().Address());
+				//fmt::format("{}-{}", 1145, 14);
 			}
-			std::is_convertible_v<EProcess*, KObject*>;
 		}
 	}
 	catch (const std::exception& ex)

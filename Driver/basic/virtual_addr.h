@@ -223,7 +223,7 @@ public:
     friend bool operator<(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend bool operator>=(const MmVirtualAddress& x, const MmVirtualAddress& y);
     friend bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y);
-    friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next);
+    friend MmVirtualAddress operator+(ptrdiff_t offset, const MmVirtualAddress& next);
 
     MmVirtualAddress operator+(ptrdiff_t offset) const;
     MmVirtualAddress operator-(ptrdiff_t offset) const;

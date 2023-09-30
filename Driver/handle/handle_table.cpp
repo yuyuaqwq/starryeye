@@ -42,7 +42,7 @@ bool HandleTable::ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, const F
 void HandleTable::Init()
 {
 	TableCodeOffset = 0x8;
-	PspCidTable = 0xfffff80260efc5d0;	//TODO PspCidTable
+	PspCidTable = 0xfffff802598fc5d0;	//TODO PspCidTable
 }
 
 HandleTable::HandleTable(const MmVirtualAddress& vaddr) :KObject(vaddr) {}

@@ -75,25 +75,22 @@ public:
 		RtlBalanceNode cur_;
 	};
 
-	using ForeachCallBackT = const krnlib::function<bool(const RtlBalanceNode&)>&;
+	using ForeachCallBackT = krnlib::function<bool(const RtlBalanceNode&)>;
 
 	RtlAvlTree(const MmVirtualAddress& vaddr);
 	RtlAvlTree() = default;
 	~RtlAvlTree() = default;
 
 	RtlBalanceNode Root();
-	void Foreach(ForeachCallBackT callback);
+	void Foreach(const ForeachCallBackT& callback);
 	// 获取所有节点(性能差, 不推荐使用!!!)
 	krnlib::list<RtlBalanceNode> GetAllNodes();
-
-	RtlBalanceNode BeginNode();
-	RtlBalanceNode EndNode();
 
 	Iterator begin();
 	Iterator end();
 
 private:
-	bool ForeachRecursion(const RtlBalanceNode& root, ForeachCallBackT callback);
+	bool ForeachRecursion(const RtlBalanceNode& root, const ForeachCallBackT& callback);
 };
 
 

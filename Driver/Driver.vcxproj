@@ -89,7 +89,7 @@
     </DriverSign>
     <ClCompile>
       <TreatWarningAsError>false</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(KernelLib);$(VC_IncludePath);$(SolutionDir)Driver;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(KernelLib);$(VC_IncludePath);$(SolutionDir)Driver;E:\Code\C++\_Packages\Analyser\fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>

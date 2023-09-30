@@ -37,7 +37,7 @@ RtlAvlTree::RtlAvlTree(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 RtlBalanceNode RtlAvlTree::Root() {
 	return MmVirtualAddress(vaddr_.ValU64(), vaddr_.Owner());
 }
-void RtlAvlTree::Foreach(ForeachCallBackT callback) {
+void RtlAvlTree::Foreach(const ForeachCallBackT& callback) {
 	ForeachRecursion(Root(), callback);
 }
 krnlib::list<RtlBalanceNode> RtlAvlTree::GetAllNodes() {
@@ -48,27 +48,21 @@ krnlib::list<RtlBalanceNode> RtlAvlTree::GetAllNodes() {
 		});
 	return total;
 }
-RtlBalanceNode RtlAvlTree::BeginNode() {
+RtlAvlTree::Iterator RtlAvlTree::begin() {
 	auto tmp = Root();
 	while (tmp.HasLeft()) {
 		tmp = tmp.Left();
 	}
 	return tmp;
 }
-RtlBalanceNode RtlAvlTree::EndNode() {
+RtlAvlTree::Iterator RtlAvlTree::end() {
 	auto tmp = Root();
 	while (tmp.HasRight()) {
 		tmp = tmp.Right();
 	}
 	return tmp;
 }
-RtlAvlTree::Iterator RtlAvlTree::begin() {
-	return BeginNode();
-}
-RtlAvlTree::Iterator RtlAvlTree::end() {
-	return EndNode();
-}
-bool RtlAvlTree::ForeachRecursion(const RtlBalanceNode& root, ForeachCallBackT callback) {
+bool RtlAvlTree::ForeachRecursion(const RtlBalanceNode& root, const ForeachCallBackT& callback) {
 	if (!root.VAddr().IsValid()) return true;
 	if (!ForeachRecursion(root.Left(), callback)) return false;
 	if (!callback(root)) return false;

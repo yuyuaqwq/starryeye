@@ -6,7 +6,7 @@ void ObjectHeader::Init()
 {
 	TypeIndexOffset = 0x18;
 	BodyOffset = 0x30;
-	ObHeaderCookie = 0xfffff80260efc72c;	//TODO ObHeaderCookie
+	ObHeaderCookie = 0xfffff802598fc72c;	//TODO ObHeaderCookie
 }
 
 ObjectHeader::ObjectHeader(const MmVirtualAddress& vaddr): KObject(vaddr) {}

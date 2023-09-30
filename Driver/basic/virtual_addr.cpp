@@ -363,8 +363,8 @@ bool operator>=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
 bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
     return x.vaddr_ <= y.vaddr_;
 }
-MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) {
-    return next += offset;
+MmVirtualAddress operator+(ptrdiff_t offset, const MmVirtualAddress& next) {
+    return next + offset;
 }
 
 void* MmVirtualAddress::GetPteUnsafe() const {
