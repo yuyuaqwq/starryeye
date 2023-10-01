@@ -89,13 +89,13 @@
     </DriverSign>
     <ClCompile>
       <TreatWarningAsError>false</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(KernelLib);$(VC_IncludePath);$(SolutionDir)Driver;E:\Code\C++\_Packages\Analyser\fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(KernelLib);$(VC_IncludePath);$(SolutionDir)Driver;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(KernelLib)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>krnlib\x64\krnlib-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>krnlib\x64\krnlib-debug.lib;$(DDK_LIB_PATH)\ntstrsafe.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>

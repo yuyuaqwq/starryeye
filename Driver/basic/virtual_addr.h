@@ -2,8 +2,8 @@
 #include "algorithm.h"
 #include <stdint.h>
 #include <intrin.h>
-#include <krnlib/stl_container.hpp>
-#include <krnlib/string.hpp>
+#include <vector>
+#include <fmt/format.h>
 
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....
 namespace stareye {
@@ -200,7 +200,7 @@ public:
     uint32_t* PtrU32() const;
     uint64_t* PtrU64() const;
     uint64_t Address() const;
-    krnlib::vector<char> Buffer(size_t size) const;
+    std::vector<char> Buffer(size_t size) const;
     template<class T>
     T& Value() const;
     uint64_t ValU64() const;

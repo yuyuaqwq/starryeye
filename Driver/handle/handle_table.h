@@ -1,6 +1,4 @@
 #pragma once
-#include <krnlib/functional.hpp>
-#include <krnlib/stl_container.hpp>
 #include "basic/structs.h"
 #include "object_header.h"
 
@@ -9,7 +7,7 @@ namespace stareye {
 class HandleTable: public KObject
 {
 public:
-	using ForeachHandleObjectsCallBack = krnlib::function<bool(const ObjectHeader&)>;
+	using ForeachHandleObjectsCallBack = std::function<bool(const ObjectHeader&)>;
 
 	inline static MmVirtualAddress PspCidTable;
 	static void Init();
@@ -33,9 +31,6 @@ public:
 
 	// 自动根据TableCode等级遍历所有Handle
 	bool AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback) const;
-
-	// 获取所有Handle对象(性能差, 不推荐使用!!!)
-	krnlib::list<ObjectHeader> GetAllHandleObjects() const;
 
 private:
 	// 解密HandleTable中Handle项的路径

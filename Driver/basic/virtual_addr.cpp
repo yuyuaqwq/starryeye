@@ -172,10 +172,10 @@ uint64_t* MmVirtualAddress::PtrU64() const {
 uint64_t MmVirtualAddress::Address() const {
     return vaddr_;
 }
-krnlib::vector<char> MmVirtualAddress::Buffer(size_t size) const
+std::vector<char> MmVirtualAddress::Buffer(size_t size) const
 {
     ProcessAutoAttacker pa{ owner_ };
-    krnlib::vector<char> buf;
+    std::vector<char> buf;
     buf.resize(size);
     RtlCopyMemory(buf.data(), Pointer(), size);
     return buf;
@@ -339,10 +339,10 @@ void MmVirtualAddress::ThrowIfReadInvalid() const {
 void MmVirtualAddress::ThrowIfWriteInvalid() const {
     ThrowIfInvalid("写入了无效内存:");
 }
-void MmVirtualAddress::ThrowIfInvalid(const char* format) const
-{
+void MmVirtualAddress::ThrowIfInvalid(const char* format) const {
     if (!IsValid()) {
-        std::_Xruntime_error((format + krnlib::to_string(Address()) + '\n').c_str());
+        auto err = fmt::format("{}{:016x}\n", format, Address());
+        std::_Xruntime_error(err.c_str());
     }
 }
 bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y) {

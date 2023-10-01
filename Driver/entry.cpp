@@ -1,4 +1,3 @@
-#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <ntifs.h>
 #include <stdexcept>
@@ -13,6 +12,8 @@
 
 #include <io/control.h>
 #include <iostream>
+
+#include <functional>
 
 //#define _SCN krnlib::
 //#include <yuJson/json.hpp>
@@ -42,16 +43,17 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	DbgBreakPoint();
 	try
 	{
-		auto table = HandleTable(HandleTable::PspCidTable.ValU64());
-		auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
-		if (!res.empty()) {
-			auto tree = res[0].VadRoot();
-			for (auto& node : tree) {
-				auto mmvad_short = node.Impl<MmVadShort>();
-				DebugPrintf("Start: %llx - End: %llx\n", mmvad_short.StartingAddress().Address(), mmvad_short.EndingAddress().Address());
-				//fmt::format("{}-{}", 1145, 14);
-			}
-		}
+		auto b = fmt::format("{:016x}-{}", 0x1145, 14);
+		DebugPrintf(b.c_str());
+		//auto table = HandleTable(HandleTable::PspCidTable.ValU64());
+		//auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
+		//if (!res.empty()) {
+		//	auto tree = res[0].VadRoot();
+		//	for (auto& node : tree) {
+		//		auto mmvad_short = node.Impl<MmVadShort>();
+		//		DebugPrintf("Start: %llx - End: %llx\n", mmvad_short.StartingAddress().Address(), mmvad_short.EndingAddress().Address());
+		//	}
+		//}
 	}
 	catch (const std::exception& ex)
 	{

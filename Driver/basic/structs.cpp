@@ -40,14 +40,6 @@ RtlBalanceNode RtlAvlTree::Root() {
 void RtlAvlTree::Foreach(const ForeachCallBackT& callback) {
 	ForeachRecursion(Root(), callback);
 }
-krnlib::list<RtlBalanceNode> RtlAvlTree::GetAllNodes() {
-	krnlib::list<RtlBalanceNode> total;
-	Foreach([&](const RtlBalanceNode& node) {
-		total.push_back(node);
-		return true;
-		});
-	return total;
-}
 RtlAvlTree::Iterator RtlAvlTree::begin() {
 	auto tmp = Root();
 	while (tmp.HasLeft()) {

@@ -105,16 +105,6 @@ bool HandleTable::AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack
 	}
 }
 
-krnlib::list<ObjectHeader> HandleTable::GetAllHandleObjects() const
-{
-	krnlib::list<ObjectHeader> total;
-	AutoForeachAllHandleObjects([&](const ObjectHeader& obj) {
-		total.push_back(obj);
-		return true;
-		});
-	return total;
-}
-
 
 std::optional<ObjectHeader> HandleTable::GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index)
 {
