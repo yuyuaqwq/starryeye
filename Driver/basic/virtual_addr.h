@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <intrin.h>
 #include <vector>
-#include <fmt/format.h>
+#include <krnfmt/format.h>
 
 //TODO ·ÖÒ³»úÖÆ´ı²âÊÔ.....
 namespace stareye {
@@ -294,3 +294,23 @@ inline T& MmVirtualAddress::Value() const {
     return *Pointer<T>();
 }
 }
+
+template<>
+struct fmt::formatter<stareye::MmVirtualAddress> {
+    std::string fmt = "{}";
+
+    constexpr auto parse(fmt::format_parse_context& ctx) {
+        auto it = ctx.begin();
+        while (it != ctx.end() && *it != '}') {
+            ++it;
+        }
+        fmt = std::string(ctx.begin() - 2, it + 1);
+        return it;
+    }
+
+    template <typename FormatContext>
+    auto format(const stareye::MmVirtualAddress& addr, FormatContext& ctx) {
+        auto a = addr.Address();
+        return fmt::vformat_to(ctx.out(), fmt, fmt::make_format_args(a));
+    }
+};

@@ -1,4 +1,3 @@
-#include <fmt/format.h>
 #include <ntifs.h>
 #include <stdexcept>
 
@@ -14,9 +13,8 @@
 #include <iostream>
 
 #include <functional>
+#include <krnlib/iostream.hpp>
 
-//#define _SCN krnlib::
-//#include <yuJson/json.hpp>
 using namespace stareye;
 
 //io::Device* g_device;
@@ -43,21 +41,19 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	DbgBreakPoint();
 	try
 	{
-		auto b = fmt::format("{:016x}-{}", 0x1145, 14);
-		DebugPrintf(b.c_str());
-		//auto table = HandleTable(HandleTable::PspCidTable.ValU64());
-		//auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
-		//if (!res.empty()) {
-		//	auto tree = res[0].VadRoot();
-		//	for (auto& node : tree) {
-		//		auto mmvad_short = node.Impl<MmVadShort>();
-		//		DebugPrintf("Start: %llx - End: %llx\n", mmvad_short.StartingAddress().Address(), mmvad_short.EndingAddress().Address());
-		//	}
-		//}
+		auto table = HandleTable(HandleTable::PspCidTable.ValU64());
+		auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
+		if (!res.empty()) {
+			auto tree = res[0].VadRoot();
+			for (auto& node : tree) {
+				auto mmvad_short = node.Impl<MmVadShort>();
+				krnlib::Print("Start: 0x{:016x} - End: 0x{:016x}\n", mmvad_short.StartingAddress(), mmvad_short.EndingAddress());
+			}
+		}
 	}
 	catch (const std::exception& ex)
 	{
-		DebugPrintf("出现错误: %s\n", ex.what());
+		krnlib::Print("出现错误: {}\n", ex.what());
 		return STATUS_UNSUCCESSFUL;
 	}
 
