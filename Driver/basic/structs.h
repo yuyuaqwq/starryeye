@@ -43,52 +43,50 @@ public:
 	}
 };
 
+namespace details {
+class RtlAvlTreeIterator
+{
+public:
+	using difference_type = std::ptrdiff_t;
+	using value_type = RtlBalanceNode;
+	using pointer = value_type*;
+	using reference = value_type&;
+	using iterator_category = std::bidirectional_iterator_tag;
+
+	RtlAvlTreeIterator(const RtlBalanceNode& cur);
+	~RtlAvlTreeIterator() = default;
+
+	RtlBalanceNode& operator*();
+	RtlBalanceNode* operator->();
+	RtlAvlTreeIterator& operator++();
+	RtlAvlTreeIterator& operator--();
+	RtlAvlTreeIterator operator++(int);
+	RtlAvlTreeIterator operator--(int);
+	bool operator==(const RtlAvlTreeIterator& x);
+	bool operator!=(const RtlAvlTreeIterator& x);
+
+private:
+	void GoLeftMost(const RtlBalanceNode& node);
+	void GoRightMost(const RtlBalanceNode& node);
+
+	RtlBalanceNode cur_;
+};
+}
+
 
 class RtlAvlTree : public KObject
 {
 public:
-	class Iterator
-	{
-	public: 
-		using difference_type = std::ptrdiff_t;
-		using value_type = RtlBalanceNode;
-		using pointer = value_type*;
-		using reference = value_type&;
-		using iterator_category = std::bidirectional_iterator_tag;
-
-		Iterator(const RtlBalanceNode& cur);
-		~Iterator() = default;
-
-		RtlBalanceNode& operator*();
-		RtlBalanceNode* operator->();
-		Iterator& operator++();
-		Iterator& operator--();
-		Iterator operator++(int);
-		Iterator operator--(int);
-		bool operator==(const Iterator& x);
-		bool operator!=(const Iterator& x);
-
-	private:
-		void GoLeftMost(const RtlBalanceNode& node);
-		void GoRightMost(const RtlBalanceNode& node);
-
-		RtlBalanceNode cur_;
-	};
-
-	using ForeachCallBackT = std::function<bool(const RtlBalanceNode&)>;
+	using iterator = details::RtlAvlTreeIterator;
 
 	RtlAvlTree(const MmVirtualAddress& vaddr);
 	RtlAvlTree() = default;
 	~RtlAvlTree() = default;
 
 	RtlBalanceNode Root();
-	void Foreach(const ForeachCallBackT& callback);
 
-	Iterator begin();
-	Iterator end();
-
-private:
-	bool ForeachRecursion(const RtlBalanceNode& root, const ForeachCallBackT& callback);
+	iterator begin();
+	iterator end();
 };
 
 

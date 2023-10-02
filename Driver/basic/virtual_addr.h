@@ -4,6 +4,7 @@
 #include <intrin.h>
 #include <vector>
 #include <krnfmt/format.h>
+#include <krnlib/iostream.hpp>
 
 //TODO ·ÖÒ³»úÖÆ´ı²âÊÔ.....
 namespace stareye {

@@ -3,11 +3,34 @@
 #include "object_header.h"
 
 namespace stareye {
+namespace details {
+class HandleTableIterator
+{
+public:
+	HandleTableIterator(HandleTable* table, uint64_t idx);
+	~HandleTableIterator() = default;
+
+	ObjectHeader& operator*();
+	ObjectHeader* operator->();
+	HandleTableIterator& operator++();
+	HandleTableIterator& operator--();
+	HandleTableIterator operator++(int);
+	HandleTableIterator operator--(int);
+	bool operator==(const HandleTableIterator& x);
+	bool operator!=(const HandleTableIterator& x);
+
+private:
+	uint64_t cur_idx_;
+	HandleTable* table_;
+	ObjectHeader cur_obj_;
+};
+}
 
 class HandleTable: public KObject
 {
 public:
 	using ForeachHandleObjectsCallBack = std::function<bool(const ObjectHeader&)>;
+	using iterator = details::HandleTableIterator;
 
 	inline static MmVirtualAddress PspCidTable;
 	static void Init();
@@ -28,6 +51,9 @@ public:
 
 	// 根据索引获取Handle对象
 	std::optional<ObjectHeader> GetHandleObject(uint64_t index) const;
+
+	iterator begin();
+	iterator end();
 
 	// 自动根据TableCode等级遍历所有Handle
 	bool AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback) const;

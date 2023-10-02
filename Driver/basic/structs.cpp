@@ -14,7 +14,7 @@ RtlBalanceNode RtlBalanceNode::Right() const {
 	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Right, vaddr_.Owner());
 }
 RtlBalanceNode RtlBalanceNode::Parent() const {
-	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->ParentValue, vaddr_.Owner());
+	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->ParentValue & ~0b111ull, vaddr_.Owner());
 }
 bool RtlBalanceNode::HasLeft() const {
 	return Left().vaddr_.IsValid();
@@ -37,34 +37,26 @@ RtlAvlTree::RtlAvlTree(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
 RtlBalanceNode RtlAvlTree::Root() {
 	return MmVirtualAddress(vaddr_.ValU64(), vaddr_.Owner());
 }
-void RtlAvlTree::Foreach(const ForeachCallBackT& callback) {
-	ForeachRecursion(Root(), callback);
-}
-RtlAvlTree::Iterator RtlAvlTree::begin() {
+RtlAvlTree::iterator RtlAvlTree::begin() {
 	auto tmp = Root();
 	while (tmp.HasLeft()) {
 		tmp = tmp.Left();
 	}
 	return tmp;
 }
-RtlAvlTree::Iterator RtlAvlTree::end() {
+RtlAvlTree::iterator RtlAvlTree::end() {
 	auto tmp = Root();
 	while (tmp.HasRight()) {
 		tmp = tmp.Right();
 	}
 	return tmp;
 }
-bool RtlAvlTree::ForeachRecursion(const RtlBalanceNode& root, const ForeachCallBackT& callback) {
-	if (!root.VAddr().IsValid()) return true;
-	if (!ForeachRecursion(root.Left(), callback)) return false;
-	if (!callback(root)) return false;
-	return ForeachRecursion(root.Right(), callback);
-}
 
-RtlAvlTree::Iterator::Iterator(const RtlBalanceNode& cur) : cur_(cur) {}
-RtlBalanceNode& RtlAvlTree::Iterator::operator*() { return cur_; }
-RtlBalanceNode* RtlAvlTree::Iterator::operator->() { return &cur_; }
-RtlAvlTree::Iterator& RtlAvlTree::Iterator::operator++() {
+namespace details {
+RtlAvlTreeIterator::RtlAvlTreeIterator(const RtlBalanceNode& cur) : cur_(cur) {}
+RtlBalanceNode& RtlAvlTreeIterator::operator*() { return cur_; }
+RtlBalanceNode* RtlAvlTreeIterator::operator->() { return &cur_; }
+RtlAvlTreeIterator& RtlAvlTreeIterator::operator++() {
 	if (cur_.HasRight()) {
 		GoLeftMost(cur_.Right());
 	}
@@ -76,7 +68,7 @@ RtlAvlTree::Iterator& RtlAvlTree::Iterator::operator++() {
 	}
 	return *this;
 }
-RtlAvlTree::Iterator& RtlAvlTree::Iterator::operator--() {
+RtlAvlTreeIterator& RtlAvlTreeIterator::operator--() {
 	if (cur_.HasLeft()) {
 		GoRightMost(cur_.Left());
 	}
@@ -88,34 +80,35 @@ RtlAvlTree::Iterator& RtlAvlTree::Iterator::operator--() {
 	}
 	return *this;
 }
-RtlAvlTree::Iterator RtlAvlTree::Iterator::operator++(int) {
+RtlAvlTreeIterator RtlAvlTreeIterator::operator++(int) {
 	auto tmp = *this;
 	++(*this);
 	return tmp;
 }
-RtlAvlTree::Iterator RtlAvlTree::Iterator::operator--(int) {
+RtlAvlTreeIterator RtlAvlTreeIterator::operator--(int) {
 	auto tmp = *this;
 	--(*this);
 	return tmp;
 }
-bool RtlAvlTree::Iterator::operator==(const Iterator& x) {
+bool RtlAvlTreeIterator::operator==(const RtlAvlTreeIterator& x) {
 	return cur_ == x.cur_;
 }
-bool RtlAvlTree::Iterator::operator!=(const Iterator& x) {
+bool RtlAvlTreeIterator::operator!=(const RtlAvlTreeIterator& x) {
 	return cur_ != x.cur_;
 }
-void RtlAvlTree::Iterator::GoLeftMost(const RtlBalanceNode& node) {
+void RtlAvlTreeIterator::GoLeftMost(const RtlBalanceNode& node) {
 	RtlBalanceNode tmp = node;
 	while (tmp.HasLeft()) {
 		tmp = tmp.Left();
 	}
 	cur_ = tmp;
 }
-void RtlAvlTree::Iterator::GoRightMost(const RtlBalanceNode& node) {
+void RtlAvlTreeIterator::GoRightMost(const RtlBalanceNode& node) {
 	RtlBalanceNode tmp = node;
 	while (tmp.HasRight()) {
 		tmp = tmp.Right();
 	}
 	cur_ = tmp;
+}
 }
 }

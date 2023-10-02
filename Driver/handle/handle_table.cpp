@@ -87,6 +87,53 @@ std::optional<ObjectHeader> HandleTable::GetHandleObject(uint64_t index) const
 	}
 }
 
+HandleTable::iterator HandleTable::begin() {
+	uint64_t idx = 0;
+	while (true) {
+		if (auto opt = GetHandleObject(idx); opt.has_value() && opt.value().VAddr().IsValid()){
+			break;
+		}
+		++idx;
+	}
+	return HandleTable::iterator(this, idx);
+}
+
+HandleTable::iterator HandleTable::end() {
+	size_t lv1i = 0;
+	size_t lv2i = 0;
+	size_t lv3i = 0;
+	auto table = (uint64_t*)TableAddress();
+	switch (TableLevel())
+	{
+	case 0:
+	_foreach0:
+		for (lv1i = 0; lv1i < 512; lv1i++) {
+			if (auto opt = GetHandleObjectInLv1TableCode(table, lv1i); !opt.has_value()) {
+				break;
+			}
+		}
+		break;
+	case 1:
+	_foreach1:
+		for (lv2i = 0; lv2i < 512; lv2i++) {
+			if (!MmIsAddressValid(table + lv2i)) {
+				table = (uint64_t*)table[--lv2i];
+				goto _foreach0;
+			}
+		}
+		break;
+	case 2:
+		for (lv3i = 0; lv3i < 512; lv3i++) {
+			if (!MmIsAddressValid(table + lv3i)) {
+				table = (uint64_t*)table[--lv3i];
+				goto _foreach1;
+			}
+		}
+		break;
+	}
+	return HandleTable::iterator(this, lv3i * 512 * 512 + lv2i * 512 + lv1i);
+}
+
 bool HandleTable::AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback) const
 {
 	switch (TableLevel())
@@ -126,5 +173,54 @@ std::optional<ObjectHeader> HandleTable::GetHandleObjectInLv3TableCode(uint64_t*
 	if (MmIsAddressValid(table) && index_lv3 < 512 && index_lv2 < 512 && index_lv1 < 512)
 		return GetHandleObjectInLv2TableCode((uint64_t*)table[index_lv3], index_lv2, index_lv1);
 	return std::nullopt;
+}
+
+
+namespace details {
+HandleTableIterator::HandleTableIterator(HandleTable* table, uint64_t idx) 
+	: table_(table),
+	cur_idx_(idx),
+	cur_obj_(table_->GetHandleObject(idx).value_or(MmVirtualAddress())) {}
+
+ObjectHeader& HandleTableIterator::operator*() {
+	return cur_obj_;
+}
+ObjectHeader* HandleTableIterator::operator->() {
+	return &cur_obj_;
+}
+HandleTableIterator& HandleTableIterator::operator++() {
+	do {
+		++cur_idx_;
+		if (auto opt = table_->GetHandleObject(cur_idx_); opt.has_value()) {
+			cur_obj_ = opt.value();
+		}
+	} while (!cur_obj_.VAddr().IsValid());
+	return *this;
+}
+HandleTableIterator& HandleTableIterator::operator--() {
+	do {
+		--cur_idx_;
+		if (auto opt = table_->GetHandleObject(cur_idx_); opt.has_value()) {
+			cur_obj_ = opt.value();
+		}
+	} while (!cur_obj_.VAddr().IsValid());
+	return *this;
+}
+HandleTableIterator HandleTableIterator::operator++(int) {
+	auto tmp = *this;
+	++(*this);
+	return tmp;
+}
+HandleTableIterator HandleTableIterator::operator--(int) {
+	auto tmp = *this;
+	--(*this);
+	return tmp;
+}
+bool HandleTableIterator::operator==(const HandleTableIterator& x) {
+	return x.cur_idx_ == cur_idx_;
+}
+bool HandleTableIterator::operator!=(const HandleTableIterator& x) {
+	return x.cur_idx_ != cur_idx_;
+}
 }
 }
