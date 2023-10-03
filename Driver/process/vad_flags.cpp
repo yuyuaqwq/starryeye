@@ -7,7 +7,7 @@ void MmVadFlags::Init()
 	PrivateMemoryBitSize = 1;
 }
 
-MmVadFlags::MmVadFlags(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+MmVadFlags::MmVadFlags(MmVirtualAddress vaddr) : KObject(vaddr) {}
 
 uint8_t MmVadFlags::PrivateMemory()
 {

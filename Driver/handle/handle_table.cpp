@@ -6,46 +6,13 @@ uint64_t HandleTable::DecryptHandleAddress(uint64_t addr)
 	return ((LONG64)addr >> 0x10) & ~0xF;
 }
 
-bool HandleTable::ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback)
-{
-	ObjectHeader temp{};
-	for (SHORT i = 0; i < 512; i++) {
-		if (auto opt = GetHandleObjectInLv1TableCode(table, i); opt.has_value()) {
-			if (temp = opt.value(); temp.VAddr().IsValid() && !callback(temp)) {
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-bool HandleTable::ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback)
-{
-	for (size_t i = 0; i < 512; i++) {
-		if (MmIsAddressValid(table + i)) {
-			if (!HandleTable::ForeachAllHandleObjectsInLv1TableCode((uint64_t*)table[i], callback)) return false;
-		}
-	}
-	return true;
-}
-
-bool HandleTable::ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback)
-{
-	for (size_t i = 0; i < 512; i++) {
-		if (MmIsAddressValid(table + i)) {
-			if (!HandleTable::ForeachAllHandleObjectsInLv2TableCode((uint64_t*)table[i], callback)) return false;
-		}
-	}
-	return true;
-}
-
 void HandleTable::Init()
 {
 	TableCodeOffset = 0x8;
 	PspCidTable = 0xfffff802598fc5d0;	//TODO PspCidTable
 }
 
-HandleTable::HandleTable(const MmVirtualAddress& vaddr) :KObject(vaddr) {}
+HandleTable::HandleTable(MmVirtualAddress vaddr) :KObject(vaddr) {}
 
 uint64_t HandleTable::TableCode() const
 {
@@ -70,6 +37,13 @@ uint64_t HandleTable::MaxTableSize() const
 	return total;
 }
 
+uint64_t* HandleTable::TablePtr() const {
+	static uint64_t* PtrCache{};
+	if (!PtrCache)
+		PtrCache = (uint64_t*)TableAddress();
+	return PtrCache;
+}
+
 std::optional<ObjectHeader> HandleTable::GetHandleObject(uint64_t index) const
 {
 	if (index >= MaxTableSize()) return std::nullopt;
@@ -77,79 +51,62 @@ std::optional<ObjectHeader> HandleTable::GetHandleObject(uint64_t index) const
 	switch (TableLevel())
 	{
 	case 0:
-		return GetHandleObjectInLv1TableCode((uint64_t*)TableAddress(), index);
+		return GetHandleObjectInLv1TableCode(TablePtr(), index);
 	case 1:
-		return GetHandleObjectInLv2TableCode((uint64_t*)TableAddress(), index / 512, index % 512);
+		return GetHandleObjectInLv2TableCode(TablePtr(), index / 512, index % 512);
 	case 2:
-		return GetHandleObjectInLv3TableCode((uint64_t*)TableAddress(), index / (512ULL * 512), (index % (512ULL * 512)) / 512, (index % (512ULL * 512)) % 512);
+		return GetHandleObjectInLv3TableCode(TablePtr(), index / (512ULL * 512), (index % (512ULL * 512)) / 512, (index % (512ULL * 512)) % 512);
 	default:
 		return std::nullopt;
 	}
 }
 
-HandleTable::iterator HandleTable::begin() {
-	uint64_t idx = 0;
-	while (true) {
-		if (auto opt = GetHandleObject(idx); opt.has_value() && opt.value().VAddr().IsValid()){
-			break;
-		}
-		++idx;
-	}
-	return HandleTable::iterator(this, idx);
-}
-
-HandleTable::iterator HandleTable::end() {
-	size_t lv1i = 0;
-	size_t lv2i = 0;
-	size_t lv3i = 0;
-	auto table = (uint64_t*)TableAddress();
+HandleTable::iterator HandleTable::begin() const {
 	switch (TableLevel())
 	{
 	case 0:
-	_foreach0:
-		for (lv1i = 0; lv1i < 512; lv1i++) {
-			if (auto opt = GetHandleObjectInLv1TableCode(table, lv1i); !opt.has_value()) {
-				break;
+		for (size_t i = 0; i < kMaxCount; i++) {
+			if (auto opt = GetHandleObjectIfLv1(i); opt.has_value() && opt.value().IsValid()) {
+				return iterator(this, ~0, ~0, i);
 			}
 		}
 		break;
 	case 1:
-	_foreach1:
-		for (lv2i = 0; lv2i < 512; lv2i++) {
-			if (!MmIsAddressValid(table + lv2i)) {
-				table = (uint64_t*)table[--lv2i];
-				goto _foreach0;
+		for (size_t i = 0; i < kMaxCount; i++) {
+			for (size_t j = 0; j < kMaxCount; j++) {
+				if (auto opt = GetHandleObjectIfLv2(i, j); opt.has_value() && opt.value().IsValid()) {
+					return iterator(this, ~0, i, j);
+				}
 			}
 		}
 		break;
 	case 2:
-		for (lv3i = 0; lv3i < 512; lv3i++) {
-			if (!MmIsAddressValid(table + lv3i)) {
-				table = (uint64_t*)table[--lv3i];
-				goto _foreach1;
+		for (size_t i = 0; i < kMaxCount; i++) {
+			for (size_t j = 0; j < kMaxCount; j++) {
+				for (size_t k = 0; k < kMaxCount; k++) {
+					if (auto opt = GetHandleObjectIfLv3(i, j, k); opt.has_value() && opt.value().IsValid()) {
+						return iterator(this, i, j, k);
+					}
+				}
 			}
 		}
 		break;
 	}
-	return HandleTable::iterator(this, lv3i * 512 * 512 + lv2i * 512 + lv1i);
+	std::_Xruntime_error("HandleTable中找不到起始项!");
 }
 
-bool HandleTable::AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback) const
-{
-	switch (TableLevel())
-	{
-	case 0:
-		HandleTable::ForeachAllHandleObjectsInLv1TableCode((uint64_t*)TableAddress(), callback);
-		return true;
-	case 1:
-		HandleTable::ForeachAllHandleObjectsInLv2TableCode((uint64_t*)TableAddress(), callback);
-		return true;
-	case 2:
-		HandleTable::ForeachAllHandleObjectsInLv3TableCode((uint64_t*)TableAddress(), callback);
-		return true;
-	default:
-		return false;
-	}
+HandleTable::iterator HandleTable::end() const {
+	return iterator(this, ~0, ~0, ~0);
+}
+
+std::optional<ObjectHeader> HandleTable::GetHandleObjectIfLv1(uint64_t index) const {
+	return GetHandleObjectInLv1TableCode(TablePtr(), index);
+}
+std::optional<ObjectHeader> HandleTable::GetHandleObjectIfLv2(uint64_t index_lv2, uint64_t index_lv1) const {
+	return GetHandleObjectInLv2TableCode(TablePtr(), index_lv2, index_lv1);
+}
+std::optional<ObjectHeader> HandleTable::GetHandleObjectIfLv3(uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1) const {
+	return GetHandleObjectInLv3TableCode(TablePtr(), index_lv3, index_lv2, index_lv1);
 }
 
 
@@ -177,10 +134,13 @@ std::optional<ObjectHeader> HandleTable::GetHandleObjectInLv3TableCode(uint64_t*
 
 
 namespace details {
-HandleTableIterator::HandleTableIterator(HandleTable* table, uint64_t idx) 
+HandleTableIterator::HandleTableIterator(const HandleTable* table, uint16_t idx_lv3, uint16_t idx_lv2, uint16_t idx_lv1)
 	: table_(table),
-	cur_idx_(idx),
-	cur_obj_(table_->GetHandleObject(idx).value_or(MmVirtualAddress())) {}
+	idx_lv1_(idx_lv1),
+	idx_lv2_(idx_lv2),
+	idx_lv3_(idx_lv3) {
+	CheckValidIndexAndAssign();
+}
 
 ObjectHeader& HandleTableIterator::operator*() {
 	return cur_obj_;
@@ -190,20 +150,12 @@ ObjectHeader* HandleTableIterator::operator->() {
 }
 HandleTableIterator& HandleTableIterator::operator++() {
 	do {
-		++cur_idx_;
-		if (auto opt = table_->GetHandleObject(cur_idx_); opt.has_value()) {
-			cur_obj_ = opt.value();
-		}
-	} while (!cur_obj_.VAddr().IsValid());
+		if (!JudgeIncIdxOrInEnd()) goto _ret;
+	} while (!CheckValidIndexAndAssign());
+_ret:
 	return *this;
 }
 HandleTableIterator& HandleTableIterator::operator--() {
-	do {
-		--cur_idx_;
-		if (auto opt = table_->GetHandleObject(cur_idx_); opt.has_value()) {
-			cur_obj_ = opt.value();
-		}
-	} while (!cur_obj_.VAddr().IsValid());
 	return *this;
 }
 HandleTableIterator HandleTableIterator::operator++(int) {
@@ -216,11 +168,101 @@ HandleTableIterator HandleTableIterator::operator--(int) {
 	--(*this);
 	return tmp;
 }
-bool HandleTableIterator::operator==(const HandleTableIterator& x) {
-	return x.cur_idx_ == cur_idx_;
+bool HandleTableIterator::operator==(const HandleTableIterator& x) const {
+	return x.idx_lv1_ == idx_lv1_ && x.idx_lv2_ == idx_lv2_ && x.idx_lv3_ == idx_lv3_;
 }
-bool HandleTableIterator::operator!=(const HandleTableIterator& x) {
-	return x.cur_idx_ != cur_idx_;
+bool HandleTableIterator::operator!=(const HandleTableIterator& x) const {
+	return !operator==(x);
+}
+bool HandleTableIterator::CheckValidIndexAndAssign()
+{
+	std::optional<ObjectHeader> tmp;
+	switch (table_->TableLevel())
+	{
+	case 0:
+		tmp = table_->GetHandleObjectIfLv1(idx_lv1_);
+		break;
+	case 1:
+		tmp = table_->GetHandleObjectIfLv2(idx_lv2_, idx_lv1_);
+		break;
+	case 2:
+		tmp = table_->GetHandleObjectIfLv3(idx_lv3_, idx_lv2_, idx_lv1_);
+		break;
+	}
+	if (tmp.has_value() && tmp.value().IsValid()) {
+		cur_obj_ = tmp.value();
+		return true;
+	}
+	return false;
+}
+bool HandleTableIterator::JudgeIncIdxOrInEnd()
+{
+	if (idx_lv1_ == ~0) return false;
+	if (idx_lv1_ == HandleTable::kMaxIndex) {
+		switch (table_->TableLevel())
+		{
+		case 0:
+		_in_end:
+			idx_lv1_ = ~0;
+			idx_lv2_ = ~0;
+			idx_lv3_ = ~0;
+			return false;
+		case 1:
+			if (idx_lv2_ == HandleTable::kMaxIndex) {
+				goto _in_end;
+			}
+			else {
+			_inc_idx2:
+				idx_lv1_ = 0;
+				if (!FindValidIfLv2Table()) goto _in_end;
+			}
+			break;
+		case 2:
+			if (idx_lv2_ == HandleTable::kMaxIndex) {
+				if (idx_lv3_ == HandleTable::kMaxIndex) {
+					goto _in_end;
+				}
+				else {
+					idx_lv1_ = 0;
+					idx_lv2_ = 0;
+					if (!FindValidIfLv3Table()) goto _in_end;
+				}
+			}
+			else goto _inc_idx2;
+			break;
+		}
+	}
+	else {
+		++idx_lv1_;
+	}
+	return true;
+}
+bool HandleTableIterator::FindValidIfLv1Table() {
+	while(idx_lv1_ < HandleTable::kMaxCount) {
+		++idx_lv1_;
+		if (MmIsAddressValid((void*)table_->TablePtr()[idx_lv1_])) {
+			return true;
+		}
+	}
+	return false;
+}
+bool HandleTableIterator::FindValidIfLv2Table() {
+	while(idx_lv2_ < HandleTable::kMaxCount) {
+		++idx_lv2_;
+		if (MmIsAddressValid((void*)table_->TablePtr()[idx_lv2_])) {
+			return true;
+		}
+	}
+	return false;
+}
+bool HandleTableIterator::FindValidIfLv3Table() {
+	while(idx_lv3_ < HandleTable::kMaxCount) {
+		++idx_lv3_;
+		if (MmIsAddressValid((void*)table_->TablePtr()[idx_lv3_])) {
+			return true;
+		}
+	}
+	return false;
 }
 }
 }

@@ -8,7 +8,7 @@ class MmVadShort : public RtlBalanceNode
 public:
 	static void Init();
 
-	MmVadShort(const MmVirtualAddress& vaddr);
+	MmVadShort(MmVirtualAddress vaddr);
 	MmVadShort() = default;
 	~MmVadShort() = default;
 
@@ -36,7 +36,7 @@ class MmVad : public KObject
 public:
 	static void Init();
 
-	MmVad(const MmVirtualAddress& vaddr);
+	MmVad(MmVirtualAddress vaddr);
 	MmVad() = default;
 	~MmVad() = default;
 
@@ -58,9 +58,9 @@ public:
 	static void Init();
 
 	MmVadTree() = default;
-	MmVadTree(const MmVirtualAddress& vaddr);
+	MmVadTree(MmVirtualAddress vaddr);
 	~MmVadTree() = default;
 
-	std::optional<MmVadShort> SearchNode(const MmVirtualAddress& vaddr);
+	std::optional<MmVadShort> SearchNode(MmVirtualAddress vaddr);
 };
 }

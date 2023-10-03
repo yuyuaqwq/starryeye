@@ -7,7 +7,7 @@ void KProcess::Init()
     DirectoryTableBaseOffset = 0x28;
 }
 
-KProcess::KProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {
+KProcess::KProcess(MmVirtualAddress vaddr) : KObject(vaddr) {
     vaddr_.SetOwner((PEPROCESS)vaddr.Address());
 }
 

@@ -9,7 +9,7 @@ void ObjectHeader::Init()
 	ObHeaderCookie = 0xfffff802598fc72c;	//TODO ObHeaderCookie
 }
 
-ObjectHeader::ObjectHeader(const MmVirtualAddress& vaddr): KObject(vaddr) {}
+ObjectHeader::ObjectHeader(MmVirtualAddress vaddr): KObject(vaddr) {}
 
 uint8_t ObjectHeader::TypeIndex() const
 {

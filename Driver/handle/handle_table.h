@@ -7,7 +7,7 @@ namespace details {
 class HandleTableIterator
 {
 public:
-	HandleTableIterator(HandleTable* table, uint64_t idx);
+	HandleTableIterator(const HandleTable* table, uint16_t idx_lv3, uint16_t idx_lv2, uint16_t idx_lv1);
 	~HandleTableIterator() = default;
 
 	ObjectHeader& operator*();
@@ -16,19 +16,30 @@ public:
 	HandleTableIterator& operator--();
 	HandleTableIterator operator++(int);
 	HandleTableIterator operator--(int);
-	bool operator==(const HandleTableIterator& x);
-	bool operator!=(const HandleTableIterator& x);
+	bool operator==(const HandleTableIterator& x) const;
+	bool operator!=(const HandleTableIterator& x) const;
 
 private:
-	uint64_t cur_idx_;
-	HandleTable* table_;
+	bool CheckValidIndexAndAssign();
+	bool JudgeIncIdxOrInEnd();
+	bool FindValidIfLv1Table();
+	bool FindValidIfLv2Table();
+	bool FindValidIfLv3Table();
+
+	const HandleTable* table_;
 	ObjectHeader cur_obj_;
+	uint16_t idx_lv3_;
+	uint16_t idx_lv2_;
+	uint16_t idx_lv1_;
 };
 }
 
 class HandleTable: public KObject
 {
 public:
+	static constexpr uint16_t kMaxCount = 512;
+	static constexpr uint16_t kMaxIndex = kMaxCount - 1;
+
 	using ForeachHandleObjectsCallBack = std::function<bool(const ObjectHeader&)>;
 	using iterator = details::HandleTableIterator;
 
@@ -36,7 +47,7 @@ public:
 	static void Init();
 
 	HandleTable() = default;
-	HandleTable(const MmVirtualAddress& vaddr);
+	HandleTable(MmVirtualAddress vaddr);
 	~HandleTable() = default;
 
 	// 获取TableCode
@@ -52,22 +63,20 @@ public:
 	// 根据索引获取Handle对象
 	std::optional<ObjectHeader> GetHandleObject(uint64_t index) const;
 
-	iterator begin();
-	iterator end();
+	iterator begin() const;
+	iterator end() const;
 
-	// 自动根据TableCode等级遍历所有Handle
-	bool AutoForeachAllHandleObjects(const ForeachHandleObjectsCallBack& callback) const;
+	std::optional<ObjectHeader> GetHandleObjectIfLv1(uint64_t index) const;
+	std::optional<ObjectHeader> GetHandleObjectIfLv2(uint64_t index_lv2, uint64_t index_lv1) const;
+	std::optional<ObjectHeader> GetHandleObjectIfLv3(uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1) const;
 
 private:
+	friend class details::HandleTableIterator;
+
+	uint64_t* TablePtr() const;
+
 	// 解密HandleTable中Handle项的路径
 	static uint64_t DecryptHandleAddress(uint64_t addr);
-
-	// 获取一级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv1TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback);
-	// 获取二级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv2TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback);
-	// 获取三级TableCode下所有Handle对象
-	static bool ForeachAllHandleObjectsInLv3TableCode(uint64_t* table, const ForeachHandleObjectsCallBack& callback);
 
 	// 获取一级TableCode下指定索引的Handle对象
 	static std::optional<ObjectHeader> GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index);

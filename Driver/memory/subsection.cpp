@@ -7,7 +7,7 @@ void SubSection::Init()
 	NextSubsectionOffset = 0x10;
 }
 
-SubSection::SubSection(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+SubSection::SubSection(MmVirtualAddress vaddr) : KObject(vaddr) {}
 
 ControlArea SubSection::ControlArea()
 {

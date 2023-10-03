@@ -13,7 +13,7 @@ public:
 	static void Init();
 
 	ObjectHeader() = default;
-	ObjectHeader(const MmVirtualAddress& vaddr);
+	ObjectHeader(MmVirtualAddress vaddr);
 	~ObjectHeader() = default;
 
 	// ªÒ»°TypeIndex

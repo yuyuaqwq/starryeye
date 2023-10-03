@@ -13,7 +13,7 @@ class EProcess: public KObject
 public:
 	static void Init();
 
-	EProcess(const MmVirtualAddress& vaddr);
+	EProcess(MmVirtualAddress vaddr);
 	EProcess() = default;
 	~EProcess() = default;
 

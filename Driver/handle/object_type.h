@@ -9,7 +9,7 @@ namespace stareye {
 
 		static void Init();
 
-		ObjectType(const MmVirtualAddress& vaddr);
+		ObjectType(MmVirtualAddress vaddr);
 		ObjectType() = default;
 		~ObjectType() = default;
 

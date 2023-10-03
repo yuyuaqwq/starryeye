@@ -7,7 +7,7 @@ namespace stareye {
 	public:
 		static void Init();
 
-		ControlArea(const MmVirtualAddress& vaddr);
+		ControlArea(MmVirtualAddress vaddr);
 		ControlArea() = default;
 		~ControlArea() = default;
 

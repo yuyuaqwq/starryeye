@@ -7,7 +7,7 @@ namespace stareye {
 	public:
 		static void Init();
 
-		SubSection(const MmVirtualAddress& vaddr);
+		SubSection(MmVirtualAddress vaddr);
 		SubSection() = default;
 		~SubSection() = default;
 

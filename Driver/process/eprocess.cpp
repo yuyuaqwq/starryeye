@@ -14,7 +14,7 @@ void EProcess::Init()
 	VadRootOffset = 0x7d8;
 }
 
-EProcess::EProcess(const MmVirtualAddress& vaddr) : KObject(vaddr) {
+EProcess::EProcess(MmVirtualAddress vaddr) : KObject(vaddr) {
 	vaddr_.SetOwner((PEPROCESS)vaddr.Address());
 }
 

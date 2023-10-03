@@ -7,7 +7,7 @@ void ObjectType::Init()
 	NameOffset = 0x10;
 }
 
-ObjectType::ObjectType(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+ObjectType::ObjectType(MmVirtualAddress vaddr) : KObject(vaddr) {}
 
 PUNICODE_STRING ObjectType::Name()
 {

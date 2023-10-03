@@ -196,6 +196,10 @@ public:
         ThrowIfInvalid("无法将无效地址转换为指针: ");
         return (T*)vaddr_;
     }
+    template <class T>
+    MmVirtualAddress Offset(size_t off) const {
+        return operator+(off * sizeof(T));
+    }
     uint8_t* PtrU8() const;
     uint16_t* PtrU16() const;
     uint32_t* PtrU32() const;
@@ -209,22 +213,22 @@ public:
     uint16_t ValU16() const;
     uint8_t ValU8() const;
     uint64_t BitArea(size_t bit_pos, uint8_t bit_size) const;
-    int Protection();
+    int Protection() const;
     PEPROCESS Owner() const;
 
     void WriteBuffer(size_t pos, void* buffer, size_t buf_size) const;
     void WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const;
-    bool SetProtection(int protection);
+    bool SetProtection(int protection) const;
 
     void SetOwner(PEPROCESS eproc);
 
-    friend bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y);
-    friend bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y);
-    friend bool operator>(const MmVirtualAddress& x, const MmVirtualAddress& y);
-    friend bool operator<(const MmVirtualAddress& x, const MmVirtualAddress& y);
-    friend bool operator>=(const MmVirtualAddress& x, const MmVirtualAddress& y);
-    friend bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y);
-    friend MmVirtualAddress operator+(ptrdiff_t offset, const MmVirtualAddress& next);
+    friend bool operator==(MmVirtualAddress x, MmVirtualAddress y);
+    friend bool operator!=(MmVirtualAddress x, MmVirtualAddress y);
+    friend bool operator>(MmVirtualAddress x, MmVirtualAddress y);
+    friend bool operator<(MmVirtualAddress x, MmVirtualAddress y);
+    friend bool operator>=(MmVirtualAddress x, MmVirtualAddress y);
+    friend bool operator<=(MmVirtualAddress x, MmVirtualAddress y);
+    friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next);
 
     MmVirtualAddress operator+(ptrdiff_t offset) const;
     MmVirtualAddress operator-(ptrdiff_t offset) const;
@@ -280,7 +284,7 @@ public:
         MmPte* parent_;
     };
     MmPte() = default;
-    MmPte(const MmVirtualAddress& pte_vaddr);
+    MmPte(MmVirtualAddress pte_vaddr);
     ~MmPte() = default;
 
     Handware Hand();

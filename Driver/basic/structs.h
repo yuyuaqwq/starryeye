@@ -8,8 +8,9 @@ namespace stareye {
 class KObject {
 public:
 	KObject() = default;
-	KObject(const MmVirtualAddress& vaddr);
-	const MmVirtualAddress& VAddr() const;
+	KObject(MmVirtualAddress vaddr);
+	MmVirtualAddress VAddr() const;
+	bool IsValid() const;
 
 protected:
 	MmVirtualAddress vaddr_;
@@ -21,7 +22,7 @@ concept InheritKObjectT = std::is_convertible_v<T*, KObject*>;
 class RtlBalanceNode: public KObject
 {
 public:
-	RtlBalanceNode(const MmVirtualAddress& vaddr);
+	RtlBalanceNode(MmVirtualAddress vaddr);
 	RtlBalanceNode() = default;
 	~RtlBalanceNode() = default;
 
@@ -62,8 +63,8 @@ public:
 	RtlAvlTreeIterator& operator--();
 	RtlAvlTreeIterator operator++(int);
 	RtlAvlTreeIterator operator--(int);
-	bool operator==(const RtlAvlTreeIterator& x);
-	bool operator!=(const RtlAvlTreeIterator& x);
+	bool operator==(const RtlAvlTreeIterator& x) const;
+	bool operator!=(const RtlAvlTreeIterator& x) const;
 
 private:
 	void GoLeftMost(const RtlBalanceNode& node);
@@ -79,14 +80,14 @@ class RtlAvlTree : public KObject
 public:
 	using iterator = details::RtlAvlTreeIterator;
 
-	RtlAvlTree(const MmVirtualAddress& vaddr);
+	RtlAvlTree(MmVirtualAddress vaddr);
 	RtlAvlTree() = default;
 	~RtlAvlTree() = default;
 
-	RtlBalanceNode Root();
+	RtlBalanceNode Root() const;
 
-	iterator begin();
-	iterator end();
+	iterator begin() const;
+	iterator end() const;
 };
 
 
@@ -96,7 +97,7 @@ class ListEntry : public KObject
 {
 public:
 	ListEntry() = default;
-	ListEntry(const MmVirtualAddress& vaddr, ptrdiff_t off_to_head): KObject(vaddr), off_to_head_(off_to_head) {}
+	ListEntry(MmVirtualAddress vaddr, ptrdiff_t off_to_head): KObject(vaddr), off_to_head_(off_to_head) {}
 	~ListEntry() = default;
 
 	ListEntry Blink() {
@@ -120,7 +121,7 @@ class ExFastRef : public KObject
 {
 public:
 	ExFastRef() = default;
-	ExFastRef(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+	ExFastRef(MmVirtualAddress vaddr) : KObject(vaddr) {}
 	~ExFastRef() = default;
 
 	ObjectT Object() {

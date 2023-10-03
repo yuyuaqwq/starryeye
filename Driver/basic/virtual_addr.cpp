@@ -104,7 +104,7 @@ void MmPte::Init()
     Handware::CopyOnWriteBitPos = 9;
     Handware::CopyOnWriteBitSize = 1;
 }
-MmPte::MmPte(const MmVirtualAddress& pte_vaddr): pte_vaddr_(pte_vaddr) {}
+MmPte::MmPte(MmVirtualAddress pte_vaddr): pte_vaddr_(pte_vaddr) {}
 MmPte::Handware MmPte::Hand() {
     return { this };
 }
@@ -210,7 +210,7 @@ uint64_t MmVirtualAddress::BitArea(size_t bit_pos, uint8_t bit_size) const
 
     return value;
 }
-int MmVirtualAddress::Protection() {
+int MmVirtualAddress::Protection() const {
     ProcessAutoAttacker pa{ owner_ };
     int protection = 0;
     auto pxte = GetPxte();
@@ -267,7 +267,7 @@ void MmVirtualAddress::WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size
         bytes_buf[byte_idx] |= (bit_val << bit_idx);
     }
 }
-bool MmVirtualAddress::SetProtection(int protection) {
+bool MmVirtualAddress::SetProtection(int protection) const {
     ProcessAutoAttacker pa{ owner_ };
     bool is_executable = protection & kPageExecutable;
     bool is_writeable = protection & kPageWriteable;
@@ -345,25 +345,25 @@ void MmVirtualAddress::ThrowIfInvalid(const char* format) const {
         std::_Xruntime_error(err.c_str());
     }
 }
-bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+bool operator==(MmVirtualAddress x, MmVirtualAddress y) {
     return x.vaddr_ == y.vaddr_;
 }
-bool operator!=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+bool operator!=(MmVirtualAddress x, MmVirtualAddress y) {
     return x.vaddr_ != y.vaddr_;
 }
-bool operator>(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+bool operator>(MmVirtualAddress x, MmVirtualAddress y) {
     return x.vaddr_ > y.vaddr_;
 }
-bool operator<(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+bool operator<(MmVirtualAddress x, MmVirtualAddress y) {
     return x.vaddr_ < y.vaddr_;
 }
-bool operator>=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+bool operator>=(MmVirtualAddress x, MmVirtualAddress y) {
     return x.vaddr_ >= y.vaddr_;
 }
-bool operator<=(const MmVirtualAddress& x, const MmVirtualAddress& y) {
+bool operator<=(MmVirtualAddress x, MmVirtualAddress y) {
     return x.vaddr_ <= y.vaddr_;
 }
-MmVirtualAddress operator+(ptrdiff_t offset, const MmVirtualAddress& next) {
+MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) {
     return next + offset;
 }
 

@@ -9,7 +9,7 @@ class EThread: public KObject
 public:
 	static void Init();
 
-	EThread(const MmVirtualAddress& vaddr);
+	EThread(MmVirtualAddress vaddr);
 	EThread() = default;
 	~EThread() = default;
 

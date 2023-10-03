@@ -1,12 +1,16 @@
 #include "structs.h"
 
 namespace stareye {
-KObject::KObject(const MmVirtualAddress& vaddr): vaddr_(vaddr) {}
-const MmVirtualAddress& KObject::VAddr() const {
+KObject::KObject(MmVirtualAddress vaddr): vaddr_(vaddr) {}
+MmVirtualAddress KObject::VAddr() const {
 	return vaddr_;
 }
 
-RtlBalanceNode::RtlBalanceNode(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+bool KObject::IsValid() const {
+	return vaddr_.IsValid();
+}
+
+RtlBalanceNode::RtlBalanceNode(MmVirtualAddress vaddr) : KObject(vaddr) {}
 RtlBalanceNode RtlBalanceNode::Left() const {
 	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Left, vaddr_.Owner());
 }
@@ -17,13 +21,13 @@ RtlBalanceNode RtlBalanceNode::Parent() const {
 	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->ParentValue & ~0b111ull, vaddr_.Owner());
 }
 bool RtlBalanceNode::HasLeft() const {
-	return Left().vaddr_.IsValid();
+	return Left().IsValid();
 }
 bool RtlBalanceNode::HasRight() const {
-	return Right().vaddr_.IsValid();
+	return Right().IsValid();
 }
 bool RtlBalanceNode::HasParent() const {
-	return Parent().vaddr_.IsValid();
+	return Parent().IsValid();
 }
 bool operator==(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept {
 	return x.vaddr_ == y.vaddr_;
@@ -33,18 +37,18 @@ bool operator!=(const RtlBalanceNode& x, const RtlBalanceNode& y) noexcept {
 }
 
 
-RtlAvlTree::RtlAvlTree(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
-RtlBalanceNode RtlAvlTree::Root() {
+RtlAvlTree::RtlAvlTree(MmVirtualAddress vaddr) : KObject(vaddr) {}
+RtlBalanceNode RtlAvlTree::Root() const {
 	return MmVirtualAddress(vaddr_.ValU64(), vaddr_.Owner());
 }
-RtlAvlTree::iterator RtlAvlTree::begin() {
+RtlAvlTree::iterator RtlAvlTree::begin() const {
 	auto tmp = Root();
 	while (tmp.HasLeft()) {
 		tmp = tmp.Left();
 	}
 	return tmp;
 }
-RtlAvlTree::iterator RtlAvlTree::end() {
+RtlAvlTree::iterator RtlAvlTree::end() const {
 	auto tmp = Root();
 	while (tmp.HasRight()) {
 		tmp = tmp.Right();
@@ -90,10 +94,10 @@ RtlAvlTreeIterator RtlAvlTreeIterator::operator--(int) {
 	--(*this);
 	return tmp;
 }
-bool RtlAvlTreeIterator::operator==(const RtlAvlTreeIterator& x) {
+bool RtlAvlTreeIterator::operator==(const RtlAvlTreeIterator& x) const {
 	return cur_ == x.cur_;
 }
-bool RtlAvlTreeIterator::operator!=(const RtlAvlTreeIterator& x) {
+bool RtlAvlTreeIterator::operator!=(const RtlAvlTreeIterator& x) const {
 	return cur_ != x.cur_;
 }
 void RtlAvlTreeIterator::GoLeftMost(const RtlBalanceNode& node) {

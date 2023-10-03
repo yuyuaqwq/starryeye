@@ -5,7 +5,7 @@ namespace stareye {
 	class FileObject: public KObject
 	{
 	public:
-		FileObject(const MmVirtualAddress& vaddr);
+		FileObject(MmVirtualAddress vaddr);
 		FileObject() = default;
 		~FileObject() = default;
 

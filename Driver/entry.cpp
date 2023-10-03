@@ -43,16 +43,13 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	try
 	{
 		auto table = HandleTable(HandleTable::PspCidTable.ValU64());
-		//auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
-		//if (!res.empty()) {
-		//	auto tree = res[0].VadRoot();
-		//	for (auto& node : tree) {
-		//		auto mmvad_short = node.Impl<MmVadShort>();
-		//		krnlib::Print("Start: 0x{:016x} - End: 0x{:016x}\n", mmvad_short.StartingAddress(), mmvad_short.EndingAddress());
-		//	}
-		//}
-		for (auto& obj : table) {
-			krnlib::Print("{}\n", *obj.Type().Name());
+		auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
+		if (!res.empty()) {
+			auto tree = res[0].VadRoot();
+			for (auto& node : tree) {
+				auto mmvad_short = node.Impl<MmVadShort>();
+				krnlib::Print("Start: 0x{:016x} - End: 0x{:016x}\n", mmvad_short.StartingAddress(), mmvad_short.EndingAddress());
+			}
 		}
 	}
 	catch (const std::exception& ex)

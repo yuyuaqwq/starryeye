@@ -10,7 +10,7 @@ void MmVadShort::Init() {
 	ReferenceCountOffset = 0x24;
 	uOffset = 0x30;
 }
-MmVadShort::MmVadShort(const MmVirtualAddress& vaddr) : RtlBalanceNode(vaddr) {}
+MmVadShort::MmVadShort(MmVirtualAddress vaddr) : RtlBalanceNode(vaddr) {}
 uint32_t MmVadShort::StartingVpn() {
 	return (vaddr_ + StartingVpnOffset).ValU32();
 }
@@ -52,7 +52,7 @@ void MmVad::Init()
 	ViewLinksOffset = 0x60;
 	VadsProcessOffset = 0x70;
 }
-MmVad::MmVad(const MmVirtualAddress& vaddr) : KObject(vaddr) {}
+MmVad::MmVad(MmVirtualAddress vaddr) : KObject(vaddr) {}
 MmVadShort MmVad::Core() {
 	return vaddr_;
 }
@@ -70,11 +70,11 @@ void MmVadTree::Init()
 	MmVad::Init();
 }
 
-MmVadTree::MmVadTree(const MmVirtualAddress& vaddr) : RtlAvlTree(vaddr) {}
-std::optional<MmVadShort> MmVadTree::SearchNode(const MmVirtualAddress& vaddr)
+MmVadTree::MmVadTree(MmVirtualAddress vaddr) : RtlAvlTree(vaddr) {}
+std::optional<MmVadShort> MmVadTree::SearchNode(MmVirtualAddress vaddr)
 {
 	auto cur_vad = Root().Impl<MmVadShort>();
-	while (cur_vad.VAddr().IsValid()) {
+	while (cur_vad.IsValid()) {
 		if (cur_vad.StartingAddress() > vaddr) {
 			cur_vad = cur_vad.Left().Impl<MmVadShort>();
 		}

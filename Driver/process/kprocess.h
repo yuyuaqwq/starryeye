@@ -7,7 +7,7 @@ class KProcess: public KObject
 public:
 	static void Init();
 
-	KProcess(const MmVirtualAddress& vaddr);
+	KProcess(MmVirtualAddress vaddr);
 	KProcess() = default;
 	~KProcess() = default;
 

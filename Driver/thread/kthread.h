@@ -7,7 +7,7 @@ class KThread: public KObject
 public:
 	static void Init();
 
-	KThread(const MmVirtualAddress& vaddr);
+	KThread(MmVirtualAddress vaddr);
 	KThread() = default;
 	~KThread() = default;
 

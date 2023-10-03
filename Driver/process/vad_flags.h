@@ -7,7 +7,7 @@ class MmVadFlags: public KObject
 public:
 	static void Init();
 
-	MmVadFlags(const MmVirtualAddress& vaddr);
+	MmVadFlags(MmVirtualAddress vaddr);
 	MmVadFlags() = default;
 	~MmVadFlags() = default;
 
