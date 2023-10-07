@@ -1,16 +1,14 @@
 #include "utils.h"
 
 namespace stareye {
+
 	std::vector<EProcess> HandleUtils::FindProcessInHandleTable(const HandleTable& table, const char* proc_name) {
-		std::vector<EProcess> total;
-		for (auto& obj : table) {
+		auto flt = [&](const ObjectHeader& obj) {
 			if (obj.IsProcess()) {
 				auto eproc = obj.Body<EProcess>();
-				if (EqualString(eproc.ImageFileName(), proc_name, true)) {
-					total.push_back(eproc);
-				}
+				return EqualString(eproc.ImageFileName(), proc_name, true);
 			}
-		}
-		return total;
+		};
+		//TODO rangeø‚÷ß≥÷
 	}
 }
