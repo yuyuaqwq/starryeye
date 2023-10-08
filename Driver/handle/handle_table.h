@@ -4,26 +4,26 @@
 
 namespace stareye {
 namespace details {
-class HandleTableIterator
-{
+class HandleTableConstIterator {
 public:
-	HandleTableIterator(const HandleTable* table, uint16_t idx_lv3, uint16_t idx_lv2, uint16_t idx_lv1);
-	HandleTableIterator();
-	~HandleTableIterator() = default;
+	using iterator_category = std::bidirectional_iterator_tag;
 
-	using value_type = HandleTable;
+	using value_type = ObjectHeader;
 	using difference_type = ptrdiff_t;
+	using pointer = const value_type*;
+	using reference = const value_type&;
 
-	ObjectHeader& operator*() noexcept;
-	ObjectHeader* operator->() noexcept;
-	const ObjectHeader& operator*() const noexcept;
-	const ObjectHeader* operator->() const noexcept;
-	HandleTableIterator& operator++() noexcept;
-	HandleTableIterator& operator--() noexcept;
-	HandleTableIterator operator++(int) noexcept;
-	HandleTableIterator operator--(int) noexcept;
-	bool operator==(const HandleTableIterator& x) const noexcept;
-	bool operator!=(const HandleTableIterator& x) const noexcept;
+	HandleTableConstIterator(const HandleTable* table, int idx_lv3, int idx_lv2, int idx_lv1);
+	HandleTableConstIterator();
+	~HandleTableConstIterator() = default;
+
+	reference operator*() const noexcept;
+	pointer operator->() const noexcept;
+	HandleTableConstIterator& operator++() noexcept;
+	HandleTableConstIterator& operator--() noexcept;
+	HandleTableConstIterator operator++(int) noexcept;
+	HandleTableConstIterator operator--(int) noexcept;
+	bool operator==(const HandleTableConstIterator& x) const noexcept;
 
 private:
 	bool CheckValidIndexAndAssign() noexcept;
@@ -38,6 +38,29 @@ private:
 	uint16_t idx_lv2_;
 	uint16_t idx_lv1_;
 };
+
+
+class HandleTableIterator : public HandleTableConstIterator
+{
+public:
+	using HandleTableConstIterator::HandleTableConstIterator;
+
+	using iterator_category = std::bidirectional_iterator_tag;
+	using value_type = ObjectHeader;
+	using difference_type = ptrdiff_t;
+	using pointer = value_type*;
+	using reference = value_type&;
+
+	reference operator*() const noexcept;
+	pointer operator->() const noexcept;
+
+	HandleTableIterator& operator++() noexcept;
+	HandleTableIterator& operator--() noexcept;
+	HandleTableIterator operator++(int) noexcept;
+	HandleTableIterator operator--(int) noexcept;
+
+	bool operator==(const HandleTableIterator& x) const noexcept;
+};
 }
 
 class HandleTable: public KObject
@@ -46,7 +69,7 @@ public:
 	using value_type = ObjectHeader;
 	using difference_type = std::ptrdiff_t;
 	using iterator = details::HandleTableIterator;
-	using const_iterator = const iterator;
+	using const_iterator = details::HandleTableConstIterator;
 
 	static constexpr uint16_t kMaxCount = 512;
 	static constexpr uint16_t kMaxIndex = kMaxCount - 1;
@@ -83,7 +106,7 @@ public:
 	std::optional<ObjectHeader> GetHandleObjectIfLv3(uint64_t index_lv3, uint64_t index_lv2, uint64_t index_lv1) const;
 
 private:
-	friend class details::HandleTableIterator;
+	friend class details::HandleTableConstIterator;
 
 	uint64_t* TablePtr() const;
 	std::tuple<uint16_t, uint16_t, uint16_t> GetBeginIdx() const;
