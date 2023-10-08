@@ -7,8 +7,6 @@ void SubSection::Init()
 	NextSubsectionOffset = 0x10;
 }
 
-SubSection::SubSection(MmVirtualAddress vaddr) : KObject(vaddr) {}
-
 ControlArea SubSection::ControlArea()
 {
 	return stareye::ControlArea((vaddr_ + ControlAreaOffset).ValU64());

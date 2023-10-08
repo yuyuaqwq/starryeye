@@ -7,9 +7,7 @@ class MmVadFlags: public KObject
 public:
 	static void Init();
 
-	MmVadFlags(MmVirtualAddress vaddr);
-	MmVadFlags() = default;
-	~MmVadFlags() = default;
+	using KObject::KObject;
 
 	uint8_t PrivateMemory();
 

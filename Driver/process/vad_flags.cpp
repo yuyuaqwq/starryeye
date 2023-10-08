@@ -7,8 +7,6 @@ void MmVadFlags::Init()
 	PrivateMemoryBitSize = 1;
 }
 
-MmVadFlags::MmVadFlags(MmVirtualAddress vaddr) : KObject(vaddr) {}
-
 uint8_t MmVadFlags::PrivateMemory()
 {
 	return vaddr_.BitArea(PrivateMemoryBitPos, PrivateMemoryBitSize);

@@ -12,9 +12,7 @@ public:
 
 	static void Init();
 
-	ObjectHeader() = default;
-	ObjectHeader(MmVirtualAddress vaddr);
-	~ObjectHeader() = default;
+	using KObject::KObject;
 
 	// ªÒ»°TypeIndex
 	uint8_t TypeIndex() const;

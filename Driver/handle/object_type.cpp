@@ -7,8 +7,6 @@ void ObjectType::Init()
 	NameOffset = 0x10;
 }
 
-ObjectType::ObjectType(MmVirtualAddress vaddr) : KObject(vaddr) {}
-
 PUNICODE_STRING ObjectType::Name()
 {
 	return (vaddr_ + NameOffset).Pointer<UNICODE_STRING>();

@@ -9,9 +9,7 @@ class EThread: public KObject
 public:
 	static void Init();
 
-	EThread(MmVirtualAddress vaddr);
-	EThread() = default;
-	~EThread() = default;
+	using KObject::KObject;
 
 	KThread Tcb();
 	ListEntry<EThread> ThreadListEntry();

@@ -79,9 +79,7 @@ public:
 	inline static MmVirtualAddress PspCidTable;
 	static void Init();
 
-	HandleTable() = default;
-	HandleTable(MmVirtualAddress vaddr);
-	~HandleTable() = default;
+	using KObject::KObject;
 
 	// ªÒ»°TableCode
 	uint64_t TableCode() const;

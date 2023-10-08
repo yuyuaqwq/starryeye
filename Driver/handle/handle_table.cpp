@@ -12,8 +12,6 @@ void HandleTable::Init()
 	PspCidTable = 0xfffff802598fc5d0;	//TODO PspCidTable
 }
 
-HandleTable::HandleTable(MmVirtualAddress vaddr) :KObject(vaddr) {}
-
 uint64_t HandleTable::TableCode() const
 {
 	return (vaddr_ + TableCodeOffset).ValU64();

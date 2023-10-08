@@ -7,9 +7,7 @@ class KThread: public KObject
 public:
 	static void Init();
 
-	KThread(MmVirtualAddress vaddr);
-	KThread() = default;
-	~KThread() = default;
+	using KObject::KObject;
 
 	KProcess Process();
 

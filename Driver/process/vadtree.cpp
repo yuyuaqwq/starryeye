@@ -10,7 +10,6 @@ void MmVadShort::Init() {
 	ReferenceCountOffset = 0x24;
 	uOffset = 0x30;
 }
-MmVadShort::MmVadShort(MmVirtualAddress vaddr) : RtlBalanceNode(vaddr) {}
 uint32_t MmVadShort::StartingVpn() {
 	return (vaddr_ + StartingVpnOffset).ValU32();
 }
@@ -52,7 +51,6 @@ void MmVad::Init()
 	ViewLinksOffset = 0x60;
 	VadsProcessOffset = 0x70;
 }
-MmVad::MmVad(MmVirtualAddress vaddr) : KObject(vaddr) {}
 MmVadShort MmVad::Core() {
 	return vaddr_;
 }
@@ -70,7 +68,6 @@ void MmVadTree::Init()
 	MmVad::Init();
 }
 
-MmVadTree::MmVadTree(MmVirtualAddress vaddr) : RtlAvlTree(vaddr) {}
 std::optional<MmVadShort> MmVadTree::SearchNode(MmVirtualAddress vaddr)
 {
 	auto cur_vad = Root().Impl<MmVadShort>();

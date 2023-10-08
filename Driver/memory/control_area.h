@@ -7,9 +7,7 @@ namespace stareye {
 	public:
 		static void Init();
 
-		ControlArea(MmVirtualAddress vaddr);
-		ControlArea() = default;
-		~ControlArea() = default;
+		using KObject::KObject;
 
 		ExFastRef<FileObject> FilePointer();
 

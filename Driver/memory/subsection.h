@@ -7,9 +7,7 @@ namespace stareye {
 	public:
 		static void Init();
 
-		SubSection(MmVirtualAddress vaddr);
-		SubSection() = default;
-		~SubSection() = default;
+		using KObject::KObject;
 
 		ControlArea ControlArea();
 		SubSection NextSubsection();

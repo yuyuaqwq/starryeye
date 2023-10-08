@@ -9,9 +9,7 @@ namespace stareye {
 
 		static void Init();
 
-		ObjectType(MmVirtualAddress vaddr);
-		ObjectType() = default;
-		~ObjectType() = default;
+		using KObject::KObject;
 
 		PUNICODE_STRING Name();
 

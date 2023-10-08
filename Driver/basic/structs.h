@@ -8,6 +8,7 @@ namespace stareye {
 class KObject {
 public:
 	KObject() = default;
+	~KObject() = default;
 	KObject(MmVirtualAddress vaddr);
 	MmVirtualAddress VAddr() const;
 	bool IsValid() const;
@@ -22,9 +23,7 @@ concept InheritKObjectT = std::is_convertible_v<T*, KObject*>;
 class RtlBalanceNode: public KObject
 {
 public:
-	RtlBalanceNode(MmVirtualAddress vaddr);
-	RtlBalanceNode() = default;
-	~RtlBalanceNode() = default;
+	using KObject::KObject;
 
 	RtlBalanceNode Left() const;
 	RtlBalanceNode Right() const;
@@ -120,9 +119,7 @@ template<class ObjectT>
 class ExFastRef : public KObject
 {
 public:
-	ExFastRef() = default;
-	ExFastRef(MmVirtualAddress vaddr) : KObject(vaddr) {}
-	~ExFastRef() = default;
+	using KObject::KObject;
 
 	ObjectT Object() {
 		return vaddr_.Value<uint64_t>() & ~0xFull;

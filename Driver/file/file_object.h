@@ -5,9 +5,7 @@ namespace stareye {
 	class FileObject: public KObject
 	{
 	public:
-		FileObject(MmVirtualAddress vaddr);
-		FileObject() = default;
-		~FileObject() = default;
+		using KObject::KObject;
 
 		PUNICODE_STRING FileName();
 	};

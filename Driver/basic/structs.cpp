@@ -10,7 +10,6 @@ bool KObject::IsValid() const {
 	return vaddr_.IsValid();
 }
 
-RtlBalanceNode::RtlBalanceNode(MmVirtualAddress vaddr) : KObject(vaddr) {}
 RtlBalanceNode RtlBalanceNode::Left() const {
 	return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Left, vaddr_.Owner());
 }
