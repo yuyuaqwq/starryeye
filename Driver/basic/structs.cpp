@@ -1,12 +1,12 @@
 #include "structs.h"
 
 namespace stareye {
-KObject::KObject(MmVirtualAddress vaddr): vaddr_(vaddr) {}
-MmVirtualAddress KObject::VAddr() const {
+KObject::KObject(MmVirtualAddress vaddr) noexcept: vaddr_(vaddr) {}
+MmVirtualAddress KObject::VAddr() const noexcept {
 	return vaddr_;
 }
 
-bool KObject::IsValid() const {
+bool KObject::IsValid() const noexcept {
 	return vaddr_.IsValid();
 }
 

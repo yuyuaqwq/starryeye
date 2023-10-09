@@ -9,9 +9,9 @@ class KObject {
 public:
 	KObject() = default;
 	~KObject() = default;
-	KObject(MmVirtualAddress vaddr);
-	MmVirtualAddress VAddr() const;
-	bool IsValid() const;
+	KObject(MmVirtualAddress vaddr) noexcept;
+	MmVirtualAddress VAddr() const noexcept;
+	bool IsValid() const noexcept;
 
 protected:
 	MmVirtualAddress vaddr_;

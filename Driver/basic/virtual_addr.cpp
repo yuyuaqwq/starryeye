@@ -71,7 +71,7 @@ MmPte::Handware::Handware(MmPte* parent) : parent_(parent) {}
 bool MmPte::Handware::Vaild() const {
     return parent_->pte_vaddr_.BitArea(0, 1);
 }
-uint64_t MmPte::Handware::PageFrameNumber() {
+uint64_t MmPte::Handware::PageFrameNumber() const {
     return parent_->pte_vaddr_.BitArea(PageFrameNumberBitPos, PageFrameNumberBitSize);
 }
 char MmPte::Handware::NoExecute() {
@@ -113,27 +113,27 @@ void MmVirtualAddress::Init() {
     MmPte::Init();
 }
 
-MmVirtualAddress::MmVirtualAddress(uint64_t vaddr, PEPROCESS owner)
+MmVirtualAddress::MmVirtualAddress(uint64_t vaddr, PEPROCESS owner) noexcept
     : owner_(owner),
     vaddr_(vaddr) {}
 
-MmVirtualAddress::MmVirtualAddress(void* ptr, PEPROCESS owner)
+MmVirtualAddress::MmVirtualAddress(void* ptr, PEPROCESS owner) noexcept
     : owner_(owner),
     vaddr_((uint64_t)ptr) {}
 
-uint64_t MmVirtualAddress::PxtIndex() const {
+uint64_t MmVirtualAddress::PxtIndex() const noexcept {
     return VIRTUAL_ADDRESS_PXTI(vaddr_);
 }
-uint64_t MmVirtualAddress::PptIndex() const {
+uint64_t MmVirtualAddress::PptIndex() const noexcept {
     return VIRTUAL_ADDRESS_PPTI(vaddr_);
 }
-uint64_t MmVirtualAddress::PdtIndex() const {
+uint64_t MmVirtualAddress::PdtIndex() const noexcept {
     return VIRTUAL_ADDRESS_PDTI(vaddr_);
 }
-uint64_t MmVirtualAddress::PtIndex() const {
+uint64_t MmVirtualAddress::PtIndex() const noexcept {
     return VIRTUAL_ADDRESS_PTI(vaddr_);
 }
-uint64_t MmVirtualAddress::PteOffset() const {
+uint64_t MmVirtualAddress::PteOffset() const noexcept {
     return VIRTUAL_ADDRESS_OFFSET(vaddr_);
 }
 MmPte MmVirtualAddress::GetPte() const {
@@ -312,24 +312,24 @@ bool MmVirtualAddress::SetProtection(int protection) const {
     pte.Hand().SetCopyOnWrite(is_writecopy);
     return true;
 }
-void MmVirtualAddress::SetOwner(PEPROCESS eproc) {
+void MmVirtualAddress::SetOwner(PEPROCESS eproc) noexcept {
     owner_ = eproc;
 }
-MmVirtualAddress MmVirtualAddress::operator+(ptrdiff_t offset) const {
+MmVirtualAddress MmVirtualAddress::operator+(ptrdiff_t offset) const noexcept {
     auto tmp = *this;
     tmp.vaddr_ += offset;
     return tmp;
 }
-MmVirtualAddress MmVirtualAddress::operator-(ptrdiff_t offset) const {
+MmVirtualAddress MmVirtualAddress::operator-(ptrdiff_t offset) const noexcept {
     auto tmp = *this;
     tmp.vaddr_ -= offset;
     return tmp;
 }
-MmVirtualAddress& MmVirtualAddress::operator+=(ptrdiff_t offset) {
+MmVirtualAddress& MmVirtualAddress::operator+=(ptrdiff_t offset) noexcept {
     vaddr_ += offset;
     return *this;
 }
-MmVirtualAddress& MmVirtualAddress::operator-=(ptrdiff_t offset) {
+MmVirtualAddress& MmVirtualAddress::operator-=(ptrdiff_t offset) noexcept {
     vaddr_ -= offset;
     return *this;
 }
@@ -345,25 +345,25 @@ void MmVirtualAddress::ThrowIfInvalid(const char* format) const {
         std::_Xruntime_error(err.c_str());
     }
 }
-bool operator==(MmVirtualAddress x, MmVirtualAddress y) {
+bool operator==(MmVirtualAddress x, MmVirtualAddress y) noexcept {
     return x.vaddr_ == y.vaddr_;
 }
-bool operator!=(MmVirtualAddress x, MmVirtualAddress y) {
+bool operator!=(MmVirtualAddress x, MmVirtualAddress y) noexcept {
     return x.vaddr_ != y.vaddr_;
 }
-bool operator>(MmVirtualAddress x, MmVirtualAddress y) {
+bool operator>(MmVirtualAddress x, MmVirtualAddress y) noexcept {
     return x.vaddr_ > y.vaddr_;
 }
-bool operator<(MmVirtualAddress x, MmVirtualAddress y) {
+bool operator<(MmVirtualAddress x, MmVirtualAddress y) noexcept {
     return x.vaddr_ < y.vaddr_;
 }
-bool operator>=(MmVirtualAddress x, MmVirtualAddress y) {
+bool operator>=(MmVirtualAddress x, MmVirtualAddress y) noexcept {
     return x.vaddr_ >= y.vaddr_;
 }
-bool operator<=(MmVirtualAddress x, MmVirtualAddress y) {
+bool operator<=(MmVirtualAddress x, MmVirtualAddress y) noexcept {
     return x.vaddr_ <= y.vaddr_;
 }
-MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) {
+MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) noexcept {
     return next + offset;
 }
 

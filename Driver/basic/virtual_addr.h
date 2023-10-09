@@ -173,16 +173,16 @@ class MmVirtualAddress
 public:
     static void Init();
 
-    MmVirtualAddress() = default;
-    MmVirtualAddress(uint64_t vaddr, PEPROCESS owner = nullptr);
-    MmVirtualAddress(void* ptr, PEPROCESS owner = nullptr);
-    ~MmVirtualAddress() = default;
+    MmVirtualAddress() noexcept = default;
+    MmVirtualAddress(uint64_t vaddr, PEPROCESS owner = nullptr) noexcept;
+    MmVirtualAddress(void* ptr, PEPROCESS owner = nullptr) noexcept;
+    ~MmVirtualAddress() noexcept = default;
 
-    uint64_t PxtIndex() const;
-    uint64_t PptIndex() const;
-    uint64_t PdtIndex() const;
-    uint64_t PtIndex() const;
-    uint64_t PteOffset() const;
+    uint64_t PxtIndex() const noexcept;
+    uint64_t PptIndex() const noexcept;
+    uint64_t PdtIndex() const noexcept;
+    uint64_t PtIndex() const noexcept;
+    uint64_t PteOffset() const noexcept;
 
     MmPte GetPte() const;
     PdteFormater* GetPdte() const;
@@ -197,7 +197,7 @@ public:
         return (T*)vaddr_;
     }
     template <class T>
-    MmVirtualAddress Offset(size_t off) const {
+    MmVirtualAddress Offset(size_t off) const noexcept {
         return operator+(off * sizeof(T));
     }
     uint8_t* PtrU8() const;
@@ -220,21 +220,21 @@ public:
     void WriteBitArea(size_t beg_bit_pos, uint64_t src_value, size_t src_bit_size) const;
     bool SetProtection(int protection) const;
 
-    void SetOwner(PEPROCESS eproc);
+    void SetOwner(PEPROCESS eproc) noexcept;
 
-    friend bool operator==(MmVirtualAddress x, MmVirtualAddress y);
-    friend bool operator!=(MmVirtualAddress x, MmVirtualAddress y);
-    friend bool operator>(MmVirtualAddress x, MmVirtualAddress y);
-    friend bool operator<(MmVirtualAddress x, MmVirtualAddress y);
-    friend bool operator>=(MmVirtualAddress x, MmVirtualAddress y);
-    friend bool operator<=(MmVirtualAddress x, MmVirtualAddress y);
-    friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next);
+    friend bool operator==(MmVirtualAddress x, MmVirtualAddress y) noexcept;
+    friend bool operator!=(MmVirtualAddress x, MmVirtualAddress y) noexcept;
+    friend bool operator>(MmVirtualAddress x, MmVirtualAddress y) noexcept;
+    friend bool operator<(MmVirtualAddress x, MmVirtualAddress y) noexcept;
+    friend bool operator>=(MmVirtualAddress x, MmVirtualAddress y) noexcept;
+    friend bool operator<=(MmVirtualAddress x, MmVirtualAddress y) noexcept;
+    friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) noexcept;
 
-    MmVirtualAddress operator+(ptrdiff_t offset) const;
-    MmVirtualAddress operator-(ptrdiff_t offset) const;
+    MmVirtualAddress operator+(ptrdiff_t offset) const noexcept;
+    MmVirtualAddress operator-(ptrdiff_t offset) const noexcept;
 
-    MmVirtualAddress& operator+=(ptrdiff_t offset);
-    MmVirtualAddress& operator-=(ptrdiff_t offset);
+    MmVirtualAddress& operator+=(ptrdiff_t offset) noexcept;
+    MmVirtualAddress& operator-=(ptrdiff_t offset) noexcept;
 
 private:
     void* GetPteUnsafe() const;
@@ -261,7 +261,7 @@ public:
     public:
         ~Handware() = default;
         bool Vaild() const;
-        uint64_t PageFrameNumber();
+        uint64_t PageFrameNumber() const;
         char NoExecute();
         void SetNoExecute(bool no_exec);
         char Write();
