@@ -44,6 +44,7 @@ class HandleTableIterator : public HandleTableConstIterator
 {
 public:
 	using HandleTableConstIterator::HandleTableConstIterator;
+	using InheritT = HandleTableConstIterator;
 
 	using iterator_category = std::bidirectional_iterator_tag;
 	using value_type = ObjectHeader;
@@ -67,7 +68,6 @@ class HandleTable: public KObject
 {
 public:
 	using value_type = ObjectHeader;
-	using difference_type = std::ptrdiff_t;
 	using iterator = details::HandleTableIterator;
 	using const_iterator = details::HandleTableConstIterator;
 

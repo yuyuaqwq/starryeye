@@ -44,26 +44,25 @@ public:
 };
 
 namespace details {
-class RtlAvlTreeIterator
+class RtlAvlTreeConstIterator
 {
 public:
 	using difference_type = std::ptrdiff_t;
 	using value_type = RtlBalanceNode;
-	using pointer = value_type*;
-	using reference = value_type&;
+	using pointer = const value_type*;
+	using reference = const value_type&;
 	using iterator_category = std::bidirectional_iterator_tag;
 
-	RtlAvlTreeIterator(const RtlBalanceNode& cur);
-	~RtlAvlTreeIterator() = default;
+	RtlAvlTreeConstIterator(const RtlBalanceNode& cur);
+	~RtlAvlTreeConstIterator() = default;
 
-	RtlBalanceNode& operator*();
-	RtlBalanceNode* operator->();
-	RtlAvlTreeIterator& operator++();
-	RtlAvlTreeIterator& operator--();
-	RtlAvlTreeIterator operator++(int);
-	RtlAvlTreeIterator operator--(int);
-	bool operator==(const RtlAvlTreeIterator& x) const;
-	bool operator!=(const RtlAvlTreeIterator& x) const;
+	reference operator*() const noexcept;
+	pointer operator->() const noexcept;
+	RtlAvlTreeConstIterator& operator++();
+	RtlAvlTreeConstIterator& operator--();
+	RtlAvlTreeConstIterator operator++(int);
+	RtlAvlTreeConstIterator operator--(int);
+	bool operator==(const RtlAvlTreeConstIterator& x) const noexcept;
 
 private:
 	void GoLeftMost(const RtlBalanceNode& node);
@@ -71,13 +70,36 @@ private:
 
 	RtlBalanceNode cur_;
 };
+
+class RtlAvlTreeIterator : public RtlAvlTreeConstIterator
+{
+public:
+	using RtlAvlTreeConstIterator::RtlAvlTreeConstIterator;
+	using InheritT = RtlAvlTreeConstIterator;
+
+	using difference_type = std::ptrdiff_t;
+	using value_type = RtlBalanceNode;
+	using pointer = value_type*;
+	using reference = value_type&;
+	using iterator_category = std::bidirectional_iterator_tag;
+
+	reference operator*() const noexcept;
+	pointer operator->() const noexcept;
+	RtlAvlTreeIterator& operator++();
+	RtlAvlTreeIterator& operator--();
+	RtlAvlTreeIterator operator++(int);
+	RtlAvlTreeIterator operator--(int);
+	bool operator==(const RtlAvlTreeIterator& x) const noexcept;
+};
 }
 
 
 class RtlAvlTree : public KObject
 {
 public:
+	using value_type = RtlBalanceNode;
 	using iterator = details::RtlAvlTreeIterator;
+	using const_iterator = details::RtlAvlTreeConstIterator;
 
 	RtlAvlTree(MmVirtualAddress vaddr);
 	RtlAvlTree() = default;
@@ -85,8 +107,14 @@ public:
 
 	RtlBalanceNode Root() const;
 
-	iterator begin() const;
-	iterator end() const;
+	const_iterator begin() const;
+	const_iterator end() const;
+	iterator begin();
+	iterator end();
+
+private:
+	RtlBalanceNode BegNode() const;
+	RtlBalanceNode EndNode() const;
 };
 
 
