@@ -42,10 +42,8 @@ private:
 
 class HandleTableIterator : public HandleTableConstIterator
 {
+	STAREYE_USING_BASE(HandleTableConstIterator)
 public:
-	using HandleTableConstIterator::HandleTableConstIterator;
-	using InheritT = HandleTableConstIterator;
-
 	using iterator_category = std::bidirectional_iterator_tag;
 	using value_type = ObjectHeader;
 	using difference_type = ptrdiff_t;
@@ -66,6 +64,7 @@ public:
 
 class HandleTable: public KObject
 {
+	STAREYE_USING_BASE(KObject)
 public:
 	using value_type = ObjectHeader;
 	using iterator = details::HandleTableIterator;
@@ -78,8 +77,6 @@ public:
 
 	inline static MmVirtualAddress PspCidTable;
 	static void Init();
-
-	using KObject::KObject;
 
 	// ªÒ»°TableCode
 	uint64_t TableCode() const;

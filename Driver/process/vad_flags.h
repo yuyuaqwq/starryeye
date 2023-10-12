@@ -4,10 +4,9 @@
 namespace stareye {
 class MmVadFlags: public KObject
 {
+	STAREYE_USING_BASE(KObject)
 public:
 	static void Init();
-
-	using KObject::KObject;
 
 	uint8_t PrivateMemory();
 

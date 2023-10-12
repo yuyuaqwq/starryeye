@@ -4,10 +4,9 @@
 namespace stareye {
 class KThread: public KObject
 {
+	STAREYE_USING_BASE(KObject)
 public:
 	static void Init();
-
-	using KObject::KObject;
 
 	KProcess Process();
 

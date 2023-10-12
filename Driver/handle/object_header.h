@@ -7,12 +7,11 @@ class HandleTable;
 
 class ObjectHeader: public KObject
 {
+	STAREYE_USING_BASE(KObject)
 public:
 	inline static MmVirtualAddress ObHeaderCookie;
 
 	static void Init();
-
-	using KObject::KObject;
 
 	// ªÒ»°TypeIndex
 	uint8_t TypeIndex() const;

@@ -47,8 +47,7 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 		if (!res.empty()) {
 			auto tree = res[0].VadRoot();
 			for (auto& node : tree) {
-				auto mmvad_short = node.Impl<MmVadShort>();
-				krnlib::Print("Start: 0x{:016x} - End: 0x{:016x}\n", mmvad_short.StartingAddress(), mmvad_short.EndingAddress());
+				krnlib::Print("Start: 0x{:016x} - End: 0x{:016x}\n", node.StartingAddress(), node.EndingAddress());
 			}
 		}
 	}

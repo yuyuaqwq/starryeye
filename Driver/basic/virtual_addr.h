@@ -251,6 +251,10 @@ private:
 };
 
 
+inline bool IsValid(const MmVirtualAddress& vaddr) {
+    return vaddr.IsValid();
+}
+
 class MmPte
 {
 public:

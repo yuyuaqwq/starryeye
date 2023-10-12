@@ -3,12 +3,11 @@
 #include "vad_flags.h"
 
 namespace stareye {
-class MmVadShort : public RtlBalanceNode
+class MmVadShort : public RtlBalanceNode<MmVadShort>
 {
+	STAREYE_USING_BASE(RtlBalanceNode<MmVadShort>)
 public:
 	static void Init();
-
-	using RtlBalanceNode::RtlBalanceNode;
 
 	uint32_t StartingVpn();
 	uint32_t EndingVpn();
@@ -48,12 +47,11 @@ private:
 	static inline uint64_t VadsProcessOffset;
 };
 
-class MmVadTree: public RtlAvlTree
+class MmVadTree: public RtlAvlTree<MmVadShort>
 {
+	STAREYE_USING_BASE(RtlAvlTree<MmVadShort>)
 public:
 	static void Init();
-
-	using RtlAvlTree::RtlAvlTree;
 
 	std::optional<MmVadShort> SearchNode(MmVirtualAddress vaddr);
 };

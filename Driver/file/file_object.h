@@ -4,9 +4,8 @@
 namespace stareye {
 	class FileObject: public KObject
 	{
+		STAREYE_USING_BASE(KObject)
 	public:
-		using KObject::KObject;
-
 		PUNICODE_STRING FileName();
 	};
 }

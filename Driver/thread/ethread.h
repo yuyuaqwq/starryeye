@@ -6,10 +6,9 @@
 namespace stareye {
 class EThread: public KObject
 {
+	STAREYE_USING_BASE(KObject)
 public:
 	static void Init();
-
-	using KObject::KObject;
 
 	KThread Tcb();
 	ListEntry<EThread> ThreadListEntry();

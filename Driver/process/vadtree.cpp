@@ -70,13 +70,13 @@ void MmVadTree::Init()
 
 std::optional<MmVadShort> MmVadTree::SearchNode(MmVirtualAddress vaddr)
 {
-	auto cur_vad = Root().Impl<MmVadShort>();
-	while (cur_vad.IsValid()) {
+	auto cur_vad = Root();
+	while (IsValid(cur_vad)) {
 		if (cur_vad.StartingAddress() > vaddr) {
-			cur_vad = cur_vad.Left().Impl<MmVadShort>();
+			cur_vad = cur_vad.Left();
 		}
 		else if (cur_vad.EndingAddress() < vaddr) {
-			cur_vad = cur_vad.Right().Impl<MmVadShort>();
+			cur_vad = cur_vad.Right();
 		}
 		else return cur_vad;
 	}

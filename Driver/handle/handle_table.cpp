@@ -48,7 +48,7 @@ std::tuple<uint16_t, uint16_t, uint16_t> HandleTable::GetBeginIdx() const
 	{
 	case 0:
 		for (uint16_t i = 0; i < kMaxCount; i++) {
-			if (auto opt = GetHandleObjectIfLv1(i); opt.has_value() && opt.value().IsValid()) {
+			if (auto opt = GetHandleObjectIfLv1(i); opt.has_value() && IsValid(opt.value())) {
 				return { ~0, ~0, i };
 			}
 		}
@@ -56,7 +56,7 @@ std::tuple<uint16_t, uint16_t, uint16_t> HandleTable::GetBeginIdx() const
 	case 1:
 		for (uint16_t i = 0; i < kMaxCount; i++) {
 			for (uint16_t j = 0; j < kMaxCount; j++) {
-				if (auto opt = GetHandleObjectIfLv2(i, j); opt.has_value() && opt.value().IsValid()) {
+				if (auto opt = GetHandleObjectIfLv2(i, j); opt.has_value() && IsValid(opt.value())) {
 					return { ~0, i, j };
 				}
 			}
@@ -66,7 +66,7 @@ std::tuple<uint16_t, uint16_t, uint16_t> HandleTable::GetBeginIdx() const
 		for (uint16_t i = 0; i < kMaxCount; i++) {
 			for (uint16_t j = 0; j < kMaxCount; j++) {
 				for (uint16_t k = 0; k < kMaxCount; k++) {
-					if (auto opt = GetHandleObjectIfLv3(i, j, k); opt.has_value() && opt.value().IsValid()) {
+					if (auto opt = GetHandleObjectIfLv3(i, j, k); opt.has_value() && IsValid(opt.value())) {
 						return { i, j, k };
 					}
 				}
@@ -211,7 +211,7 @@ bool HandleTableConstIterator::CheckValidIndexAndAssign() noexcept
 		tmp = table_->GetHandleObjectIfLv3(idx_lv3_, idx_lv2_, idx_lv1_);
 		break;
 	}
-	if (tmp.has_value() && tmp.value().IsValid()) {
+	if (tmp.has_value() && IsValid(tmp.value())) {
 		cur_obj_ = tmp.value();
 		return true;
 	}
@@ -289,31 +289,31 @@ bool HandleTableConstIterator::FindValidIfLv3Table() noexcept {
 
 
 HandleTableIterator::reference HandleTableIterator::operator*() const noexcept {
-	return const_cast<reference>(InheritT::operator*());
+	return const_cast<reference>(BaseT::operator*());
 }
 HandleTableIterator::pointer HandleTableIterator::operator->() const noexcept {
-	return const_cast<pointer>(InheritT::operator->());
+	return const_cast<pointer>(BaseT::operator->());
 }
 HandleTableIterator& HandleTableIterator::operator++() noexcept {
-	InheritT::operator++();
+	BaseT::operator++();
 	return *this;
 }
 HandleTableIterator& HandleTableIterator::operator--() noexcept {
-	InheritT::operator--();
+	BaseT::operator--();
 	return *this;
 }
 HandleTableIterator HandleTableIterator::operator++(int) noexcept {
 	auto tmp = *this;
-	InheritT::operator++();
+	BaseT::operator++();
 	return tmp;
 }
 HandleTableIterator HandleTableIterator::operator--(int) noexcept {
 	auto tmp = *this;
-	InheritT::operator--();
+	BaseT::operator--();
 	return tmp;
 }
 bool HandleTableIterator::operator==(const HandleTableIterator& x) const noexcept {
-	return InheritT::operator==(x);
+	return BaseT::operator==(x);
 }
 }
 }
