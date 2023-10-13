@@ -289,31 +289,31 @@ bool HandleTableConstIterator::FindValidIfLv3Table() noexcept {
 
 
 HandleTableIterator::reference HandleTableIterator::operator*() const noexcept {
-	return const_cast<reference>(BaseT::operator*());
+	return const_cast<reference>(Base::operator*());
 }
 HandleTableIterator::pointer HandleTableIterator::operator->() const noexcept {
-	return const_cast<pointer>(BaseT::operator->());
+	return const_cast<pointer>(Base::operator->());
 }
 HandleTableIterator& HandleTableIterator::operator++() noexcept {
-	BaseT::operator++();
+	Base::operator++();
 	return *this;
 }
 HandleTableIterator& HandleTableIterator::operator--() noexcept {
-	BaseT::operator--();
+	Base::operator--();
 	return *this;
 }
 HandleTableIterator HandleTableIterator::operator++(int) noexcept {
 	auto tmp = *this;
-	BaseT::operator++();
+	Base::operator++();
 	return tmp;
 }
 HandleTableIterator HandleTableIterator::operator--(int) noexcept {
 	auto tmp = *this;
-	BaseT::operator--();
+	Base::operator--();
 	return tmp;
 }
 bool HandleTableIterator::operator==(const HandleTableIterator& x) const noexcept {
-	return BaseT::operator==(x);
+	return Base::operator==(x);
 }
 }
 }

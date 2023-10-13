@@ -25,7 +25,7 @@ public:
 	bool IsProcess() const;
 
 	// 获取Body并转换为对象
-	template<InheritKObjectT T>
+	template<std::derived_from<KObject> T>
 	T Body() const {
 		return vaddr_ + BodyOffset;
 	}

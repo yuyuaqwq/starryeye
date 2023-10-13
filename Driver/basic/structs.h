@@ -6,8 +6,8 @@
 
 #define STAREYE_USING_BASE(base) \
 public:\
-using BaseT = base;\
-using BaseT::BaseT;
+using Base = base;\
+using Base::Base;
 
 namespace stareye {
 class KObject {
@@ -25,22 +25,19 @@ inline bool IsValid(const KObject& obj) {
 	return IsValid(obj.VAddr());
 }
 
-template<class T>
-concept InheritKObjectT = std::is_convertible_v<T*, KObject*>;
 
-
-template<class DeriveT>
+template<class Derive>
 class RtlBalanceNode: public KObject
 {
 	STAREYE_USING_BASE(KObject)
 public:
-	DeriveT Left() const {
+	Derive Left() const {
 		return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Left, vaddr_.Owner());
 	}
-	DeriveT Right() const {
+	Derive Right() const {
 		return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->Right, vaddr_.Owner());
 	}
-	DeriveT Parent() const {
+	Derive Parent() const {
 		return MmVirtualAddress(vaddr_.Pointer<RTL_BALANCED_NODE>()->ParentValue & ~0b111ull, vaddr_.Owner());
 	}
 
@@ -50,17 +47,17 @@ public:
 };
 
 namespace details {
-template<class NodeT>
+template<class Node>
 class RtlAvlTreeConstIterator
 {
 public:
 	using difference_type = std::ptrdiff_t;
-	using value_type = NodeT;
+	using value_type = Node;
 	using pointer = const value_type*;
 	using reference = const value_type&;
 	using iterator_category = std::bidirectional_iterator_tag;
 
-	RtlAvlTreeConstIterator(const NodeT& cur) : cur_(cur) {}
+	RtlAvlTreeConstIterator(const Node& cur) : cur_(cur) {}
 	~RtlAvlTreeConstIterator() = default;
 
 	reference operator*() const noexcept { return cur_; }
@@ -104,75 +101,75 @@ public:
 	}
 
 private:
-	void GoLeftMost(const NodeT& node) {
-		NodeT tmp = node;
+	void GoLeftMost(const Node& node) {
+		Node tmp = node;
 		while (IsValid(tmp.Left())) {
 			tmp = tmp.Left();
 		}
 		cur_ = tmp;
 	}
-	void GoRightMost(const NodeT& node) {
-		NodeT tmp = node;
+	void GoRightMost(const Node& node) {
+		Node tmp = node;
 		while (IsValid(tmp.Right())) {
 			tmp = tmp.Right();
 		}
 		cur_ = tmp;
 	}
 
-	NodeT cur_;
+	Node cur_;
 };
 
-template<class NodeT>
-class RtlAvlTreeIterator : public RtlAvlTreeConstIterator<NodeT>
+template<class Node>
+class RtlAvlTreeIterator : public RtlAvlTreeConstIterator<Node>
 {
-	STAREYE_USING_BASE(RtlAvlTreeConstIterator<NodeT>)
+	STAREYE_USING_BASE(RtlAvlTreeConstIterator<Node>)
 public:
 	using difference_type = std::ptrdiff_t;
-	using value_type = NodeT;
+	using value_type = Node;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using iterator_category = std::bidirectional_iterator_tag;
 
 	reference operator*() const noexcept {
-		return const_cast<reference>(BaseT::operator*());
+		return const_cast<reference>(Base::operator*());
 	}
 	pointer operator->() const noexcept {
-		return const_cast<pointer>(BaseT::operator->());
+		return const_cast<pointer>(Base::operator->());
 	}
 	RtlAvlTreeIterator& operator++() {
-		BaseT::operator++();
+		Base::operator++();
 		return *this;
 	}
 	RtlAvlTreeIterator& operator--() {
-		BaseT::operator--();
+		Base::operator--();
 		return *this;
 	}
 	RtlAvlTreeIterator operator++(int) {
 		auto tmp = *this;
-		BaseT::operator++();
+		Base::operator++();
 		return tmp;
 	}
 	RtlAvlTreeIterator operator--(int) {
 		auto tmp = *this;
-		BaseT::operator--();
+		Base::operator--();
 		return tmp;
 	}
 	bool operator==(const RtlAvlTreeIterator& x) const noexcept {
-		return BaseT::operator==(x);
+		return Base::operator==(x);
 	}
 };
 }
 
-template<class NodeT>
+template<class Node>
 class RtlAvlTree : public KObject
 {
 	STAREYE_USING_BASE(KObject)
 public:
-	using value_type = NodeT;
-	using iterator = details::RtlAvlTreeIterator<NodeT>;
-	using const_iterator = details::RtlAvlTreeConstIterator<NodeT>;
+	using value_type = Node;
+	using iterator = details::RtlAvlTreeIterator<Node>;
+	using const_iterator = details::RtlAvlTreeConstIterator<Node>;
 
-	NodeT Root() const {
+	Node Root() const {
 		return MmVirtualAddress(vaddr_.ValU64(), vaddr_.Owner());
 	}
 
@@ -190,14 +187,14 @@ public:
 	}
 
 private:
-	NodeT BegNode() const {
+	Node BegNode() const {
 		auto tmp = Root();
 		while (IsValid(tmp.Left())) {
 			tmp = tmp.Left();
 		}
 		return tmp;
 	}
-	NodeT EndNode() const {
+	Node EndNode() const {
 		auto tmp = Root();
 		while (IsValid(tmp.Right())) {
 			tmp = tmp.Right();
@@ -232,12 +229,12 @@ private:
 	ptrdiff_t off_to_head_;
 };
 
-template<class ObjectT>
+template<class ObjType>
 class ExFastRef : public KObject
 {
 	STAREYE_USING_BASE(KObject)
 public:
-	ObjectT Object() {
+	ObjType Object() {
 		return vaddr_.Value<uint64_t>() & ~0xFull;
 	}
 

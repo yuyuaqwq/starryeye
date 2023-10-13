@@ -1,7 +1,7 @@
 #pragma once
 #include <ntifs.h>
 #include <stdint.h>
-#include <fustd/generic/algorithm.hpp>
+#include <fustd/algorithm.hpp>
 
 namespace stareye {
 constexpr bool IsBitAreaValid(size_t buf_size, size_t bit_pos, size_t bit_size);
