@@ -181,6 +181,7 @@ _ret:
 	return *this;
 }
 HandleTableConstIterator& HandleTableConstIterator::operator--() noexcept {
+	//TODO HandleTableConstIterator::operator--()
 	return *this;
 }
 HandleTableConstIterator HandleTableConstIterator::operator++(int) noexcept {
