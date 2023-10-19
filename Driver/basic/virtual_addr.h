@@ -5,6 +5,7 @@
 #include <vector>
 #include <krnfmt/format.h>
 #include <krnlib/iostream.hpp>
+#include <compare>
 
 //TODO ·ÖÒ³»úÖÆ´ý²âÊÔ.....
 namespace stareye {
@@ -222,13 +223,9 @@ public:
 
     void SetOwner(PEPROCESS eproc) noexcept;
 
-    friend bool operator==(MmVirtualAddress x, MmVirtualAddress y) noexcept;
-    friend bool operator!=(MmVirtualAddress x, MmVirtualAddress y) noexcept;
-    friend bool operator>(MmVirtualAddress x, MmVirtualAddress y) noexcept;
-    friend bool operator<(MmVirtualAddress x, MmVirtualAddress y) noexcept;
-    friend bool operator>=(MmVirtualAddress x, MmVirtualAddress y) noexcept;
-    friend bool operator<=(MmVirtualAddress x, MmVirtualAddress y) noexcept;
-    friend MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) noexcept;
+    friend std::strong_ordering operator<=>(const MmVirtualAddress& x, const MmVirtualAddress& y) noexcept;
+    friend bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y) noexcept;
+    friend MmVirtualAddress operator+(ptrdiff_t offset, const MmVirtualAddress& next) noexcept;
 
     MmVirtualAddress operator+(ptrdiff_t offset) const noexcept;
     MmVirtualAddress operator-(ptrdiff_t offset) const noexcept;

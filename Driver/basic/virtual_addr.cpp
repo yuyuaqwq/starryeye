@@ -345,25 +345,13 @@ void MmVirtualAddress::ThrowIfInvalid(const char* format) const {
         std::_Xruntime_error(err.c_str());
     }
 }
-bool operator==(MmVirtualAddress x, MmVirtualAddress y) noexcept {
+std::strong_ordering operator<=>(const MmVirtualAddress& x, const MmVirtualAddress& y) noexcept {
+    return x.vaddr_ <=> y.vaddr_;
+}
+bool operator==(const MmVirtualAddress& x, const MmVirtualAddress& y) noexcept {
     return x.vaddr_ == y.vaddr_;
 }
-bool operator!=(MmVirtualAddress x, MmVirtualAddress y) noexcept {
-    return x.vaddr_ != y.vaddr_;
-}
-bool operator>(MmVirtualAddress x, MmVirtualAddress y) noexcept {
-    return x.vaddr_ > y.vaddr_;
-}
-bool operator<(MmVirtualAddress x, MmVirtualAddress y) noexcept {
-    return x.vaddr_ < y.vaddr_;
-}
-bool operator>=(MmVirtualAddress x, MmVirtualAddress y) noexcept {
-    return x.vaddr_ >= y.vaddr_;
-}
-bool operator<=(MmVirtualAddress x, MmVirtualAddress y) noexcept {
-    return x.vaddr_ <= y.vaddr_;
-}
-MmVirtualAddress operator+(ptrdiff_t offset, MmVirtualAddress next) noexcept {
+MmVirtualAddress operator+(ptrdiff_t offset, const MmVirtualAddress& next) noexcept {
     return next + offset;
 }
 
