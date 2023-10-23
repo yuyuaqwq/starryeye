@@ -6,7 +6,7 @@ namespace stareye {
 namespace details {
 class HandleTableConstIterator {
 public:
-	using iterator_category = std::bidirectional_iterator_tag;
+	using iterator_category = std::forward_iterator_tag;
 
 	using value_type = ObjectHeader;
 	using difference_type = ptrdiff_t;
@@ -20,17 +20,15 @@ public:
 	reference operator*() const noexcept;
 	pointer operator->() const noexcept;
 	HandleTableConstIterator& operator++() noexcept;
-	HandleTableConstIterator& operator--() noexcept;
 	HandleTableConstIterator operator++(int) noexcept;
-	HandleTableConstIterator operator--(int) noexcept;
 	bool operator==(const HandleTableConstIterator& x) const noexcept;
 
 private:
 	bool CheckValidIndexAndAssign() noexcept;
-	bool JudgeIncIdxOrInEnd() noexcept;
-	bool FindValidIfLv1Table() noexcept;
-	bool FindValidIfLv2Table() noexcept;
-	bool FindValidIfLv3Table() noexcept;
+	bool JudgeIsInEndOrIncIdx() noexcept;
+	bool SeekValidIfLv1Table() noexcept;
+	bool SeekValidIfLv2Table() noexcept;
+	bool SeekValidIfLv3Table() noexcept;
 
 	const HandleTable* table_;
 	ObjectHeader cur_obj_;
@@ -44,7 +42,7 @@ class HandleTableIterator : public HandleTableConstIterator
 {
 	STAREYE_USING_BASE(HandleTableConstIterator)
 public:
-	using iterator_category = std::bidirectional_iterator_tag;
+	using iterator_category = std::forward_iterator_tag;
 	using value_type = ObjectHeader;
 	using difference_type = ptrdiff_t;
 	using pointer = value_type*;
@@ -54,9 +52,7 @@ public:
 	pointer operator->() const noexcept;
 
 	HandleTableIterator& operator++() noexcept;
-	HandleTableIterator& operator--() noexcept;
 	HandleTableIterator operator++(int) noexcept;
-	HandleTableIterator operator--(int) noexcept;
 
 	bool operator==(const HandleTableIterator& x) const noexcept;
 };

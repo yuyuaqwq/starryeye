@@ -175,23 +175,14 @@ HandleTableConstIterator::pointer HandleTableConstIterator::operator->() const n
 }
 HandleTableConstIterator& HandleTableConstIterator::operator++() noexcept {
 	do {
-		if (!JudgeIncIdxOrInEnd()) goto _ret;
+		if (JudgeIsInEndOrIncIdx()) goto _ret;
 	} while (!CheckValidIndexAndAssign());
 _ret:
-	return *this;
-}
-HandleTableConstIterator& HandleTableConstIterator::operator--() noexcept {
-	//TODO HandleTableConstIterator::operator--()
 	return *this;
 }
 HandleTableConstIterator HandleTableConstIterator::operator++(int) noexcept {
 	auto tmp = *this;
 	++(*this);
-	return tmp;
-}
-HandleTableConstIterator HandleTableConstIterator::operator--(int) noexcept {
-	auto tmp = *this;
-	--(*this);
 	return tmp;
 }
 bool HandleTableConstIterator::operator==(const HandleTableConstIterator& x) const noexcept {
@@ -218,9 +209,9 @@ bool HandleTableConstIterator::CheckValidIndexAndAssign() noexcept
 	}
 	return false;
 }
-bool HandleTableConstIterator::JudgeIncIdxOrInEnd() noexcept
+bool HandleTableConstIterator::JudgeIsInEndOrIncIdx() noexcept
 {
-	if (idx_lv1_ == ~0) return false;
+	if (idx_lv1_ == ~0) return true;
 	if (idx_lv1_ == HandleTable::kMaxIndex) {
 		switch (table_->TableLevel())
 		{
@@ -237,7 +228,7 @@ bool HandleTableConstIterator::JudgeIncIdxOrInEnd() noexcept
 			else {
 			_inc_idx2:
 				idx_lv1_ = 0;
-				if (!FindValidIfLv2Table()) goto _in_end;
+				if (!SeekValidIfLv2Table()) goto _in_end;
 			}
 			break;
 		case 2:
@@ -248,7 +239,7 @@ bool HandleTableConstIterator::JudgeIncIdxOrInEnd() noexcept
 				else {
 					idx_lv1_ = 0;
 					idx_lv2_ = 0;
-					if (!FindValidIfLv3Table()) goto _in_end;
+					if (!SeekValidIfLv3Table()) goto _in_end;
 				}
 			}
 			else goto _inc_idx2;
@@ -258,9 +249,9 @@ bool HandleTableConstIterator::JudgeIncIdxOrInEnd() noexcept
 	else {
 		++idx_lv1_;
 	}
-	return true;
+	return false;
 }
-bool HandleTableConstIterator::FindValidIfLv1Table() noexcept {
+bool HandleTableConstIterator::SeekValidIfLv1Table() noexcept {
 	while(idx_lv1_ < HandleTable::kMaxCount) {
 		++idx_lv1_;
 		if (MmIsAddressValid((void*)table_->TablePtr()[idx_lv1_])) {
@@ -269,7 +260,7 @@ bool HandleTableConstIterator::FindValidIfLv1Table() noexcept {
 	}
 	return false;
 }
-bool HandleTableConstIterator::FindValidIfLv2Table() noexcept {
+bool HandleTableConstIterator::SeekValidIfLv2Table() noexcept {
 	while(idx_lv2_ < HandleTable::kMaxCount) {
 		++idx_lv2_;
 		if (MmIsAddressValid((void*)table_->TablePtr()[idx_lv2_])) {
@@ -278,7 +269,7 @@ bool HandleTableConstIterator::FindValidIfLv2Table() noexcept {
 	}
 	return false;
 }
-bool HandleTableConstIterator::FindValidIfLv3Table() noexcept {
+bool HandleTableConstIterator::SeekValidIfLv3Table() noexcept {
 	while(idx_lv3_ < HandleTable::kMaxCount) {
 		++idx_lv3_;
 		if (MmIsAddressValid((void*)table_->TablePtr()[idx_lv3_])) {
@@ -299,18 +290,9 @@ HandleTableIterator& HandleTableIterator::operator++() noexcept {
 	Base::operator++();
 	return *this;
 }
-HandleTableIterator& HandleTableIterator::operator--() noexcept {
-	Base::operator--();
-	return *this;
-}
 HandleTableIterator HandleTableIterator::operator++(int) noexcept {
 	auto tmp = *this;
 	Base::operator++();
-	return tmp;
-}
-HandleTableIterator HandleTableIterator::operator--(int) noexcept {
-	auto tmp = *this;
-	Base::operator--();
 	return tmp;
 }
 bool HandleTableIterator::operator==(const HandleTableIterator& x) const noexcept {
