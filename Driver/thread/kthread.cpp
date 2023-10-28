@@ -7,6 +7,6 @@ void KThread::Init()
 }
 
 KProcess KThread::Process() {
-	return KProcess((vaddr_ + ProcessOffset).ValU64());
+	return (vaddr_ + ProcessOffset).DerefAsAddr();
 }
 }

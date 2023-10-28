@@ -55,7 +55,7 @@ MmVadShort MmVad::Core() {
 	return vaddr_;
 }
 SubSection MmVad::Subsection() {
-	return SubSection((vaddr_ + SubsectionOffset).ValU64());
+	return (vaddr_ + SubsectionOffset).DerefAsAddr();
 }
 ListEntry<MmVad> MmVad::ViewLinks() {
 	return ListEntry<MmVad>(vaddr_ + ViewLinksOffset, ViewLinksOffset);

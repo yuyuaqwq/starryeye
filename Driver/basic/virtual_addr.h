@@ -175,8 +175,8 @@ public:
     static void Init();
 
     MmVirtualAddress() noexcept = default;
-    MmVirtualAddress(uint64_t vaddr, PEPROCESS owner = nullptr) noexcept;
-    MmVirtualAddress(void* ptr, PEPROCESS owner = nullptr) noexcept;
+    explicit MmVirtualAddress(uint64_t vaddr, PEPROCESS owner = nullptr) noexcept;
+    explicit MmVirtualAddress(void* ptr, PEPROCESS owner = nullptr) noexcept;
     ~MmVirtualAddress() noexcept = default;
 
     uint64_t PxtIndex() const noexcept;
@@ -208,7 +208,11 @@ public:
     uint64_t Address() const;
     std::vector<char> Buffer(size_t size) const;
     template<class T>
-    T& Value() const;
+    T& Value() const {
+        ProcessAutoAttacker pa{ owner_ };
+        return *Pointer<T>();
+    }
+    MmVirtualAddress DerefAsAddr() const;
     uint64_t ValU64() const;
     uint32_t ValU32() const;
     uint16_t ValU16() const;
@@ -293,12 +297,6 @@ public:
 private:
     MmVirtualAddress pte_vaddr_;
 };
-template<class T>
-inline T& MmVirtualAddress::Value() const {
-    
-    ProcessAutoAttacker pa{ owner_ };
-    return *Pointer<T>();
-}
 }
 
 template<>

@@ -140,17 +140,17 @@ MmPte MmVirtualAddress::GetPte() const {
     return MmVirtualAddress(GetPteUnsafe(), owner_);
 }
 PdteFormater* MmVirtualAddress::GetPdte() const {
-    MmVirtualAddress ptr = GetPdteUnsafe();
+    auto ptr = MmVirtualAddress(GetPdteUnsafe());
     ptr.ThrowIfInvalid("解析出来的Pdte是无效地址: ");
     return ptr.Pointer<PdteFormater>();
 }
 PpteFormater* MmVirtualAddress::GetPpte() const {
-    MmVirtualAddress ptr = GetPpteUnsafe();
+    auto ptr = MmVirtualAddress(GetPpteUnsafe());
     ptr.ThrowIfInvalid("解析出来的Ppte是无效地址: ");
     return ptr.Pointer<PpteFormater>();
 }
 PxteFormater* MmVirtualAddress::GetPxte() const {
-    MmVirtualAddress ptr = GetPxteUnsafe();
+    auto ptr = MmVirtualAddress(GetPxteUnsafe());
     ptr.ThrowIfInvalid("解析出来的Pxte是无效地址: ");
     return ptr.Pointer<PxteFormater>();
 }
@@ -179,6 +179,9 @@ std::vector<char> MmVirtualAddress::Buffer(size_t size) const
     buf.resize(size);
     RtlCopyMemory(buf.data(), Pointer(), size);
     return buf;
+}
+MmVirtualAddress MmVirtualAddress::DerefAsAddr() const {
+    return MmVirtualAddress(Value<intptr_t>(), owner_);
 }
 uint64_t MmVirtualAddress::ValU64() const {
     return Value<uint64_t>();

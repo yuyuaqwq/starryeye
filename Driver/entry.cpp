@@ -42,7 +42,7 @@ extern "C" NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STR
 	DbgBreakPoint();
 	try
 	{
-		auto table = HandleTable(HandleTable::PspCidTable.ValU64());
+		auto table = HandleTable(HandleTable::PspCidTable.DerefAsAddr());
 		auto res = HandleUtils::FindProcessInHandleTable(table, "Everything.exe");
 		if (!res.empty()) {
 			auto tree = res[0].VadRoot();

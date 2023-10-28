@@ -9,11 +9,11 @@ void SubSection::Init()
 
 ControlArea SubSection::ControlArea()
 {
-	return stareye::ControlArea((vaddr_ + ControlAreaOffset).ValU64());
+	return (vaddr_ + ControlAreaOffset).DerefAsAddr();
 }
 
 SubSection SubSection::NextSubsection()
 {
-	return SubSection((vaddr_ + NextSubsectionOffset).ValU64());
+	return (vaddr_ + NextSubsectionOffset).DerefAsAddr();
 }
 }

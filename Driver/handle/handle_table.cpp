@@ -9,7 +9,7 @@ uint64_t HandleTable::DecryptHandleAddress(uint64_t addr)
 void HandleTable::Init()
 {
 	TableCodeOffset = 0x8;
-	PspCidTable = 0xfffff802598fc5d0;	//TODO PspCidTable
+	PspCidTable = MmVirtualAddress(0xfffff802598fc5d0);	//TODO PspCidTable
 }
 
 uint64_t HandleTable::TableCode() const
@@ -129,8 +129,8 @@ std::optional<ObjectHeader> HandleTable::GetHandleObjectIfLv3(uint64_t index_lv3
 std::optional<ObjectHeader> HandleTable::GetHandleObjectInLv1TableCode(uint64_t* table, uint64_t index)
 {
 	if (MmIsAddressValid(table) && index < 512)
-		return ObjectHeader(
-			DecryptHandleAddress(table[index]) - ObjectHeader::BodyOffset);
+		return ObjectHeader(MmVirtualAddress(
+			DecryptHandleAddress(table[index]) - ObjectHeader::BodyOffset));
 	return std::nullopt;
 }
 

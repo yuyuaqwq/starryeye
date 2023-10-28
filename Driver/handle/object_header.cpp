@@ -6,7 +6,7 @@ void ObjectHeader::Init()
 {
 	TypeIndexOffset = 0x18;
 	BodyOffset = 0x30;
-	ObHeaderCookie = 0xfffff802598fc72c;	//TODO ObHeaderCookie
+	ObHeaderCookie = MmVirtualAddress(0xfffff802598fc72c);	//TODO ObHeaderCookie
 }
 
 uint8_t ObjectHeader::TypeIndex() const
@@ -22,7 +22,7 @@ uint8_t ObjectHeader::TypeIndexDecrypted() const
 
 ObjectType ObjectHeader::Type() const
 {
-	return ObjectType(ObjectType::ObTypeIndexTable.PtrU64()[TypeIndexDecrypted()]);	// 根据TypeIndex从ObTypeIndexTable中获取_OBJECT_TYPE
+	return MmVirtualAddress(ObjectType::ObTypeIndexTable.PtrU64()[TypeIndexDecrypted()]);	// 根据TypeIndex从ObTypeIndexTable中获取_OBJECT_TYPE
 }
 
 bool ObjectHeader::IsProcess() const
