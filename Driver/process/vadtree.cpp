@@ -31,14 +31,14 @@ MmVadFlags MmVadShort::VadFlags() {
 MmVirtualAddress MmVadShort::StartingAddress()
 {
 	uint64_t res = StartingVpn();
-	fustd::SetIntegerHigh<4>(res, StartingVpnHigh());
+	SetIntegerHigh<4>(res, StartingVpnHigh());
 	res <<= PAGE_SHIFT;
 	return MmVirtualAddress(res, vaddr_.Owner());
 }
 MmVirtualAddress MmVadShort::EndingAddress()
 {
 	uint64_t res = EndingVpn();
-	fustd::SetIntegerHigh<4>(res, EndingVpnHigh());
+	SetIntegerHigh<4>(res, EndingVpnHigh());
 	res <<= PAGE_SHIFT;
 	res += PAGE_SIZE - 1;
 	return MmVirtualAddress(res, vaddr_.Owner());

@@ -11,8 +11,13 @@ ProcessAutoAttacker::~ProcessAutoAttacker() {
         KeDetachProcess();
 }
 
+constexpr size_t CeilDiv(size_t dividend, size_t divisor) {
+    auto res = dividend / divisor;
+    return (dividend % divisor) != 0 ? res + 1 : res;
+}
+
 inline constexpr bool IsBitAreaValid(size_t buf_size, size_t bit_pos, size_t bit_size) {
-    return fustd::CeilDiv(bit_pos + bit_size, 8) <= bit_size;
+    return CeilDiv(bit_pos + bit_size, 8) <= bit_size;
 }
 bool EqualString(const char* str1, const char* str2, bool case_in_sensitive)
 {
